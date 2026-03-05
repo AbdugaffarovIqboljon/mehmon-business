@@ -1,0 +1,142 @@
+lib
+├── core
+│   ├── config
+│   │   └── env.dart
+│   ├── constants
+│   │   ├── api_constants.dart
+│   │   └── app_spacing.dart
+│   ├── errors
+│   │   ├── api_exception.dart
+│   │   ├── failure.dart
+│   │   └── result.dart
+│   ├── local
+│   │   └── local_data_source.dart
+│   ├── networking
+│   │   ├── auth_interceptor.dart
+│   │   ├── dio_client.dart
+│   │   ├── logging_interceptor.dart
+│   │   └── token_store.dart
+│   ├── routing
+│   │   ├── app_router.dart
+│   │   └── route_names.dart
+│   ├── theme
+│   │   ├── app_colors.dart
+│   │   ├── app_text_styles.dart
+│   │   └── app_theme.dart
+│   └── widgets
+│       ├── app_scaffold.dart
+│       ├── app_text_field.dart
+│       ├── calendar_wrapper.dart
+│       └── primary_button.dart
+├── features
+│   ├── auth
+│   │   ├── data
+│   │   │   ├── datasources
+│   │   │   │   └── auth_remote_data_source.dart
+│   │   │   ├── models
+│   │   │   │   ├── auth_model.dart
+│   │   │   │   ├── auth_model.freezed.dart
+│   │   │   │   └── auth_model.g.dart
+│   │   │   └── repositories
+│   │   │       └── auth_repository_impl.dart
+│   │   ├── domain
+│   │   │   ├── entities
+│   │   │   │   ├── auth_entity.dart
+│   │   │   │   └── auth_entity.freezed.dart
+│   │   │   └── repositories
+│   │   │       └── auth_repository.dart
+│   │   └── presentation
+│   │       ├── controllers
+│   │       │   └── auth_controller.dart
+│   │       └── pages
+│   │           ├── login_page.dart
+│   │           └── register_page.dart
+│   ├── bookings
+│   │   ├── data
+│   │   │   ├── datasources
+│   │   │   │   └── booking_remote_data_source.dart
+│   │   │   ├── models
+│   │   │   │   ├── booking_model.dart
+│   │   │   │   ├── booking_model.freezed.dart
+│   │   │   │   └── booking_model.g.dart
+│   │   │   └── repositories
+│   │   │       └── booking_repository_impl.dart
+│   │   ├── domain
+│   │   │   ├── entities
+│   │   │   │   ├── booking_entity.dart
+│   │   │   │   └── booking_entity.freezed.dart
+│   │   │   └── repositories
+│   │   │       └── booking_repository.dart
+│   │   └── presentation
+│   │       ├── controllers
+│   │       │   └── booking_controller.dart
+│   │       └── pages
+│   │           └── bookings_page.dart
+│   ├── floor
+│   │   ├── data
+│   │   │   ├── datasources
+│   │   │   │   └── floor_remote_data_source.dart
+│   │   │   ├── models
+│   │   │   │   ├── floor_model.dart
+│   │   │   │   ├── floor_model.freezed.dart
+│   │   │   │   └── floor_model.g.dart
+│   │   │   └── repositories
+│   │   │       └── floor_repository_impl.dart
+│   │   ├── domain
+│   │   │   ├── entities
+│   │   │   │   ├── floor_entity.dart
+│   │   │   │   └── floor_entity.freezed.dart
+│   │   │   └── repositories
+│   │   │       └── floor_repository.dart
+│   │   └── presentation
+│   │       ├── controllers
+│   │       │   └── floor_controller.dart
+│   │       └── pages
+│   │           └── floor_page.dart
+│   ├── guests
+│   │   ├── data
+│   │   │   ├── datasources
+│   │   │   │   └── guest_remote_data_source.dart
+│   │   │   ├── models
+│   │   │   │   ├── guest_model.dart
+│   │   │   │   ├── guest_model.freezed.dart
+│   │   │   │   └── guest_model.g.dart
+│   │   │   └── repositories
+│   │   │       └── guest_repository_impl.dart
+│   │   ├── domain
+│   │   │   ├── entities
+│   │   │   │   ├── guest_entity.dart
+│   │   │   │   └── guest_entity.freezed.dart
+│   │   │   └── repositories
+│   │   │       └── guest_repository.dart
+│   │   └── presentation
+│   │       ├── controllers
+│   │       │   └── guest_controller.dart
+│   │       └── pages
+│   │           └── guests_page.dart
+│   ├── settings
+│   │   └── presentation
+│   │       └── pages
+│   │           └── settings_page.dart
+│   └── stats
+│       ├── data
+│       │   ├── datasources
+│       │   │   └── stats_remote_data_source.dart
+│       │   ├── models
+│       │   │   ├── stats_model.dart
+│       │   │   ├── stats_model.freezed.dart
+│       │   │   └── stats_model.g.dart
+│       │   └── repositories
+│       │       └── stats_repository_impl.dart
+│       ├── domain
+│       │   ├── entities
+│       │   │   ├── stats_entity.dart
+│       │   │   └── stats_entity.freezed.dart
+│       │   └── repositories
+│       │       └── stats_repository.dart
+│       └── presentation
+│           ├── controllers
+│           │   └── stats_controller.dart
+│           └── pages
+│               └── stats_page.dart
+└── main.dart
