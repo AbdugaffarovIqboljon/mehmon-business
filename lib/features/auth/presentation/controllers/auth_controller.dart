@@ -59,6 +59,43 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
     );
   }
 
+  /// Login using name and phone number.
+  ///
+  /// Passes [phone] as the email field to the existing dummy data source
+  /// until the backend supports phone-based auth.
+  Future<void> loginByPhone({
+    required String name,
+    required String phone,
+  }) async {
+    state = const AsyncLoading();
+    final result = await _repo.login(email: phone, password: name);
+    state = result.when(
+      success: AsyncData.new,
+      error: (f) => AsyncError(f, StackTrace.current),
+    );
+  }
+
+  /// Register using restaurant name, user name, and phone number.
+  ///
+  /// Passes [phone] as the email field to the existing dummy data source
+  /// until the backend supports phone-based auth.
+  Future<void> registerByPhone({
+    required String restaurantName,
+    required String name,
+    required String phone,
+  }) async {
+    state = const AsyncLoading();
+    final result = await _repo.register(
+      name: '$restaurantName / $name',
+      email: phone,
+      password: name,
+    );
+    state = result.when(
+      success: AsyncData.new,
+      error: (f) => AsyncError(f, StackTrace.current),
+    );
+  }
+
   Future<void> logout() async {
     await _repo.logout();
     state = const AsyncData(null);

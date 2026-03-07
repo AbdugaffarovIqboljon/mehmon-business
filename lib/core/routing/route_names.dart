@@ -10,6 +10,7 @@ abstract final class RouteNames {
   static const String floor = 'floor';
   static const String bookings = 'bookings';
   static const String guests = 'guests';
+  static const String guestDetail = 'guest-detail';
   static const String stats = 'stats';
   static const String settings = 'settings';
 }
@@ -26,6 +27,12 @@ abstract final class RoutePaths {
   static const String floor = '/floor';
   static const String bookings = '/bookings';
   static const String guests = '/guests';
+  static const String guestDetail = 'detail/:guestId';
   static const String stats = '/stats';
   static const String settings = '/settings';
+}
+
+/// Path parameter names used in router declarations.
+abstract final class RouteParams {
+  static const String guestId = 'guestId';
 }

@@ -1,36 +1,193 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mehmon/core/constants/app_spacing.dart';
+import 'package:mehmon/core/routing/route_names.dart';
+import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/guests/presentation/controllers/guest_controller.dart';
+import 'package:mehmon/features/guests/presentation/widgets/guest_card.dart';
+import 'package:mehmon/features/guests/presentation/widgets/guests_segmented_control.dart';
 
-/// Placeholder guests page.
 class GuestsPage extends ConsumerWidget {
   const GuestsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final guestsAsync = ref.watch(guestControllerProvider);
+    return const AppScaffold(
+      showAppBar: false,
+      usePadding: false,
+      body: _GuestsBody(),
+    );
+  }
+}
 
-    return AppScaffold(
-      title: 'Guests',
-      body: guestsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
-        data: (guests) => ListView.builder(
-          itemCount: guests.length,
-          itemBuilder: (context, index) {
-            final guest = guests[index];
-            return ListTile(
-              title: Text(guest.name),
-              subtitle: Text(
-                '${guest.visitCount} visits${guest.isVip ? ' · VIP' : ''}',
+class _GuestsBody extends ConsumerWidget {
+  const _GuestsBody();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final guestsAsync = ref.watch(guestControllerProvider);
+    final selectedTab = ref.watch(guestFilterTabProvider);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.xl,
+        AppSpacing.lg,
+        0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              'Гости',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w700,
               ),
-              leading: CircleAvatar(child: Text(guest.name[0])),
-              trailing: guest.isVip
-                  ? const Icon(Icons.star, color: Colors.amber)
-                  : null,
-            );
-          },
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          GuestsSegmentedControl(
+            selectedTab: selectedTab,
+            onTabChanged: (tab) {
+              ref.read(guestFilterTabProvider.notifier).state = tab;
+            },
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Expanded(
+            child: guestsAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) {
+                return _GuestsErrorState(
+                  error: error,
+                  onRetry: ref.read(guestControllerProvider.notifier).refresh,
+                );
+              },
+              data: (_) {
+                final guests = ref.watch(filteredGuestsProvider);
+                if (guests.isEmpty) {
+                  return _GuestsEmptyState(
+                    title: selectedTab == GuestFilterTab.inHall
+                        ? 'Сейчас в зале нет гостей'
+                        : 'Список гостей пока пуст',
+                    subtitle: selectedTab == GuestFilterTab.inHall
+                        ? 'Когда гости появятся в зале, они отобразятся здесь.'
+                        : 'Добавьте гостей, чтобы видеть историю и заметки.',
+                  );
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+                  itemCount: guests.length,
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: AppSpacing.lg),
+                  itemBuilder: (context, index) {
+                    final guest = guests[index];
+                    return GuestCard(
+                      guest: guest,
+                      onTap: () {
+                        context.pushNamed(
+                          RouteNames.guestDetail,
+                          pathParameters: {RouteParams.guestId: guest.id},
+                          extra: guest,
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GuestsEmptyState extends StatelessWidget {
+  const _GuestsEmptyState({
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.people_outline_rounded,
+              size: 52,
+              color: AppColors.textHint,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              subtitle,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GuestsErrorState extends StatelessWidget {
+  const _GuestsErrorState({
+    required this.error,
+    required this.onRetry,
+  });
+
+  final Object error;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Не удалось загрузить гостей',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              '$error',
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            FilledButton(
+              onPressed: onRetry,
+              child: const Text('Повторить'),
+            ),
+          ],
         ),
       ),
     );

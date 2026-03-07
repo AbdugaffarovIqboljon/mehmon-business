@@ -24,6 +24,32 @@ final guestControllerProvider =
       GuestController.new,
     );
 
+enum GuestFilterTab { allGuests, inHall }
+
+final guestFilterTabProvider = StateProvider<GuestFilterTab>(
+  (ref) => GuestFilterTab.allGuests,
+);
+
+final filteredGuestsProvider = Provider<List<GuestEntity>>((ref) {
+  final guests = ref.watch(guestControllerProvider).asData?.value ?? [];
+  final filter = ref.watch(guestFilterTabProvider);
+
+  if (filter == GuestFilterTab.inHall) {
+    return guests.where((guest) => guest.isInHall).toList();
+  }
+
+  return guests;
+});
+
+final guestByIdProvider = Provider.family<GuestEntity?, String>((ref, guestId) {
+  final guests = ref.watch(guestControllerProvider).asData?.value;
+  if (guests == null) return null;
+  for (final guest in guests) {
+    if (guest.id == guestId) return guest;
+  }
+  return null;
+});
+
 // ── Controller ────────────────────────────────────────────────────────────
 
 class GuestController extends AsyncNotifier<List<GuestEntity>> {

@@ -3,10 +3,6 @@ import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
 
-/// Branded primary button used across the application.
-///
-/// Renders an [ElevatedButton] with the app's primary color and consistent
-/// padding / border-radius.
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     required this.label,
@@ -28,6 +24,7 @@ class PrimaryButton extends StatelessWidget {
     final button = ElevatedButton(
       onPressed: isLoading ? null : onPressed,
       style: ElevatedButton.styleFrom(
+        fixedSize: const Size(double.infinity, 54),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         disabledBackgroundColor: AppColors.disabled,
@@ -37,7 +34,7 @@ class PrimaryButton extends StatelessWidget {
           vertical: AppSpacing.md,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
         ),
         elevation: 0,
       ),

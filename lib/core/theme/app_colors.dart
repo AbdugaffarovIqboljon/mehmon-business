@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 /// Centralized color palette for the MEHMON design system.
-///
-/// Never use raw hex values in UI code — always reference [AppColors].
 abstract final class AppColors {
   // ── Brand ─────────────────────────────────────────────────────────────
   static const Color primary = Color(0xFFF49B33);

@@ -9,6 +9,8 @@ lib
 │   │   ├── api_exception.dart
 │   │   ├── failure.dart
 │   │   └── result.dart
+│   ├── formatters
+│   │   └── uzbek_phone_input_formatter.dart
 │   ├── local
 │   │   └── local_data_source.dart
 │   ├── networking
@@ -48,9 +50,18 @@ lib
 │   │   └── presentation
 │   │       ├── controllers
 │   │       │   └── auth_controller.dart
-│   │       └── pages
-│   │           ├── login_page.dart
-│   │           └── register_page.dart
+│   │       ├── pages
+│   │       │   ├── intro_page.dart
+│   │       │   ├── login_page.dart
+│   │       │   ├── register_page.dart
+│   │       │   └── restaurant_profile_page.dart
+│   │       └── widgets
+│   │           ├── auth_form_section.dart
+│   │           ├── auth_selection_field.dart
+│   │           ├── restaurant_photo_picker.dart
+│   │           ├── restaurant_time_picker_sheet.dart
+│   │           ├── restaurant_type_dropdown.dart
+│   │           └── working_hours_picker_row.dart
 │   ├── bookings
 │   │   ├── data
 │   │   │   ├── datasources
@@ -118,6 +129,14 @@ lib
 │   │   └── presentation
 │   │       └── pages
 │   │           └── settings_page.dart
+│   ├── shell
+│   │   └── presentation
+│   │       ├── models
+│   │       │   └── shell_tab_item.dart
+│   │       ├── pages
+│   │       │   └── main_shell_page.dart
+│   │       └── widgets
+│   │           └── main_bottom_navigation_bar.dart
 │   └── stats
 │       ├── data
 │       │   ├── datasources

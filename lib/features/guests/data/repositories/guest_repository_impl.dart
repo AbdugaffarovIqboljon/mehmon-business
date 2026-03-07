@@ -55,20 +55,44 @@ class GuestRepositoryImpl implements GuestRepository {
   GuestEntity _toEntity(GuestModel m) => GuestEntity(
     id: m.id,
     name: m.name,
+    avatarUrl: m.avatarUrl,
     phone: m.phone,
     email: m.email,
+    tableLabel: m.tableLabel,
+    visitDate: m.visitDate,
+    guestCount: m.guestCount,
     visitCount: m.visitCount,
     notes: m.notes,
     isVip: m.isVip,
+    isInHall: m.isInHall,
+    visitHistory: m.visitHistory.map(_toVisitEntity).toList(),
   );
 
   GuestModel _toModel(GuestEntity e) => GuestModel(
     id: e.id,
     name: e.name,
+    avatarUrl: e.avatarUrl,
     phone: e.phone,
     email: e.email,
+    tableLabel: e.tableLabel,
+    visitDate: e.visitDate,
+    guestCount: e.guestCount,
     visitCount: e.visitCount,
     notes: e.notes,
     isVip: e.isVip,
+    isInHall: e.isInHall,
+    visitHistory: e.visitHistory.map(_toVisitModel).toList(),
+  );
+
+  GuestVisitEntity _toVisitEntity(GuestVisitModel m) => GuestVisitEntity(
+    date: m.date,
+    tableLabel: m.tableLabel,
+    guestCount: m.guestCount,
+  );
+
+  GuestVisitModel _toVisitModel(GuestVisitEntity e) => GuestVisitModel(
+    date: e.date,
+    tableLabel: e.tableLabel,
+    guestCount: e.guestCount,
   );
 }

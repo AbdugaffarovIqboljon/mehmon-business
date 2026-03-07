@@ -21,8 +21,8 @@ final bookingRepositoryProvider = Provider<BookingRepository>(
 
 final bookingControllerProvider =
     AsyncNotifierProvider<BookingController, List<BookingEntity>>(
-      BookingController.new,
-    );
+  BookingController.new,
+);
 
 // ── Controller ────────────────────────────────────────────────────────────
 
@@ -46,6 +46,22 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(_loadBookings);
+  }
+
+  Future<void> create(BookingEntity booking) async {
+    final currentBookings = state.valueOrNull ?? const <BookingEntity>[];
+    final result = await _repo.createBooking(booking);
+
+    result.when(
+      success: (createdBooking) {
+        final updatedBookings = [...currentBookings, createdBooking]
+          ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+        state = AsyncData(updatedBookings);
+      },
+      error: (f) {
+        state = AsyncError(Exception(f.message), StackTrace.current);
+      },
+    );
   }
 
   Future<void> cancel(String id) async {
