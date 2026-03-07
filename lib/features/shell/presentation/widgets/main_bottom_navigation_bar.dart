@@ -38,57 +38,52 @@ class MainBottomNavigationBar extends StatelessWidget {
             final itemColor = isSelected ? AppColors.primary : mutedColor;
 
             return Expanded(
-              child: Semantics(
-                button: true,
-                selected: isSelected,
-                label: item.label,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => onTap(index),
-                    borderRadius: BorderRadius.circular(14),
-                    splashFactory: InkRipple.splashFactory,
-                    overlayColor: WidgetStateProperty.resolveWith<Color?>((
-                      states,
-                    ) {
-                      if (states.contains(WidgetState.pressed)) {
-                        return AppColors.primary.withValues(alpha: 0.08);
-                      }
-                      if (states.contains(WidgetState.hovered) ||
-                          states.contains(WidgetState.focused)) {
-                        return AppColors.primary.withValues(alpha: 0.04);
-                      }
-                      return Colors.transparent;
-                    }),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AnimatedScale(
-                            duration: const Duration(milliseconds: 180),
-                            curve: Curves.easeOutCubic,
-                            scale: isSelected ? 1 : 0.97,
-                            child: ImageIcon(
-                              AssetImage(item.iconAsset),
-                              color: itemColor,
-                              size: 32,
-                            ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => onTap(index),
+                  borderRadius: BorderRadius.circular(14),
+                  splashFactory: InkRipple.splashFactory,
+                  overlayColor: WidgetStateProperty.resolveWith<Color?>((
+                    states,
+                  ) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return AppColors.primary.withValues(alpha: 0.08);
+                    }
+                    if (states.contains(WidgetState.hovered) ||
+                        states.contains(WidgetState.focused)) {
+                      return AppColors.primary.withValues(alpha: 0.04);
+                    }
+                    return Colors.transparent;
+                  }),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedScale(
+                          duration: const Duration(milliseconds: 180),
+                          curve: Curves.easeOutCubic,
+                          scale: isSelected ? 1 : 0.97,
+                          child: ImageIcon(
+                            AssetImage(item.iconAsset),
+                            color: itemColor,
+                            size: 32,
                           ),
-                          const SizedBox(height: 4),
-                          AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 180),
-                            curve: Curves.easeOutCubic,
-                            style: TextStyle(
-                              fontSize: 43 / 3,
-                              height: 1.1,
-                              fontWeight: FontWeight.w400,
-                              color: itemColor,
-                            ),
-                            child: Text(item.label),
+                        ),
+                        const SizedBox(height: 4),
+                        AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 180),
+                          curve: Curves.easeOutCubic,
+                          style: TextStyle(
+                            fontSize: 43 / 3,
+                            height: 1.1,
+                            fontWeight: FontWeight.w400,
+                            color: itemColor,
                           ),
-                        ],
-                      ),
+                          child: Text(item.label),
+                        ),
+                      ],
                     ),
                   ),
                 ),

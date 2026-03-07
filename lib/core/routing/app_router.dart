@@ -7,12 +7,16 @@ import 'package:mehmon/features/auth/presentation/pages/login_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/register_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/restaurant_profile_page.dart';
 import 'package:mehmon/features/bookings/presentation/pages/bookings_page.dart';
+import 'package:mehmon/features/floor/presentation/pages/chronology_page.dart';
+import 'package:mehmon/features/floor/presentation/pages/dashboard_page.dart';
 import 'package:mehmon/features/floor/presentation/pages/floor_page.dart';
+import 'package:mehmon/features/floor/presentation/pages/floor_placeholder_page.dart';
 import 'package:mehmon/features/guests/domain/entities/guest_entity.dart';
 import 'package:mehmon/features/guests/presentation/pages/guest_detail_page.dart';
 import 'package:mehmon/features/guests/presentation/pages/guests_page.dart';
 import 'package:mehmon/features/settings/presentation/pages/settings_page.dart';
 import 'package:mehmon/features/shell/presentation/pages/main_shell_page.dart';
+import 'package:mehmon/features/stats/presentation/pages/statistics_page.dart';
 
 /// Application router configuration.
 ///
@@ -69,6 +73,38 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
         path: RoutePaths.profileSetup,
         builder: (context, state) => const RestaurantProfilePage(),
       ),
+      GoRoute(
+        name: RouteNames.floorDashboard,
+        path: RoutePaths.floorDashboard,
+        builder: (context, state) => const DashboardPage(),
+      ),
+      GoRoute(
+        name: RouteNames.floorChronology,
+        path: RoutePaths.floorChronology,
+        builder: (context, state) => const ChronologyPage(),
+      ),
+      GoRoute(
+        name: RouteNames.floorReports,
+        path: RoutePaths.floorReports,
+        builder: (context, state) => const StatisticsPage(),
+      ),
+      GoRoute(
+        name: RouteNames.floorShifts,
+        path: RoutePaths.floorShifts,
+        builder: (context, state) => const FloorPlaceholderPage(title: 'Смены'),
+      ),
+      GoRoute(
+        name: RouteNames.floorPosIntegration,
+        path: RoutePaths.floorPosIntegration,
+        builder: (context, state) =>
+            const FloorPlaceholderPage(title: 'POS-интеграция'),
+      ),
+      GoRoute(
+        name: RouteNames.floorMenuSettings,
+        path: RoutePaths.floorMenuSettings,
+        builder: (context, state) =>
+            const FloorPlaceholderPage(title: 'Настройки'),
+      ),
 
       // ── Main App Shell Routes ────────────────────────────────────
       StatefulShellRoute.indexedStack(
@@ -109,8 +145,7 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
                     path: RoutePaths.guestDetail,
                     builder: (context, state) {
                       final extra = state.extra;
-                      final initialGuest =
-                          extra is GuestEntity ? extra : null;
+                      final initialGuest = extra is GuestEntity ? extra : null;
                       final guestId =
                           state.pathParameters[RouteParams.guestId] ?? '';
                       return GuestDetailPage(
