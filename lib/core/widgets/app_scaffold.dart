@@ -28,6 +28,7 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final content = usePadding
         ? Padding(
             padding: const EdgeInsets.symmetric(
@@ -43,7 +44,16 @@ class AppScaffold extends StatelessWidget {
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       appBar: showAppBar
           ? AppBar(
-              title: title != null ? Text(title!) : null,
+              title: title != null
+                  ? Text(
+                      title!,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    )
+                  : null,
               actions: actions,
               backgroundColor: Colors.transparent,
               surfaceTintColor: Colors.transparent,

@@ -6,8 +6,8 @@ import 'package:mehmon/features/bookings/presentation/controllers/booking_view_s
 
 final bookingViewControllerProvider =
     NotifierProvider<BookingViewController, BookingViewState>(
-  BookingViewController.new,
-);
+      BookingViewController.new,
+    );
 
 final bookingDateStripProvider = Provider<List<DateTime>>((ref) {
   final selectedDate = ref.watch(
@@ -38,10 +38,13 @@ final selectedDayBookingsProvider = Provider<List<BookingEntity>>((ref) {
     bookingViewControllerProvider.select((state) => state.selectedDate),
   );
   final bookings = ref.watch(bookingControllerProvider).valueOrNull ?? const [];
-  final selectedDayBookings = bookings
-      .where((booking) => DateUtils.isSameDay(booking.dateTime, selectedDate))
-      .toList()
-    ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+  final selectedDayBookings =
+      bookings
+          .where(
+            (booking) => DateUtils.isSameDay(booking.dateTime, selectedDate),
+          )
+          .toList()
+        ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
   return List<BookingEntity>.unmodifiable(selectedDayBookings);
 });

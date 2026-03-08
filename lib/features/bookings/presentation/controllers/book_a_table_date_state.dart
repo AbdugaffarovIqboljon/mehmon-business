@@ -36,15 +36,15 @@ class BookATableDateState {
   int get daysInMonth => _daysInMonth(selectedMonth.year, selectedMonth.month);
 
   List<DateTime> get visibleDates => List<DateTime>.unmodifiable(
-        List<DateTime>.generate(
-          (visibleEndDay - visibleStartDay) + 1,
-          (index) => DateTime(
-            selectedMonth.year,
-            selectedMonth.month,
-            visibleStartDay + index,
-          ),
-        ),
-      );
+    List<DateTime>.generate(
+      (visibleEndDay - visibleStartDay) + 1,
+      (index) => DateTime(
+        selectedMonth.year,
+        selectedMonth.month,
+        visibleStartDay + index,
+      ),
+    ),
+  );
 
   bool get canRevealPreviousDates => visibleStartDay > 1;
   bool get canRevealNextDates => visibleEndDay < daysInMonth;
@@ -66,11 +66,7 @@ class BookATableDateState {
 
 int _daysInMonth(int year, int month) => DateTime(year, month + 1, 0).day;
 
-int _clampDay(
-  int value, {
-  required int min,
-  required int max,
-}) {
+int _clampDay(int value, {required int min, required int max}) {
   if (value < min) return min;
   if (value > max) return max;
   return value;

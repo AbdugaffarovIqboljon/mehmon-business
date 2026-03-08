@@ -43,8 +43,9 @@ abstract final class UzbekPhoneInput {
 
   static String extractLocalDigits(String value) {
     final digits = _digitsOnly(value);
-    final withoutCountry =
-        digits.startsWith('998') ? digits.substring(3) : digits;
+    final withoutCountry = digits.startsWith('998')
+        ? digits.substring(3)
+        : digits;
     return withoutCountry.substring(
       0,
       math.min(withoutCountry.length, localNumberLength),
@@ -130,8 +131,10 @@ class UzbekPhoneTextInputFormatter extends TextInputFormatter {
     );
     final targetOffset = UzbekPhoneInput.cursorOffsetForLocalDigits(
       formattedValue: formatted,
-      localDigitsBeforeCursor:
-          math.min(localDigitsBeforeCursor.length, localDigits.length),
+      localDigitsBeforeCursor: math.min(
+        localDigitsBeforeCursor.length,
+        localDigits.length,
+      ),
     );
 
     return TextEditingValue(

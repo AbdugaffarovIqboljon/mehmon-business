@@ -3,10 +3,7 @@ import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 
 class GuestNotesCard extends StatelessWidget {
-  const GuestNotesCard({
-    required this.notes,
-    super.key,
-  });
+  const GuestNotesCard({required this.notes, super.key});
 
   final String notes;
 

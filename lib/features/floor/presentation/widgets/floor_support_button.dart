@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class FloorSupportButton extends StatelessWidget {
-  const FloorSupportButton({
-    required this.onTap,
-    super.key,
-  });
+  const FloorSupportButton({required this.onTap, super.key});
 
   final VoidCallback onTap;
 
@@ -57,12 +55,12 @@ class FloorSupportButton extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Text(
-                  'Support',
+                  AppLocalizations.of(context)!.support,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 42 / 2,
-                      ),
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 42 / 2,
+                  ),
                 ),
               ],
             ),

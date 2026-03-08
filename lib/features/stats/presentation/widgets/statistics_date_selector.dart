@@ -3,11 +3,7 @@ import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 
 class StatisticsDateSelector extends StatelessWidget {
-  const StatisticsDateSelector({
-    required this.label,
-    super.key,
-    this.onTap,
-  });
+  const StatisticsDateSelector({required this.label, super.key, this.onTap});
 
   final String label;
   final VoidCallback? onTap;
@@ -33,9 +29,9 @@ class StatisticsDateSelector extends StatelessWidget {
                 child: Text(
                   label,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const Icon(

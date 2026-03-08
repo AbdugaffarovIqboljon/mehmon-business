@@ -6,6 +6,7 @@ import 'package:mehmon/features/floor/presentation/models/floor_drawer_destinati
 import 'package:mehmon/features/floor/presentation/widgets/floor_drawer_header.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_drawer_section.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_support_button.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class FloorDrawer extends StatelessWidget {
   const FloorDrawer({
@@ -37,9 +38,7 @@ class FloorDrawer extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: Color(0xFFFAFAFB),
-        ),
+        decoration: const BoxDecoration(color: Color(0xFFFAFAFB)),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +53,7 @@ class FloorDrawer extends StatelessWidget {
                 child: FloorDrawerHeader(),
               ),
               FloorDrawerSectionBlock(
-                title: floorDrawerSections[0].section.title,
+                title: floorDrawerSections[0].section.localizedTitle(context),
                 destinations: floorDrawerSections[0].destinations,
                 onDestinationTap: onDestinationTap,
               ),
@@ -62,7 +61,7 @@ class FloorDrawer extends StatelessWidget {
               const Divider(color: Color(0xFFE1E4EA), height: 1),
               const SizedBox(height: AppSpacing.md),
               FloorDrawerSectionBlock(
-                title: floorDrawerSections[1].section.title,
+                title: floorDrawerSections[1].section.localizedTitle(context),
                 destinations: floorDrawerSections[1].destinations,
                 onDestinationTap: onDestinationTap,
               ),
@@ -86,8 +85,9 @@ class FloorDrawer extends StatelessWidget {
                     onTap: onLogoutTap,
                     borderRadius: BorderRadius.circular(14),
                     splashFactory: NoSplash.splashFactory,
-                    overlayColor:
-                        WidgetStateProperty.resolveWith<Color?>((states) {
+                    overlayColor: WidgetStateProperty.resolveWith<Color?>((
+                      states,
+                    ) {
                       if (states.contains(WidgetState.pressed)) {
                         return const Color(0x0F1A1A2E);
                       }
@@ -110,10 +110,8 @@ class FloorDrawer extends StatelessWidget {
                           ),
                           const SizedBox(width: AppSpacing.md),
                           Text(
-                            'Logout',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
+                            AppLocalizations.of(context)!.logout,
+                            style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
                                   color: const Color(0xFF7D8698),
                                   fontWeight: FontWeight.w400,

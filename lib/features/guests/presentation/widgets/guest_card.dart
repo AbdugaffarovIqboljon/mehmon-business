@@ -6,11 +6,7 @@ import 'package:mehmon/features/guests/presentation/widgets/guest_avatar.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_info_stat_row.dart';
 
 class GuestCard extends StatelessWidget {
-  const GuestCard({
-    required this.guest,
-    required this.onTap,
-    super.key,
-  });
+  const GuestCard({required this.guest, required this.onTap, super.key});
 
   final GuestEntity guest;
   final VoidCallback onTap;
@@ -32,10 +28,7 @@ class GuestCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GuestAvatar(
-                    name: guest.name,
-                    imageUrl: guest.avatarUrl,
-                  ),
+                  GuestAvatar(name: guest.name, imageUrl: guest.avatarUrl),
                   const SizedBox(width: AppSpacing.lg),
                   Expanded(
                     child: Column(

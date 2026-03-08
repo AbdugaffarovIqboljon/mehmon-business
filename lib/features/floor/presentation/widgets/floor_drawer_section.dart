@@ -26,10 +26,10 @@ class FloorDrawerSectionBlock extends StatelessWidget {
           child: Text(
             title,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 49 / 2,
-                ),
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w500,
+              fontSize: 49 / 2,
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -41,7 +41,7 @@ class FloorDrawerSectionBlock extends StatelessWidget {
                   (destination) => Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.xs),
                     child: FloorDrawerItem(
-                      label: destination.title,
+                      label: destination.localizedTitle(context),
                       iconAsset: destination.iconAsset,
                       onTap: () => onDestinationTap(destination),
                     ),

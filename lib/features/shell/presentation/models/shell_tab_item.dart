@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:mehmon/core/routing/route_names.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 /// Navigation metadata for one tab inside the authenticated shell.
 class ShellTabItem {
@@ -15,26 +17,29 @@ class ShellTabItem {
 
 /// Centralized tab list for the authenticated shell.
 abstract final class ShellTabItems {
-  static const List<ShellTabItem> authenticated = [
-    ShellTabItem(
-      label: 'Зал',
-      routeName: RouteNames.floor,
-      iconAsset: 'assets/icons/ic_hall.png',
-    ),
-    ShellTabItem(
-      label: 'Брони',
-      routeName: RouteNames.bookings,
-      iconAsset: 'assets/icons/ic_reservation.png',
-    ),
-    ShellTabItem(
-      label: 'Гости',
-      routeName: RouteNames.guests,
-      iconAsset: 'assets/icons/ic_guests.png',
-    ),
-    ShellTabItem(
-      label: 'Профиль',
-      routeName: RouteNames.settings,
-      iconAsset: 'assets/icons/ic_profile.png',
-    ),
-  ];
+  static List<ShellTabItem> getAuthenticated(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return [
+      ShellTabItem(
+        label: loc.tabFloor,
+        routeName: RouteNames.floor,
+        iconAsset: 'assets/icons/ic_hall.png',
+      ),
+      ShellTabItem(
+        label: loc.tabBookings,
+        routeName: RouteNames.bookings,
+        iconAsset: 'assets/icons/ic_reservation.png',
+      ),
+      ShellTabItem(
+        label: loc.tabGuests,
+        routeName: RouteNames.guests,
+        iconAsset: 'assets/icons/ic_guests.png',
+      ),
+      ShellTabItem(
+        label: loc.tabProfile,
+        routeName: RouteNames.settings,
+        iconAsset: 'assets/icons/ic_profile.png',
+      ),
+    ];
+  }
 }

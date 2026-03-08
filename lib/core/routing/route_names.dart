@@ -1,6 +1,7 @@
 /// Centralized route name and path constants.
 abstract final class RouteNames {
   // ── Onboarding / Auth ──────────────────────────────────────────────
+  static const String languageSelect = 'language-select';
   static const String onboarding = 'onboarding';
   static const String login = 'login';
   static const String register = 'register';
@@ -13,6 +14,8 @@ abstract final class RouteNames {
   static const String guestDetail = 'guest-detail';
   static const String stats = 'stats';
   static const String settings = 'settings';
+  static const String editProfile = 'edit-profile';
+  static const String aboutUs = 'about-us';
   static const String floorDashboard = 'floor-dashboard';
   static const String floorChronology = 'floor-chronology';
   static const String floorReports = 'floor-reports';
@@ -24,6 +27,7 @@ abstract final class RouteNames {
 /// Path constants corresponding to [RouteNames].
 abstract final class RoutePaths {
   // ── Onboarding / Auth ──────────────────────────────────────────────
+  static const String languageSelect = '/language-select';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String register = '/register';
@@ -33,9 +37,11 @@ abstract final class RoutePaths {
   static const String floor = '/floor';
   static const String bookings = '/bookings';
   static const String guests = '/guests';
-  static const String guestDetail = 'detail/:guestId';
+  static const String guestDetail = '/guests/detail/:guestId';
   static const String stats = '/stats';
   static const String settings = '/settings';
+  static const String editProfile = '/edit-profile';
+  static const String aboutUs = '/about-us';
   static const String floorDashboard = '/floor/dashboard';
   static const String floorChronology = '/floor/chronology';
   static const String floorReports = '/floor/reports';

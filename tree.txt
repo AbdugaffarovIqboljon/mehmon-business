@@ -52,12 +52,14 @@ lib
 │   │       │   └── auth_controller.dart
 │   │       ├── pages
 │   │       │   ├── intro_page.dart
+│   │       │   ├── language_select_page.dart
 │   │       │   ├── login_page.dart
 │   │       │   ├── register_page.dart
 │   │       │   └── restaurant_profile_page.dart
 │   │       └── widgets
 │   │           ├── auth_form_section.dart
 │   │           ├── auth_selection_field.dart
+│   │           ├── language_option_tile.dart
 │   │           ├── restaurant_photo_picker.dart
 │   │           ├── restaurant_time_picker_sheet.dart
 │   │           ├── restaurant_type_dropdown.dart
@@ -80,9 +82,29 @@ lib
 │   │   │       └── booking_repository.dart
 │   │   └── presentation
 │   │       ├── controllers
-│   │       │   └── booking_controller.dart
-│   │       └── pages
-│   │           └── bookings_page.dart
+│   │       │   ├── book_a_table_date_controller.dart
+│   │       │   ├── book_a_table_date_state.dart
+│   │       │   ├── booking_controller.dart
+│   │       │   ├── booking_view_controller.dart
+│   │       │   └── booking_view_state.dart
+│   │       ├── pages
+│   │       │   └── bookings_page.dart
+│   │       └── widgets
+│   │           ├── book_a_table_sheet.dart
+│   │           ├── booking_calendar_handle.dart
+│   │           ├── booking_card.dart
+│   │           ├── booking_date_card.dart
+│   │           ├── booking_date_formatters.dart
+│   │           ├── booking_date_item.dart
+│   │           ├── booking_date_selector.dart
+│   │           ├── booking_date_strip.dart
+│   │           ├── booking_form_actions.dart
+│   │           ├── booking_list_section.dart
+│   │           ├── booking_month_calendar.dart
+│   │           ├── booking_month_dropdown.dart
+│   │           ├── booking_time_selector.dart
+│   │           ├── bookings_fab.dart
+│   │           └── guest_count_picker.dart
 │   ├── floor
 │   │   ├── data
 │   │   │   ├── datasources
@@ -102,8 +124,32 @@ lib
 │   │   └── presentation
 │   │       ├── controllers
 │   │       │   └── floor_controller.dart
-│   │       └── pages
-│   │           └── floor_page.dart
+│   │       ├── models
+│   │       │   ├── floor_drawer_destination.dart
+│   │       │   └── floor_table_config.dart
+│   │       ├── pages
+│   │       │   ├── chronology_page.dart
+│   │       │   ├── dashboard_page.dart
+│   │       │   ├── floor_page.dart
+│   │       │   └── floor_placeholder_page.dart
+│   │       └── widgets
+│   │           ├── chronology_event_card.dart
+│   │           ├── chronology_event_icon.dart
+│   │           ├── chronology_filter_tabs.dart
+│   │           ├── chronology_section_header.dart
+│   │           ├── dashboard_double_stat_card.dart
+│   │           ├── dashboard_metric_card.dart
+│   │           ├── floor_drawer.dart
+│   │           ├── floor_drawer_header.dart
+│   │           ├── floor_drawer_item.dart
+│   │           ├── floor_drawer_section.dart
+│   │           ├── floor_map_canvas.dart
+│   │           ├── floor_support_button.dart
+│   │           ├── floor_table_widget.dart
+│   │           ├── floor_time_ruler.dart
+│   │           ├── floor_timeline_header.dart
+│   │           ├── guest_traffic_chart.dart
+│   │           └── hall_occupancy_chart.dart
 │   ├── guests
 │   │   ├── data
 │   │   │   ├── datasources
@@ -123,8 +169,17 @@ lib
 │   │   └── presentation
 │   │       ├── controllers
 │   │       │   └── guest_controller.dart
-│   │       └── pages
-│   │           └── guests_page.dart
+│   │       ├── pages
+│   │       │   ├── guest_detail_page.dart
+│   │       │   └── guests_page.dart
+│   │       └── widgets
+│   │           ├── guest_avatar.dart
+│   │           ├── guest_card.dart
+│   │           ├── guest_contact_row.dart
+│   │           ├── guest_info_stat_row.dart
+│   │           ├── guest_notes_card.dart
+│   │           ├── guest_visit_history_card.dart
+│   │           └── guests_segmented_control.dart
 │   ├── settings
 │   │   └── presentation
 │   │       └── pages
@@ -156,6 +211,11 @@ lib
 │       └── presentation
 │           ├── controllers
 │           │   └── stats_controller.dart
-│           └── pages
-│               └── stats_page.dart
+│           ├── pages
+│           │   ├── statistics_page.dart
+│           │   └── stats_page.dart
+│           └── widgets
+│               ├── statistics_chart.dart
+│               ├── statistics_date_selector.dart
+│               └── statistics_period_selector.dart
 └── main.dart

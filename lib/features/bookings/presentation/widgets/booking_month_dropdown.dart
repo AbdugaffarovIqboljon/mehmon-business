@@ -39,29 +39,24 @@ class BookingMonthDropdown extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
       itemBuilder: (context) {
-        return List<PopupMenuEntry<DateTime>>.generate(
-          12,
-          (index) {
-            final month = DateTime(currentMonth.year, index + 1);
-            return PopupMenuItem<DateTime>(
-              value: month,
-              child: Text(
-                _monthLabels[index],
-                style: textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+        return List<PopupMenuEntry<DateTime>>.generate(12, (index) {
+          final month = DateTime(currentMonth.year, index + 1);
+          return PopupMenuItem<DateTime>(
+            value: month,
+            child: Text(
+              _monthLabels[index],
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w500,
               ),
-            );
-          },
-        );
+            ),
+          );
+        });
       },
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-          border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.6),
-          ),
+          border: Border.all(color: AppColors.primary.withValues(alpha: 0.6)),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(

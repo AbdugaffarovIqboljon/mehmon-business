@@ -6,10 +6,7 @@ import 'package:mehmon/features/shell/presentation/widgets/main_bottom_navigatio
 
 /// Root shell for authenticated users with persistent bottom-tab navigation.
 class MainShellPage extends StatelessWidget {
-  const MainShellPage({
-    required this.navigationShell,
-    super.key,
-  });
+  const MainShellPage({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
@@ -19,7 +16,7 @@ class MainShellPage extends StatelessWidget {
       backgroundColor: AppColors.scaffold,
       body: navigationShell,
       bottomNavigationBar: MainBottomNavigationBar(
-        items: ShellTabItems.authenticated,
+        items: ShellTabItems.getAuthenticated(context),
         currentIndex: navigationShell.currentIndex,
         onTap: (index) {
           navigationShell.goBranch(

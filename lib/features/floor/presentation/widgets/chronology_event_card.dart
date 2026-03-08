@@ -26,23 +26,23 @@ class ChronologyEventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
-          color: AppColors.textPrimary,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          height: 1.25,
-        );
+      color: AppColors.textPrimary,
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      height: 1.25,
+    );
     final numberStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
-          color: AppColors.textPrimary,
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-          height: 1.25,
-        );
+      color: AppColors.textPrimary,
+      fontSize: 18,
+      fontWeight: FontWeight.w500,
+      height: 1.25,
+    );
     final bodyStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: AppColors.textPrimary,
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          height: 1.3,
-        );
+      color: AppColors.textPrimary,
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      height: 1.3,
+    );
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -79,10 +79,7 @@ class ChronologyEventCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        'No.$reservationNumber',
-                        style: numberStyle,
-                      ),
+                      Text('No.$reservationNumber', style: numberStyle),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -131,9 +128,7 @@ class ChronologyEventCard extends StatelessWidget {
                       const SizedBox(width: AppSpacing.sm),
                       Text(
                         time,
-                        style: bodyStyle?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: bodyStyle?.copyWith(fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),

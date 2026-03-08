@@ -73,10 +73,9 @@ class RestaurantTimePickerField extends StatelessWidget {
   Widget build(BuildContext context) {
     final formattedTime = selectedTime == null
         ? hintText
-        : MaterialLocalizations.of(context).formatTimeOfDay(
-            selectedTime!,
-            alwaysUse24HourFormat: true,
-          );
+        : MaterialLocalizations.of(
+            context,
+          ).formatTimeOfDay(selectedTime!, alwaysUse24HourFormat: true);
 
     return AuthSelectionField(
       text: formattedTime,

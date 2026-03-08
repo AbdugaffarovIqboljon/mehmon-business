@@ -4,6 +4,7 @@ import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_card.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_date_formatters.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class BookingListSection extends StatelessWidget {
   const BookingListSection({
@@ -82,20 +83,23 @@ class _BookingEmptyState extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
-                'Нет броней на ${selectedDate.day} ${bookingMonthShortLabel(selectedDate)}',
+                AppLocalizations.of(context)!.noBookingsOn(
+                  selectedDate.day.toString(),
+                  bookingMonthShortLabel(context, selectedDate),
+                ),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: const Color(0xFF2E3755),
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: const Color(0xFF2E3755),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Добавьте новую бронь через кнопку +',
+                AppLocalizations.of(context)!.addBookingHint,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: const Color(0xFF95A1BC),
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: const Color(0xFF95A1BC)),
               ),
             ],
           ),

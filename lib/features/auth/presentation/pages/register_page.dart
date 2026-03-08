@@ -11,18 +11,9 @@ import 'package:mehmon/core/widgets/app_text_field.dart';
 import 'package:mehmon/core/widgets/primary_button.dart';
 import 'package:mehmon/features/auth/presentation/controllers/auth_controller.dart';
 
+import 'package:mehmon/l10n/app_localizations.dart';
+
 // ── Register Page strings ─────────────────────────────────────────────────
-// Kept inline; do NOT introduce a localization framework yet.
-const _kTitle = 'Зарегистрироваться';
-const _kRestaurantLabel = 'Kafe/Restoran nomi';
-const _kRestaurantHint = 'Nomini kiriting';
-const _kNameLabel = 'Ismingiz';
-const _kNameHint = 'Ismingizni kiriting';
-const _kPhoneLabel = 'Telefon raqami';
-const _kPhoneHint = '+998 93 123 45 67';
-const _kButtonLabel = 'Davom etish';
-const _kHaveAccount = 'Уже есть аккаунт?';
-const _kLoginLink = 'Войти';
 const _kLogoPath = 'assets/images/img_app_logo.png';
 
 /// Register screen with restaurant name, user name, and phone fields.
@@ -110,6 +101,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final authState = ref.watch(authControllerProvider);
     final isLoading = authState.isLoading || _isSubmitting;
 
@@ -148,9 +140,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         const SizedBox(height: AppSpacing.xxl),
 
                         // ── Title ──────────────────────────────────────
-                        const Center(
+                        Center(
                           child: Text(
-                            _kTitle,
+                            loc.registerTitle,
                             style: AppTextStyles.headlineLarge,
                             textAlign: TextAlign.center,
                           ),
@@ -162,11 +154,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         AppTextField(
                           controller: _restaurantController,
                           textInputAction: TextInputAction.next,
-                          label: _kRestaurantLabel,
-                          hint: _kRestaurantHint,
+                          label: loc.restaurantLabel,
+                          hint: loc.restaurantHint,
                           enabled: !isLoading,
                           validator: (v) => (v == null || v.trim().isEmpty)
-                              ? 'Nomini kiriting'
+                              ? loc.restaurantValidationError
                               : null,
                         ),
 
@@ -176,11 +168,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         AppTextField(
                           controller: _nameController,
                           textInputAction: TextInputAction.next,
-                          label: _kNameLabel,
-                          hint: _kNameHint,
+                          label: loc.nameLabel,
+                          hint: loc.nameHint,
                           enabled: !isLoading,
                           validator: (v) => (v == null || v.trim().isEmpty)
-                              ? 'Ismingizni kiriting'
+                              ? loc.nameValidationError
                               : null,
                         ),
 
@@ -189,18 +181,18 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         // ── Phone field ───────────────────────────────
                         AppTextField(
                           controller: _phoneController,
-                          label: _kPhoneLabel,
-                          hint: _kPhoneHint,
+                          label: loc.phoneLabel,
+                          hint: loc.phoneHint,
                           keyboardType: TextInputType.phone,
                           inputFormatters: UzbekPhoneInput.inputFormatters,
                           onChanged: _onPhoneChanged,
                           enabled: !isLoading,
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
-                              return 'Telefon raqamini kiriting';
+                              return loc.phoneValidationError;
                             }
                             if (!UzbekPhoneInput.isValid(v)) {
-                              return "Telefon raqamni to'liq kiriting";
+                              return loc.phoneInvalidError;
                             }
                             return null;
                           },
@@ -211,7 +203,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       children: [
                         // ── CTA button ──────────────────────────────
                         PrimaryButton(
-                          label: _kButtonLabel,
+                          label: loc.continueBtn,
                           isLoading: isLoading,
                           onPressed: isLoading ? null : _submit,
                         ),
@@ -224,7 +216,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                _kHaveAccount,
+                                loc.alreadyHaveAccount,
                                 style: AppTextStyles.bodyLarge.copyWith(
                                   color: AppColors.textPrimary,
                                 ),
@@ -235,7 +227,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                     ? null
                                     : () => context.goNamed(RouteNames.login),
                                 child: Text(
-                                  _kLoginLink,
+                                  loc.loginLink,
                                   style: AppTextStyles.bodyLarge.copyWith(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,

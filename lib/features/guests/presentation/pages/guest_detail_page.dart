@@ -10,13 +10,10 @@ import 'package:mehmon/features/guests/presentation/widgets/guest_avatar.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_contact_row.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_notes_card.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_visit_history_card.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class GuestDetailPage extends ConsumerWidget {
-  const GuestDetailPage({
-    required this.guestId,
-    super.key,
-    this.initialGuest,
-  });
+  const GuestDetailPage({required this.guestId, super.key, this.initialGuest});
 
   final String guestId;
   final GuestEntity? initialGuest;
@@ -40,7 +37,9 @@ class GuestDetailPage extends ConsumerWidget {
 
     final contacts = <Widget>[];
     if (guest.phone != null && guest.phone!.trim().isNotEmpty) {
-      contacts.add(GuestContactRow(icon: Icons.call_outlined, value: guest.phone!));
+      contacts.add(
+        GuestContactRow(icon: Icons.call_outlined, value: guest.phone!),
+      );
     }
     if (guest.email != null && guest.email!.trim().isNotEmpty) {
       if (contacts.isNotEmpty) {
@@ -82,11 +81,12 @@ class GuestDetailPage extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      'Информация о госте',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      AppLocalizations.of(context)!.guestInfoTitle,
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
                   ],
                 ),
@@ -119,9 +119,13 @@ class GuestDetailPage extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xs),
               Center(
                 child: Text(
-                  guest.isVip ? 'VIP Гость' : 'Гость',
+                  guest.isVip
+                      ? AppLocalizations.of(context)!.vipGuest
+                      : AppLocalizations.of(context)!.regularGuest,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: guest.isVip ? AppColors.primary : AppColors.textSecondary,
+                    color: guest.isVip
+                        ? AppColors.primary
+                        : AppColors.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -129,13 +133,13 @@ class GuestDetailPage extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xl),
               if (contacts.isNotEmpty) ...contacts,
               if (contacts.isEmpty)
-                const GuestContactRow(
+                GuestContactRow(
                   icon: Icons.info_outline_rounded,
-                  value: 'Контактные данные не указаны',
+                  value: AppLocalizations.of(context)!.noContactInfo,
                 ),
               const SizedBox(height: AppSpacing.xl),
               Text(
-                'История посещений',
+                AppLocalizations.of(context)!.visitHistoryTitle,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: const Color(0xFF0F1F36),
                   fontWeight: FontWeight.w700,
@@ -151,7 +155,7 @@ class GuestDetailPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(22),
                   ),
                   child: Text(
-                    'История посещений пока отсутствует.',
+                    AppLocalizations.of(context)!.noVisitHistory,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -166,7 +170,7 @@ class GuestDetailPage extends ConsumerWidget {
                 ),
               const SizedBox(height: AppSpacing.md),
               Text(
-                'Заметки',
+                AppLocalizations.of(context)!.notesTitle,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: const Color(0xFF0F1F36),
                   fontWeight: FontWeight.w700,
@@ -175,7 +179,7 @@ class GuestDetailPage extends ConsumerWidget {
               const SizedBox(height: AppSpacing.lg),
               GuestNotesCard(
                 notes: (guest.notes == null || guest.notes!.trim().isEmpty)
-                    ? 'Заметок пока нет.'
+                    ? AppLocalizations.of(context)!.noNotes
                     : guest.notes!,
               ),
             ],
@@ -187,9 +191,7 @@ class GuestDetailPage extends ConsumerWidget {
 }
 
 class _GuestNotFoundState extends StatelessWidget {
-  const _GuestNotFoundState({
-    required this.onBack,
-  });
+  const _GuestNotFoundState({required this.onBack});
 
   final VoidCallback onBack;
 
@@ -202,15 +204,15 @@ class _GuestNotFoundState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Гость не найден',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              AppLocalizations.of(context)!.guestNotFound,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: onBack,
-              child: const Text('Назад'),
+              child: Text(AppLocalizations.of(context)!.backBtn),
             ),
           ],
         ),

@@ -23,7 +23,8 @@ class DummyGuestRemoteDataSource implements GuestRemoteDataSource {
         visitDate: '12.12.25',
         guestCount: 2,
         visitCount: 12,
-        notes: 'Любит столик у окна, аллергия на орехи, предпочитает тихую зону.',
+        notes:
+            'Любит столик у окна, аллергия на орехи, предпочитает тихую зону.',
         isVip: true,
         isInHall: true,
         visitHistory: [
@@ -70,9 +71,7 @@ class DummyGuestRemoteDataSource implements GuestRemoteDataSource {
         visitDate: '08.12.25',
         visitCount: 2,
         notes: 'Просит безглютеновые блюда.',
-        visitHistory: [
-          GuestVisitModel(date: '08.12.25', tableLabel: 'No.08'),
-        ],
+        visitHistory: [GuestVisitModel(date: '08.12.25', tableLabel: 'No.08')],
       ),
     ];
   }

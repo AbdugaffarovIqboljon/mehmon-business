@@ -40,23 +40,25 @@ class _FakeBookingRepository implements BookingRepository {
 void main() {
   group('BookingsPage UI', () {
     testWidgets(
-        'expanded month + empty state does not overflow on compact size', (
-      tester,
-    ) async {
-      final container = await _pumpBookingsPage(
-        tester,
-        bookings: const [],
-        size: const Size(390, 680),
-      );
+      'expanded month + empty state does not overflow on compact size',
+      (tester) async {
+        final container = await _pumpBookingsPage(
+          tester,
+          bookings: const [],
+          size: const Size(390, 680),
+        );
 
-      await tester.tap(find.byType(BookingCalendarHandle));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byType(BookingCalendarHandle));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(BookingMonthCalendar), findsOneWidget);
-      expect(container.read(bookingViewControllerProvider).isCalendarExpanded,
-          true);
-      expect(tester.takeException(), isNull);
-    });
+        expect(find.byType(BookingMonthCalendar), findsOneWidget);
+        expect(
+          container.read(bookingViewControllerProvider).isCalendarExpanded,
+          true,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('collapsed strip keeps selected day centered initially', (
       tester,
@@ -108,35 +110,35 @@ void main() {
       expect(expandedRect.center.dy, isNot(equals(collapsedRect.center.dy)));
     });
 
-    testWidgets('selecting month date updates selected day and auto-collapses',
-        (
-      tester,
-    ) async {
-      final container = await _pumpBookingsPage(
-        tester,
-        bookings: _sampleBookings(),
-      );
-      final targetDate = DateUtils.dateOnly(
-        DateTime.now().add(const Duration(days: 3)),
-      );
+    testWidgets(
+      'selecting month date updates selected day and auto-collapses',
+      (tester) async {
+        final container = await _pumpBookingsPage(
+          tester,
+          bookings: _sampleBookings(),
+        );
+        final targetDate = DateUtils.dateOnly(
+          DateTime.now().add(const Duration(days: 3)),
+        );
 
-      await tester.tap(find.byType(BookingCalendarHandle));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byType(BookingCalendarHandle));
+        await tester.pumpAndSettle();
 
-      final targetDayFinder = find.byKey(
-        ValueKey('booking-month-day-${targetDate.toIso8601String()}'),
-      );
-      expect(targetDayFinder, findsWidgets);
+        final targetDayFinder = find.byKey(
+          ValueKey('booking-month-day-${targetDate.toIso8601String()}'),
+        );
+        expect(targetDayFinder, findsWidgets);
 
-      await tester.tap(targetDayFinder.first);
-      await tester.pumpAndSettle();
+        await tester.tap(targetDayFinder.first);
+        await tester.pumpAndSettle();
 
-      expect(find.byType(BookingMonthCalendar), findsNothing);
-      expect(find.byType(BookingDateStrip), findsOneWidget);
-      final state = container.read(bookingViewControllerProvider);
-      expect(DateUtils.isSameDay(state.selectedDate, targetDate), isTrue);
-      expect(state.isCalendarExpanded, isFalse);
-    });
+        expect(find.byType(BookingMonthCalendar), findsNothing);
+        expect(find.byType(BookingDateStrip), findsOneWidget);
+        final state = container.read(bookingViewControllerProvider);
+        expect(DateUtils.isSameDay(state.selectedDate, targetDate), isTrue);
+        expect(state.isCalendarExpanded, isFalse);
+      },
+    );
   });
 }
 
@@ -150,8 +152,9 @@ Future<ProviderContainer> _pumpBookingsPage(
     ..devicePixelRatio = 1;
   final container = ProviderContainer(
     overrides: [
-      bookingRepositoryProvider
-          .overrideWithValue(_FakeBookingRepository(bookings)),
+      bookingRepositoryProvider.overrideWithValue(
+        _FakeBookingRepository(bookings),
+      ),
     ],
   );
   addTearDown(container.dispose);

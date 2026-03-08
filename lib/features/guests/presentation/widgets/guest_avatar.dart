@@ -37,10 +37,7 @@ class GuestAvatar extends StatelessWidget {
 }
 
 class _AvatarPlaceholder extends StatelessWidget {
-  const _AvatarPlaceholder({
-    required this.name,
-    required this.radius,
-  });
+  const _AvatarPlaceholder({required this.name, required this.radius});
 
   final String name;
   final double radius;

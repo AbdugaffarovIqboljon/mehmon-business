@@ -9,6 +9,7 @@ import 'package:mehmon/features/bookings/presentation/widgets/booking_date_selec
 import 'package:mehmon/features/bookings/presentation/widgets/booking_form_actions.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_time_selector.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/guest_count_picker.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 const List<String> defaultBookingTimes = [
   '17:00',
@@ -26,8 +27,9 @@ Future<BookATableFormPayload?> showBookATableSheet(
   DateTime? initialDate,
   List<String> timeSlots = defaultBookingTimes,
 }) {
-  final normalizedInitialDate =
-      DateUtils.dateOnly(initialDate ?? DateTime.now());
+  final normalizedInitialDate = DateUtils.dateOnly(
+    initialDate ?? DateTime.now(),
+  );
 
   return showModalBottomSheet<BookATableFormPayload>(
     context: context,
@@ -53,9 +55,7 @@ Future<BookATableFormPayload?> showBookATableSheet(
                 normalizedInitialDate,
               ),
             ],
-            child: BookATableSheet(
-              timeSlots: timeSlots,
-            ),
+            child: BookATableSheet(timeSlots: timeSlots),
           ),
         ),
       );
@@ -90,10 +90,7 @@ class BookATableFormPayload {
 }
 
 class BookATableSheet extends ConsumerStatefulWidget {
-  const BookATableSheet({
-    required this.timeSlots,
-    super.key,
-  });
+  const BookATableSheet({required this.timeSlots, super.key});
 
   final List<String> timeSlots;
 
@@ -116,8 +113,9 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   void initState() {
     super.initState();
     _guestCount = _initialGuests;
-    _selectedTime =
-        widget.timeSlots.contains('18:00') ? '18:00' : widget.timeSlots.first;
+    _selectedTime = widget.timeSlots.contains('18:00')
+        ? '18:00'
+        : widget.timeSlots.first;
     UzbekPhoneInput.seedController(_phoneController);
     _lastPhoneValue = _phoneController.text;
   }
@@ -162,6 +160,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final dateState = ref.watch(bookATableDateControllerProvider);
     final dateController = ref.read(bookATableDateControllerProvider.notifier);
@@ -194,7 +193,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                   ),
                   Center(
                     child: Text(
-                      'Book a Table',
+                      loc.bookATable,
                       style: textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -215,7 +214,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Guests',
+                          loc.guestsLabel,
                           style: textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w700,
                           ),
@@ -229,7 +228,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                     ),
                     const SizedBox(height: AppSpacing.xxl),
                     Text(
-                      'Select Time',
+                      loc.selectTime,
                       style: textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -254,7 +253,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                     ),
                     const SizedBox(height: AppSpacing.xl),
                     Text(
-                      "Guest's name",
+                      loc.guestNameLabel,
                       style: textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -262,11 +261,11 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                     const SizedBox(height: AppSpacing.sm),
                     AppTextField(
                       controller: _guestNameController,
-                      hint: 'Ismingizni kiriting',
+                      hint: loc.nameHint,
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     Text(
-                      'Phone number',
+                      loc.phoneLabel,
                       style: textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),

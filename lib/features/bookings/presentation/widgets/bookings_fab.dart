@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 
 class BookingsFab extends StatelessWidget {
-  const BookingsFab({
-    required this.onPressed,
-    super.key,
-  });
+  const BookingsFab({required this.onPressed, super.key});
 
   final VoidCallback onPressed;
 

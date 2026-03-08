@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
@@ -13,6 +12,7 @@ import 'package:mehmon/features/bookings/presentation/widgets/booking_date_strip
 import 'package:mehmon/features/bookings/presentation/widgets/booking_list_section.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_month_calendar.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/bookings_fab.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class BookingsPage extends StatelessWidget {
   const BookingsPage({super.key});
@@ -54,8 +54,9 @@ class _BookingsBody extends ConsumerWidget {
         final desiredTopHeight = isCalendarExpanded
             ? (constraints.maxHeight * 0.58).clamp(300, 420).toDouble()
             : 204.0;
-        final topSectionHeight =
-            math.min(maxTopHeight, desiredTopHeight).toDouble();
+        final topSectionHeight = math
+            .min(maxTopHeight, desiredTopHeight)
+            .toDouble();
 
         return Column(
           children: [
@@ -173,10 +174,7 @@ class _BookingsListSection extends ConsumerWidget {
 }
 
 class _BookingListError extends StatelessWidget {
-  const _BookingListError({
-    required this.error,
-    required this.onRetry,
-  });
+  const _BookingListError({required this.error, required this.onRetry});
 
   final Object error;
   final VoidCallback onRetry;
@@ -189,7 +187,7 @@ class _BookingListError extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Не удалось загрузить брони',
+            AppLocalizations.of(context)!.failedToLoadBookings,
             style: Theme.of(context).textTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
@@ -201,7 +199,7 @@ class _BookingListError extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           PrimaryButton(
-            label: 'Повторить',
+            label: AppLocalizations.of(context)!.retryBtn,
             onPressed: onRetry,
             expand: false,
           ),

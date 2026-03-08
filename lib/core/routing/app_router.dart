@@ -1,8 +1,11 @@
+// lib/core/routing/app_router.dart
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/routing/route_names.dart';
 import 'package:mehmon/features/auth/presentation/pages/intro_page.dart';
+import 'package:mehmon/features/auth/presentation/pages/language_select_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/login_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/register_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/restaurant_profile_page.dart';
@@ -14,45 +17,42 @@ import 'package:mehmon/features/floor/presentation/pages/floor_placeholder_page.
 import 'package:mehmon/features/guests/domain/entities/guest_entity.dart';
 import 'package:mehmon/features/guests/presentation/pages/guest_detail_page.dart';
 import 'package:mehmon/features/guests/presentation/pages/guests_page.dart';
+import 'package:mehmon/features/settings/presentation/pages/about_us_page.dart';
+import 'package:mehmon/features/settings/presentation/pages/edit_profile_page.dart';
 import 'package:mehmon/features/settings/presentation/pages/settings_page.dart';
 import 'package:mehmon/features/shell/presentation/pages/main_shell_page.dart';
 import 'package:mehmon/features/stats/presentation/pages/statistics_page.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
-/// Application router configuration.
-///
-/// Uses go_router with named routes and an auth redirect guard.
 GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
   return GoRouter(
-    initialLocation: RoutePaths.onboarding,
+    initialLocation: RoutePaths.languageSelect,
     debugLogDiagnostics: true,
     refreshListenable: authStateListenable,
 
-    // ── Auth Redirect Guard ──────────────────────────────────────────
     redirect: (BuildContext context, GoRouterState state) {
       final isAuthenticated = authStateListenable.value;
-      final guestOnlyRoute = state.matchedLocation == RoutePaths.login ||
-          state.matchedLocation == RoutePaths.onboarding;
+      final guestOnlyRoute =
+          state.matchedLocation == RoutePaths.login ||
+          state.matchedLocation == RoutePaths.onboarding ||
+          state.matchedLocation == RoutePaths.languageSelect;
       final registrationFlowRoute =
           state.matchedLocation == RoutePaths.register ||
-              state.matchedLocation == RoutePaths.profileSetup;
+          state.matchedLocation == RoutePaths.profileSetup;
       final authFlowRoute = guestOnlyRoute || registrationFlowRoute;
 
-      // Not authenticated → force to login.
-      if (!isAuthenticated && !authFlowRoute) {
-        return RoutePaths.login;
-      }
-
-      // Authenticated but on guest-only pages → go to floor.
-      if (isAuthenticated && guestOnlyRoute) {
-        return RoutePaths.floor;
-      }
-
-      // No redirect.
+      if (!isAuthenticated && !authFlowRoute) return RoutePaths.login;
+      if (isAuthenticated && guestOnlyRoute) return RoutePaths.floor;
       return null;
     },
 
     routes: [
       // ── Auth Routes ──────────────────────────────────────────────
+      GoRoute(
+        name: RouteNames.languageSelect,
+        path: RoutePaths.languageSelect,
+        builder: (context, state) => const LanguageSelectPage(),
+      ),
       GoRoute(
         name: RouteNames.onboarding,
         path: RoutePaths.onboarding,
@@ -73,6 +73,8 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
         path: RoutePaths.profileSetup,
         builder: (context, state) => const RestaurantProfilePage(),
       ),
+
+      // ── Floor Drawer Routes (no shell) ───────────────────────────
       GoRoute(
         name: RouteNames.floorDashboard,
         path: RoutePaths.floorDashboard,
@@ -91,26 +93,57 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
       GoRoute(
         name: RouteNames.floorShifts,
         path: RoutePaths.floorShifts,
-        builder: (context, state) => const FloorPlaceholderPage(title: 'Смены'),
+        builder: (context, state) => FloorPlaceholderPage(
+          title: AppLocalizations.of(context)!.drawerShifts,
+        ),
       ),
       GoRoute(
         name: RouteNames.floorPosIntegration,
         path: RoutePaths.floorPosIntegration,
-        builder: (context, state) =>
-            const FloorPlaceholderPage(title: 'POS-интеграция'),
+        builder: (context, state) => FloorPlaceholderPage(
+          title: AppLocalizations.of(context)!.drawerPosIntegration,
+        ),
       ),
       GoRoute(
         name: RouteNames.floorMenuSettings,
         path: RoutePaths.floorMenuSettings,
-        builder: (context, state) =>
-            const FloorPlaceholderPage(title: 'Настройки'),
+        builder: (context, state) => FloorPlaceholderPage(
+          title: AppLocalizations.of(context)!.drawerSettings,
+        ),
       ),
 
-      // ── Main App Shell Routes ────────────────────────────────────
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          return MainShellPage(navigationShell: navigationShell);
+      // ── Detail Routes (outside shell → NO navbar) ────────────────
+      GoRoute(
+        name: RouteNames.guestDetail,
+        path: RoutePaths.guestDetail,
+        builder: (context, state) {
+          final extra = state.extra;
+          final initialGuest = extra is GuestEntity ? extra : null;
+          final guestId = state.pathParameters[RouteParams.guestId] ?? '';
+          return GuestDetailPage(guestId: guestId, initialGuest: initialGuest);
         },
+      ),
+      GoRoute(
+        name: RouteNames.editProfile,
+        path: RoutePaths.editProfile,
+        builder: (context, state) {
+          final extra = state.extra;
+          final initialData = extra is EditProfileInitialData
+              ? extra
+              : const EditProfileInitialData();
+          return EditProfilePage(initialData: initialData);
+        },
+      ),
+      GoRoute(
+        name: RouteNames.aboutUs,
+        path: RoutePaths.aboutUs,
+        builder: (context, state) => const AboutUsPage(),
+      ),
+
+      // ── Main App Shell (with navbar) ─────────────────────────────
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainShellPage(navigationShell: navigationShell),
         branches: [
           StatefulShellBranch(
             routes: [
@@ -139,22 +172,6 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
                 path: RoutePaths.guests,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: GuestsPage()),
-                routes: [
-                  GoRoute(
-                    name: RouteNames.guestDetail,
-                    path: RoutePaths.guestDetail,
-                    builder: (context, state) {
-                      final extra = state.extra;
-                      final initialGuest = extra is GuestEntity ? extra : null;
-                      final guestId =
-                          state.pathParameters[RouteParams.guestId] ?? '';
-                      return GuestDetailPage(
-                        guestId: guestId,
-                        initialGuest: initialGuest,
-                      );
-                    },
-                  ),
-                ],
               ),
             ],
           ),

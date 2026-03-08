@@ -52,7 +52,8 @@ class _BookingDateSelectorState extends State<BookingDateSelector> {
   void didUpdateWidget(covariant BookingDateSelector oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final prepended = oldWidget.visibleDates.isNotEmpty &&
+    final prepended =
+        oldWidget.visibleDates.isNotEmpty &&
         widget.visibleDates.isNotEmpty &&
         widget.visibleDates.length > oldWidget.visibleDates.length &&
         widget.visibleDates.first.isBefore(oldWidget.visibleDates.first);

@@ -39,10 +39,7 @@ class RestaurantPhotoPicker extends StatelessWidget {
             width: size,
             height: size,
             child: hasImage
-                ? Ink.image(
-                    image: MemoryImage(imageBytes!),
-                    fit: BoxFit.cover,
-                  )
+                ? Ink.image(image: MemoryImage(imageBytes!), fit: BoxFit.cover)
                 : Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.lg,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/stats/presentation/controllers/stats_controller.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 /// Placeholder stats page.
 class StatsPage extends ConsumerWidget {
@@ -13,41 +14,47 @@ class StatsPage extends ConsumerWidget {
     final statsAsync = ref.watch(statsControllerProvider);
 
     return AppScaffold(
-      title: 'Statistics',
+      title: AppLocalizations.of(context)!.statsTitle,
       body: statsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
-        data: (stats) => Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _StatCard(
-                label: 'Total Bookings',
-                value: stats.totalBookings.toString(),
-                icon: Icons.calendar_today,
+        error:
+            (error, _) => Center(
+              child: Text(
+                AppLocalizations.of(context)!.statsError(error.toString()),
               ),
-              const SizedBox(height: AppSpacing.md),
-              _StatCard(
-                label: 'Total Guests',
-                value: stats.totalGuests.toString(),
-                icon: Icons.people,
+            ),
+        data:
+            (stats) => Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _StatCard(
+                    label: AppLocalizations.of(context)!.statsTotalBookings,
+                    value: stats.totalBookings.toString(),
+                    icon: Icons.calendar_today,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _StatCard(
+                    label: AppLocalizations.of(context)!.statsTotalGuests,
+                    value: stats.totalGuests.toString(),
+                    icon: Icons.people,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _StatCard(
+                    label: AppLocalizations.of(context)!.statsOccupancyRate,
+                    value: '${(stats.occupancyRate * 100).toStringAsFixed(0)}%',
+                    icon: Icons.bar_chart,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _StatCard(
+                    label: AppLocalizations.of(context)!.statsRevenue,
+                    value: '\$${stats.revenue.toStringAsFixed(2)}',
+                    icon: Icons.attach_money,
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.md),
-              _StatCard(
-                label: 'Occupancy Rate',
-                value: '${(stats.occupancyRate * 100).toStringAsFixed(0)}%',
-                icon: Icons.bar_chart,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              _StatCard(
-                label: 'Revenue',
-                value: '\$${stats.revenue.toStringAsFixed(2)}',
-                icon: Icons.attach_money,
-              ),
-            ],
-          ),
-        ),
+            ),
       ),
     );
   }

@@ -3,11 +3,7 @@ import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 
 class GuestContactRow extends StatelessWidget {
-  const GuestContactRow({
-    required this.icon,
-    required this.value,
-    super.key,
-  });
+  const GuestContactRow({required this.icon, required this.value, super.key});
 
   final IconData icon;
   final String value;
@@ -16,11 +12,7 @@ class GuestContactRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: const Color(0xFF8D9AB0),
-          size: 32,
-        ),
+        Icon(icon, color: const Color(0xFF8D9AB0), size: 32),
         const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Text(

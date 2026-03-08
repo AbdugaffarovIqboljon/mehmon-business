@@ -5,21 +5,17 @@ import 'package:mehmon/features/floor/presentation/widgets/chronology_event_card
 import 'package:mehmon/features/floor/presentation/widgets/chronology_event_icon.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_filter_tabs.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_section_header.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
-enum ChronologyFilterType {
-  all,
-  reservations,
-  updates,
-  cancellations,
-}
+enum ChronologyFilterType { all, reservations, updates, cancellations }
 
 extension ChronologyFilterTypeX on ChronologyFilterType {
   String get label => switch (this) {
-        ChronologyFilterType.all => 'All',
-        ChronologyFilterType.reservations => 'Reservations',
-        ChronologyFilterType.updates => 'Updates',
-        ChronologyFilterType.cancellations => 'Cancellations',
-      };
+    ChronologyFilterType.all => 'All',
+    ChronologyFilterType.reservations => 'Reservations',
+    ChronologyFilterType.updates => 'Updates',
+    ChronologyFilterType.cancellations => 'Cancellations',
+  };
 }
 
 class ChronologyPage extends StatefulWidget {
@@ -36,17 +32,22 @@ class _ChronologyPageState extends State<ChronologyPage> {
 
   late final ValueNotifier<ChronologyFilterType> _selectedFilter;
   late final List<_ChronologyEvent> _events;
-  late final Map<ChronologyFilterType, List<_ChronologyListItem>>
-      _itemsByFilter;
+  late Map<ChronologyFilterType, List<_ChronologyListItem>>
+  _itemsByFilter;
 
   @override
   void initState() {
     super.initState();
     _selectedFilter = ValueNotifier(ChronologyFilterType.all);
     _events = _buildMockEvents()..sort(_compareEvents);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _itemsByFilter = {
       for (final filter in ChronologyFilterType.values)
-        filter: _buildItems(filter),
+        filter: _buildItems(filter, context),
     };
   }
 
@@ -58,8 +59,9 @@ class _ChronologyPageState extends State<ChronologyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final labels =
-        ChronologyFilterType.values.map((item) => item.label).toList();
+    final labels = ChronologyFilterType.values
+        .map((item) => item.label)
+        .toList();
 
     return Scaffold(
       backgroundColor: AppColors.scaffold,
@@ -71,12 +73,12 @@ class _ChronologyPageState extends State<ChronologyPage> {
           icon: const Icon(Icons.arrow_back_rounded),
         ),
         title: Text(
-          'Хронология',
+          AppLocalizations.of(context)!.chronologyTitle,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
+            color: AppColors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
       body: Padding(
@@ -91,11 +93,11 @@ class _ChronologyPageState extends State<ChronologyPage> {
                   tabs: labels,
                   selectedTab: selectedFilter.label,
                   onSelected: (label) {
-                    final matchedFilter =
-                        ChronologyFilterType.values.firstWhere(
-                      (item) => item.label == label,
-                      orElse: () => ChronologyFilterType.all,
-                    );
+                    final matchedFilter = ChronologyFilterType.values
+                        .firstWhere(
+                          (item) => item.label == label,
+                          orElse: () => ChronologyFilterType.all,
+                        );
                     if (matchedFilter == selectedFilter) {
                       return;
                     }
@@ -113,11 +115,11 @@ class _ChronologyPageState extends State<ChronologyPage> {
                   if (items.isEmpty) {
                     return Center(
                       child: Text(
-                        'Активности пока нет',
+                        AppLocalizations.of(context)!.noActivityYet,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontSize: 14,
-                              color: AppColors.textSecondary,
-                            ),
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     );
                   }
@@ -171,14 +173,15 @@ class _ChronologyPageState extends State<ChronologyPage> {
     return _timeToMinutes(b.time).compareTo(_timeToMinutes(a.time));
   }
 
-  List<_ChronologyListItem> _buildItems(ChronologyFilterType filter) {
-    final filteredEvents =
-        _events.where((event) => _matchesFilter(filter, event));
+  List<_ChronologyListItem> _buildItems(ChronologyFilterType filter, BuildContext context) {
+    final filteredEvents = _events.where(
+      (event) => _matchesFilter(filter, event),
+    );
     final items = <_ChronologyListItem>[];
     String? currentDateTitle;
 
     for (final event in filteredEvents) {
-      final dateTitle = _dateLabel(event.date);
+      final dateTitle = _dateLabel(event.date, context);
       if (currentDateTitle != dateTitle) {
         currentDateTitle = dateTitle;
         items.add(_ChronologyListItem.header(dateTitle));
@@ -203,11 +206,11 @@ class _ChronologyPageState extends State<ChronologyPage> {
     return event.type == ChronologyEventType.reservationCancelled;
   }
 
-  String _dateLabel(DateTime date) {
+  String _dateLabel(DateTime date, BuildContext context) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     if (DateUtils.isSameDay(date, today)) {
-      return 'Сегодня';
+      return AppLocalizations.of(context)!.todayLabel;
     }
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');

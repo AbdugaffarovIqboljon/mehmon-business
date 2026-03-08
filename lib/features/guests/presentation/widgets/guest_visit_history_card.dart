@@ -4,10 +4,7 @@ import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/guests/domain/entities/guest_entity.dart';
 
 class GuestVisitHistoryCard extends StatelessWidget {
-  const GuestVisitHistoryCard({
-    required this.visit,
-    super.key,
-  });
+  const GuestVisitHistoryCard({required this.visit, super.key});
 
   final GuestVisitEntity visit;
 
@@ -25,16 +22,10 @@ class GuestVisitHistoryCard extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _ValueColumn(
-              title: 'Дата',
-              value: visit.date,
-            ),
+            child: _ValueColumn(title: 'Дата', value: visit.date),
           ),
           Expanded(
-            child: _ValueColumn(
-              title: 'Стол',
-              value: visit.tableLabel,
-            ),
+            child: _ValueColumn(title: 'Стол', value: visit.tableLabel),
           ),
           Expanded(
             child: _ValueColumn(
@@ -49,10 +40,7 @@ class GuestVisitHistoryCard extends StatelessWidget {
 }
 
 class _ValueColumn extends StatelessWidget {
-  const _ValueColumn({
-    required this.title,
-    required this.value,
-  });
+  const _ValueColumn({required this.title, required this.value});
 
   final String title;
   final String value;

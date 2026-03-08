@@ -6,6 +6,7 @@ import 'package:mehmon/features/floor/presentation/widgets/dashboard_double_stat
 import 'package:mehmon/features/floor/presentation/widgets/dashboard_metric_card.dart';
 import 'package:mehmon/features/floor/presentation/widgets/guest_traffic_chart.dart';
 import 'package:mehmon/features/floor/presentation/widgets/hall_occupancy_chart.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -36,7 +37,7 @@ class DashboardPage extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Dashboard',
+          AppLocalizations.of(context)!.drawerDashboard,
           style: theme.textTheme.headlineMedium?.copyWith(
             fontSize: 24,
             color: theme.colorScheme.onSurface,
@@ -58,7 +59,7 @@ class DashboardPage extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    'Сегодня $dateText',
+                    AppLocalizations.of(context)!.todayDate(dateText),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -68,28 +69,28 @@ class DashboardPage extends StatelessWidget {
                 ),
               ),
               _sectionSpacing,
-              const Padding(
+              Padding(
                 padding: _pageHorizontalPadding,
                 child: DashboardMetricCard(
-                  title: 'Ожидаемое количество гостей',
+                  title: AppLocalizations.of(context)!.expectedGuests,
                   value: '200',
                 ),
               ),
               _sectionSpacing,
-              const Padding(
+              Padding(
                 padding: _pageHorizontalPadding,
                 child: Row(
                   children: [
                     Expanded(
                       child: DashboardDoubleStatCard(
-                        title: 'Гости в зале',
+                        title: AppLocalizations.of(context)!.guestsInHall,
                         value: '50',
                       ),
                     ),
-                    SizedBox(width: AppSpacing.md),
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: DashboardDoubleStatCard(
-                        title: 'Брони',
+                        title: AppLocalizations.of(context)!.bookingsLabel,
                         value: '85',
                       ),
                     ),

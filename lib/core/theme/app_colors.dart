@@ -28,4 +28,8 @@ abstract final class AppColors {
   static const Color divider = Color(0xFFE0E0E0);
   static const Color disabled = Color(0xFFBDBDBD);
   static const Color shadow = Color(0x1A000000);
+
+  // ── Floor ─────────────────────────────────────────────────────────────
+  static const Color floorHeaderBg = Color(0xFFFFF7ED);
+  static const Color floorCanvasBg = Color(0x5CAFAFAF);
 }

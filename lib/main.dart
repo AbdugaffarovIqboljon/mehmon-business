@@ -4,13 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/config/env.dart';
+import 'package:mehmon/core/local/locale_provider.dart';
+import 'package:mehmon/core/local/shared_prefs_provider.dart';
 import 'package:mehmon/core/routing/app_router.dart';
 import 'package:mehmon/core/theme/app_theme.dart';
 import 'package:mehmon/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
 
   // ── Sentry ──────────────────────────────────────────────────────────
   await SentryFlutter.init(
@@ -29,7 +34,12 @@ Future<void> main() async {
         );
       };
 
-      runApp(const ProviderScope(child: MehmonApp()));
+      runApp(
+        ProviderScope(
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+          child: const MehmonApp(),
+        ),
+      );
     },
   );
 }
@@ -50,7 +60,9 @@ class _MehmonAppState extends ConsumerState<MehmonApp> {
   void initState() {
     super.initState();
     _authStateListenable = ValueNotifier<bool>(false);
-    _router = appRouter(authStateListenable: _authStateListenable);
+    _router = appRouter(
+      authStateListenable: _authStateListenable,
+    );
   }
 
   @override
@@ -63,6 +75,7 @@ class _MehmonAppState extends ConsumerState<MehmonApp> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
+    final currentLocale = ref.watch(localeProvider);
     final isAuthenticated = authState.asData?.value != null;
     if (_authStateListenable.value != isAuthenticated) {
       _authStateListenable.value = isAuthenticated;
@@ -73,6 +86,9 @@ class _MehmonAppState extends ConsumerState<MehmonApp> {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       routerConfig: _router,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: currentLocale,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class GuestTrafficChart extends StatelessWidget {
   const GuestTrafficChart({super.key});
@@ -55,7 +56,7 @@ class GuestTrafficChart extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Поток гостей',
+              AppLocalizations.of(context)!.guestTrafficTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -65,11 +66,7 @@ class GuestTrafficChart extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             AspectRatio(
               aspectRatio: 2.15,
-              child: RepaintBoundary(
-                child: LineChart(
-                  _chartData(theme),
-                ),
-              ),
+              child: RepaintBoundary(child: LineChart(_chartData(theme))),
             ),
           ],
         ),
@@ -144,11 +141,11 @@ class GuestTrafficChart extends StatelessWidget {
                 spot.x == _spots.last.x && spot.y == _spots.last.y,
             getDotPainter: (spot, percent, barData, index) =>
                 FlDotCirclePainter(
-              radius: 6.5,
-              color: AppColors.primary,
-              strokeColor: theme.colorScheme.surface,
-              strokeWidth: 4,
-            ),
+                  radius: 6.5,
+                  color: AppColors.primary,
+                  strokeColor: theme.colorScheme.surface,
+                  strokeWidth: 4,
+                ),
           ),
           belowBarData: BarAreaData(
             show: true,

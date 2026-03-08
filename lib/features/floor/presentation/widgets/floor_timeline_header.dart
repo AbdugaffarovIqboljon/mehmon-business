@@ -1,0 +1,142 @@
+import 'package:flutter/material.dart';
+
+import 'package:mehmon/core/constants/app_spacing.dart';
+import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/features/floor/presentation/widgets/floor_time_ruler.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
+
+/// Top header area of the Floor page containing the hamburger icon,
+/// date text, centered time display, and interactive time ruler.
+class FloorTimelineHeader extends StatelessWidget {
+  const FloorTimelineHeader({
+    required this.selectedMinute,
+    required this.onTimeChanged,
+    required this.onMenuTap,
+    required this.onTimeTap,
+    super.key,
+  });
+
+  /// Current time in minutes since midnight.
+  final int selectedMinute;
+
+  /// Fires when the ruler is dragged to a new time.
+  final ValueChanged<int> onTimeChanged;
+
+  /// Fires when the hamburger menu is tapped.
+  final VoidCallback onMenuTap;
+
+  /// Fires when the user taps the centered time text (snap-to-now).
+  final VoidCallback onTimeTap;
+
+  String get _formattedTime {
+    final h = (selectedMinute ~/ 60).toString().padLeft(2, '0');
+    final m = (selectedMinute % 60).toString().padLeft(2, '0');
+    return '$h:$m';
+  }
+
+  String _formattedDate(BuildContext context) {
+    final now = DateTime.now();
+    final d = now.day.toString().padLeft(2, '0');
+    final mo = now.month.toString().padLeft(2, '0');
+    final y = now.year;
+    final dateStr = '$d.$mo.$y';
+    return AppLocalizations.of(context)!.todayDate(dateStr);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: AppColors.floorHeaderBg,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: AppSpacing.sm),
+              // ── Row 1: hamburger + date ──────────────────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _HamburgerButton(onTap: onMenuTap),
+                  Text(
+                    _formattedDate(context),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              // ── Row 2: centered large time ──────────────────────────
+              GestureDetector(
+                onTap: onTimeTap,
+                behavior: HitTestBehavior.opaque,
+                child: Text(
+                  _formattedTime,
+                  style: const TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              // ── Row 3: time ruler ──────────────────────────────────
+              FloorTimeRuler(
+                selectedMinute: selectedMinute,
+                onTimeChanged: onTimeChanged,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Private widgets ─────────────────────────────────────────────────────────
+
+class _HamburgerButton extends StatelessWidget {
+  const _HamburgerButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        splashFactory: NoSplash.splashFactory,
+        overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
+          if (states.contains(WidgetState.pressed)) {
+            return AppColors.primary.withValues(alpha: 0.1);
+          }
+          if (states.contains(WidgetState.hovered) ||
+              states.contains(WidgetState.focused)) {
+            return AppColors.primary.withValues(alpha: 0.05);
+          }
+          return null;
+        }),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          child: Image.asset(
+            'assets/icons/ic_menu.png',
+            width: 30,
+            height: 30,
+            color: AppColors.textSecondary,
+            filterQuality: FilterQuality.low,
+          ),
+        ),
+      ),
+    );
+  }
+}

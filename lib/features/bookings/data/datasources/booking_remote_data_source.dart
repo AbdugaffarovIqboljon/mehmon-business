@@ -54,9 +54,9 @@ class DummyBookingRemoteDataSource implements BookingRemoteDataSource {
       BookingModel(
         id: 'bk_06',
         guestName: 'Мехрибон Абдуллаева',
-        dateTime: today.subtract(const Duration(days: 1)).add(
-              const Duration(hours: 12),
-            ),
+        dateTime: today
+            .subtract(const Duration(days: 1))
+            .add(const Duration(hours: 12)),
         partySize: 5,
         status: 'confirmed',
       ),

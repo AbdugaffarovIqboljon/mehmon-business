@@ -20,8 +20,10 @@ class BookingTimeSelector extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         const spacing = AppSpacing.md;
-        final itemWidth =
-            ((constraints.maxWidth - (spacing * 3)) / 4).clamp(72.0, 120.0);
+        final itemWidth = ((constraints.maxWidth - (spacing * 3)) / 4).clamp(
+          72.0,
+          120.0,
+        );
 
         return Wrap(
           spacing: spacing,
@@ -39,9 +41,7 @@ class BookingTimeSelector extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isSelected ? AppColors.primary : AppColors.surface,
                       borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                      border: Border.all(
-                        color: AppColors.primary,
-                      ),
+                      border: Border.all(color: AppColors.primary),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -52,8 +52,9 @@ class BookingTimeSelector extends StatelessWidget {
                         time,
                         textAlign: TextAlign.center,
                         style: textTheme.titleLarge?.copyWith(
-                          color:
-                              isSelected ? Colors.white : AppColors.primaryDark,
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.primaryDark,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

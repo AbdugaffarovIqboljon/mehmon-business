@@ -10,9 +10,9 @@ final bookATableInitialDateProvider = Provider<DateTime>((ref) {
 
 final bookATableDateControllerProvider =
     AutoDisposeNotifierProvider<BookATableDateController, BookATableDateState>(
-  BookATableDateController.new,
-  dependencies: [bookATableInitialDateProvider],
-);
+      BookATableDateController.new,
+      dependencies: [bookATableInitialDateProvider],
+    );
 
 class BookATableDateController
     extends AutoDisposeNotifier<BookATableDateState> {
@@ -21,8 +21,9 @@ class BookATableDateController
 
   @override
   BookATableDateState build() {
-    final initialDate =
-        DateUtils.dateOnly(ref.watch(bookATableInitialDateProvider));
+    final initialDate = DateUtils.dateOnly(
+      ref.watch(bookATableInitialDateProvider),
+    );
     return BookATableDateState.initial(initialDate);
   }
 
@@ -78,8 +79,10 @@ class BookATableDateController
 
   void revealNextDates() {
     if (!state.canRevealNextDates) return;
-    final nextEnd =
-        math.min(state.daysInMonth, state.visibleEndDay + _revealStep);
+    final nextEnd = math.min(
+      state.daysInMonth,
+      state.visibleEndDay + _revealStep,
+    );
     if (nextEnd == state.visibleEndDay) return;
 
     state = state.copyWith(visibleEndDay: nextEnd);

@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:mehmon/core/routing/route_names.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 enum FloorDrawerSection {
   operations(title: 'Операции'),
@@ -7,6 +9,15 @@ enum FloorDrawerSection {
   const FloorDrawerSection({required this.title});
 
   final String title;
+
+  String localizedTitle(BuildContext context) {
+    switch (this) {
+      case FloorDrawerSection.operations:
+        return AppLocalizations.of(context)!.drawerOpsGroup;
+      case FloorDrawerSection.staffAndIntegrations:
+        return AppLocalizations.of(context)!.drawerStaffGroup;
+    }
+  }
 }
 
 enum FloorDrawerDestination {
@@ -49,6 +60,23 @@ enum FloorDrawerDestination {
   final String title;
   final String? iconAsset;
   final FloorDrawerSection section;
+
+  String localizedTitle(BuildContext context) {
+    switch (this) {
+      case FloorDrawerDestination.dashboard:
+        return AppLocalizations.of(context)!.drawerDashboard;
+      case FloorDrawerDestination.chronology:
+        return AppLocalizations.of(context)!.drawerChronology;
+      case FloorDrawerDestination.reports:
+        return AppLocalizations.of(context)!.drawerReports;
+      case FloorDrawerDestination.shifts:
+        return AppLocalizations.of(context)!.drawerShifts;
+      case FloorDrawerDestination.posIntegration:
+        return AppLocalizations.of(context)!.drawerPosIntegration;
+      case FloorDrawerDestination.settings:
+        return AppLocalizations.of(context)!.drawerSettings;
+    }
+  }
 }
 
 class FloorDrawerSectionConfig {
@@ -82,11 +110,11 @@ const List<FloorDrawerSectionConfig> floorDrawerSections = [
 
 extension FloorDrawerDestinationRouting on FloorDrawerDestination {
   String get routeName => switch (this) {
-        FloorDrawerDestination.dashboard => RouteNames.floorDashboard,
-        FloorDrawerDestination.chronology => RouteNames.floorChronology,
-        FloorDrawerDestination.reports => RouteNames.floorReports,
-        FloorDrawerDestination.shifts => RouteNames.floorShifts,
-        FloorDrawerDestination.posIntegration => RouteNames.floorPosIntegration,
-        FloorDrawerDestination.settings => RouteNames.floorMenuSettings,
-      };
+    FloorDrawerDestination.dashboard => RouteNames.floorDashboard,
+    FloorDrawerDestination.chronology => RouteNames.floorChronology,
+    FloorDrawerDestination.reports => RouteNames.floorReports,
+    FloorDrawerDestination.shifts => RouteNames.floorShifts,
+    FloorDrawerDestination.posIntegration => RouteNames.floorPosIntegration,
+    FloorDrawerDestination.settings => RouteNames.floorMenuSettings,
+  };
 }

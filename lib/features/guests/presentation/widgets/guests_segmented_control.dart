@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/guests/presentation/controllers/guest_controller.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class GuestsSegmentedControl extends StatelessWidget {
   const GuestsSegmentedControl({
@@ -26,14 +27,14 @@ class GuestsSegmentedControl extends StatelessWidget {
         children: [
           Expanded(
             child: _SegmentButton(
-              label: 'Все гости',
+              label: AppLocalizations.of(context)!.segmentAllGuests,
               isSelected: selectedTab == GuestFilterTab.allGuests,
               onTap: () => onTabChanged(GuestFilterTab.allGuests),
             ),
           ),
           Expanded(
             child: _SegmentButton(
-              label: 'Гости в зале',
+              label: AppLocalizations.of(context)!.segmentGuestsInHall,
               isSelected: selectedTab == GuestFilterTab.inHall,
               onTap: () => onTabChanged(GuestFilterTab.inHall),
             ),

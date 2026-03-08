@@ -21,8 +21,8 @@ final bookingRepositoryProvider = Provider<BookingRepository>(
 
 final bookingControllerProvider =
     AsyncNotifierProvider<BookingController, List<BookingEntity>>(
-  BookingController.new,
-);
+      BookingController.new,
+    );
 
 // ── Controller ────────────────────────────────────────────────────────────
 

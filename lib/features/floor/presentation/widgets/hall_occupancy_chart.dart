@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class HallOccupancyChart extends StatelessWidget {
-  const HallOccupancyChart({
-    required this.occupancy,
-    super.key,
-  }) : assert(
-          occupancy >= 0 && occupancy <= 1,
-          'occupancy must be between 0 and 1',
-        );
+  const HallOccupancyChart({required this.occupancy, super.key})
+    : assert(
+        occupancy >= 0 && occupancy <= 1,
+        'occupancy must be between 0 and 1',
+      );
 
   final double occupancy;
 
@@ -41,7 +40,7 @@ class HallOccupancyChart extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Занятость зала',
+              AppLocalizations.of(context)!.hallOccupancyTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,

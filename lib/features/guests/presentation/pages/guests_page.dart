@@ -8,6 +8,7 @@ import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/guests/presentation/controllers/guest_controller.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_card.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guests_segmented_control.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class GuestsPage extends ConsumerWidget {
   const GuestsPage({super.key});
@@ -42,7 +43,7 @@ class _GuestsBody extends ConsumerWidget {
         children: [
           Center(
             child: Text(
-              'Гости',
+              AppLocalizations.of(context)!.tabGuests,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: Colors.black,
                 fontWeight: FontWeight.w700,
@@ -71,11 +72,11 @@ class _GuestsBody extends ConsumerWidget {
                 if (guests.isEmpty) {
                   return _GuestsEmptyState(
                     title: selectedTab == GuestFilterTab.inHall
-                        ? 'Сейчас в зале нет гостей'
-                        : 'Список гостей пока пуст',
+                        ? AppLocalizations.of(context)!.guestsEmptyInHallTitle
+                        : AppLocalizations.of(context)!.guestsEmptyAllTitle,
                     subtitle: selectedTab == GuestFilterTab.inHall
-                        ? 'Когда гости появятся в зале, они отобразятся здесь.'
-                        : 'Добавьте гостей, чтобы видеть историю и заметки.',
+                        ? AppLocalizations.of(context)!.guestsEmptyInHallSubtitle
+                        : AppLocalizations.of(context)!.guestsEmptyAllSubtitle,
                   );
                 }
 
@@ -108,10 +109,7 @@ class _GuestsBody extends ConsumerWidget {
 }
 
 class _GuestsEmptyState extends StatelessWidget {
-  const _GuestsEmptyState({
-    required this.title,
-    required this.subtitle,
-  });
+  const _GuestsEmptyState({required this.title, required this.subtitle});
 
   final String title;
   final String subtitle;
@@ -132,17 +130,17 @@ class _GuestsEmptyState extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               subtitle,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
           ],
@@ -153,10 +151,7 @@ class _GuestsEmptyState extends StatelessWidget {
 }
 
 class _GuestsErrorState extends StatelessWidget {
-  const _GuestsErrorState({
-    required this.error,
-    required this.onRetry,
-  });
+  const _GuestsErrorState({required this.error, required this.onRetry});
 
   final Object error;
   final VoidCallback onRetry;
@@ -170,10 +165,10 @@ class _GuestsErrorState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Не удалось загрузить гостей',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              AppLocalizations.of(context)!.failedToLoadGuests,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -185,7 +180,7 @@ class _GuestsErrorState extends StatelessWidget {
             const SizedBox(height: AppSpacing.lg),
             FilledButton(
               onPressed: onRetry,
-              child: const Text('Повторить'),
+              child: Text(AppLocalizations.of(context)!.retryBtn),
             ),
           ],
         ),

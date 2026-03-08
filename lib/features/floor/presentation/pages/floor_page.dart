@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mehmon/core/constants/app_spacing.dart';
-import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/floor/presentation/models/floor_drawer_destination.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_drawer.dart';
+import 'package:mehmon/features/floor/presentation/widgets/floor_map_canvas.dart';
+import 'package:mehmon/features/floor/presentation/widgets/floor_timeline_header.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
+/// Main floor page showing the restaurant hall layout with an
+/// interactive timeline ruler at the top.
 class FloorPage extends StatefulWidget {
   const FloorPage({super.key});
 
@@ -14,10 +17,57 @@ class FloorPage extends StatefulWidget {
   State<FloorPage> createState() => _FloorPageState();
 }
 
-class _FloorPageState extends State<FloorPage> {
+class _FloorPageState extends State<FloorPage>
+    with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   FloorDrawerDestination? _pendingDestination;
   bool _isNavigatingFromDrawer = false;
+
+  /// Selected time as minutes since midnight, initialised to "now".
+  late int _selectedMinute = _currentMinute;
+
+  // ── Animation for snapping back to current time ─────────────────────────
+
+  late final AnimationController _snapController;
+
+  @override
+  void initState() {
+    super.initState();
+    _snapController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+  }
+
+  static int get _currentMinute {
+    final now = DateTime.now();
+    return now.hour * 60 + now.minute;
+  }
+
+  @override
+  void dispose() {
+    _snapController.dispose();
+    super.dispose();
+  }
+
+  // ── Snap-to-now ─────────────────────────────────────────────────────────
+
+  void _snapToNow() {
+    final from = _selectedMinute;
+    final to = _currentMinute;
+    if (from == to) return;
+
+    _snapController.reset();
+    final animation = IntTween(begin: from, end: to).animate(
+      CurvedAnimation(parent: _snapController, curve: Curves.easeInOut),
+    );
+    animation.addListener(() {
+      setState(() => _selectedMinute = animation.value);
+    });
+    _snapController.forward();
+  }
+
+  // ── Drawer logic (unchanged) ─────────────────────────────────────────────
 
   void _openDrawer() => _scaffoldKey.currentState?.openDrawer();
 
@@ -28,7 +78,8 @@ class _FloorPageState extends State<FloorPage> {
   }
 
   Future<void> _pushDrawerDestination(
-      FloorDrawerDestination destination) async {
+    FloorDrawerDestination destination,
+  ) async {
     _isNavigatingFromDrawer = true;
     try {
       await context.pushNamed(destination.routeName);
@@ -54,84 +105,48 @@ class _FloorPageState extends State<FloorPage> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(
-          content: Text(text),
-          behavior: SnackBarBehavior.floating,
-        ),
+        SnackBar(content: Text(text), behavior: SnackBarBehavior.floating),
       );
   }
+
+  // ── Timeline ─────────────────────────────────────────────────────────────
+
+  void _onTimeChanged(int minute) {
+    // Stop any in-progress snap animation when the user drags manually.
+    if (_snapController.isAnimating) _snapController.stop();
+    setState(() => _selectedMinute = minute);
+  }
+
+  // ── Build ─────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: AppColors.scaffold,
       drawerEdgeDragWidth: MediaQuery.sizeOf(context).width * 0.2,
       drawerScrimColor: Colors.black.withValues(alpha: 0.26),
       onDrawerChanged: _onDrawerChanged,
       drawer: FloorDrawer(
         onDestinationTap: _onDestinationTap,
-        onSupportTap: () =>
-            _showNotReadyMessage('Поддержка скоро будет доступна'),
-        onLogoutTap: () =>
-            _showNotReadyMessage('Выход будет реализован на следующем шаге'),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                children: [
-                  Material(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(14),
-                    child: InkWell(
-                      onTap: _openDrawer,
-                      borderRadius: BorderRadius.circular(14),
-                      splashFactory: NoSplash.splashFactory,
-                      overlayColor:
-                          WidgetStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(WidgetState.pressed)) {
-                          return AppColors.primary.withValues(alpha: 0.1);
-                        }
-                        if (states.contains(WidgetState.hovered) ||
-                            states.contains(WidgetState.focused)) {
-                          return AppColors.primary.withValues(alpha: 0.05);
-                        }
-                        return null;
-                      }),
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.sm),
-                        child: Image.asset(
-                          'assets/icons/ic_menu.png',
-                          width: 30,
-                          height: 30,
-                          color: AppColors.textSecondary,
-                          filterQuality: FilterQuality.low,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    'Карта зала',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                ],
-              ),
-              const Expanded(
-                child: Center(
-                  child: Text('Страница зала'),
-                ),
-              ),
-            ],
-          ),
+        onSupportTap: () => _showNotReadyMessage(
+          AppLocalizations.of(context)!.supportComingSoon,
         ),
+        onLogoutTap: () => _showNotReadyMessage(
+          AppLocalizations.of(context)!.logOutImplNextStep,
+        ),
+      ),
+      body: Column(
+        children: [
+          // Header with timeline — rebuilds when _selectedMinute changes.
+          FloorTimelineHeader(
+            selectedMinute: _selectedMinute,
+            onTimeChanged: _onTimeChanged,
+            onMenuTap: _openDrawer,
+            onTimeTap: _snapToNow,
+          ),
+          // Floor map — const-constructable, does not depend on time state.
+          const Expanded(child: FloorMapCanvas()),
+        ],
       ),
     );
   }

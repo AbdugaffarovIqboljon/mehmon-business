@@ -1,0 +1,149 @@
+{
+  "@@locale": "en",
+  "appName": "MEHMON",
+  "@appName": {
+    "description": "The application name"
+  },
+  "continueBtn": "Continue",
+  "languageUz": "O'zbekcha",
+  "languageRu": "Русский",
+  "languageEn": "English",
+  "introTitle": "Hall management\nin one screen",
+  "introSubtitle": "Table statuses, visits - everything\nunder control.",
+  "loginTitle": "Log in",
+  "nameLabel": "Name",
+  "nameHint": "Enter your name",
+  "nameValidationError": "Enter your name",
+  "phoneLabel": "Phone number",
+  "phoneHint": "+998 93 123 45 67",
+  "phoneValidationError": "Enter your phone number",
+  "phoneInvalidError": "Enter full phone number",
+  "loginBtn": "Log in",
+  "registerLink": "Register",
+  "newToApp": "New to app?",
+  "registerTitle": "Register",
+  "restaurantLabel": "Cafe/Restaurant name",
+  "restaurantHint": "Enter name",
+  "restaurantValidationError": "Enter name",
+  "alreadyHaveAccount": "Already have an account?",
+  "loginLink": "Log in",
+  "profileSetupTitle": "Fill restaurant profile",
+  "photoPlaceholder": "Upload restaurant photo",
+  "restaurantTypeHint": "Select establishment type",
+  "addressLabel": "Address",
+  "addressHint": "Enter address",
+  "workingHoursLabel": "Working hours",
+  "openTimeHint": "Opening time",
+  "closeTimeHint": "Closing time",
+  "profileRegisterBtn": "Register",
+  "photoPickerError": "Failed to open gallery",
+  "restTypeCafe": "Cafe",
+  "restTypeRestaurant": "Restaurant",
+  "restTypeFastfood": "Fast food",
+  "restTypeChayhana": "Chayhana",
+  "tabFloor": "Floor",
+  "tabBookings": "Bookings",
+  "tabGuests": "Guests",
+  "tabProfile": "Profile",
+  "profileSubtitle": "Manage your account and app settings",
+  "profileEditProfile": "Edit Profile",
+  "profileChangeLanguage": "Change Language",
+  "profileAboutUs": "About Us",
+  "profileAboutDescription": "MEHMON helps restaurant teams manage hall operations, bookings, and guests from one place.",
+  "profileVersionLabel": "Version",
+  "profileCompanyInfo": "MEHMON Team",
+  "saveBtn": "Save",
+  "monthJan": "Jan", "monthFeb": "Feb", "monthMar": "Mar", "monthApr": "Apr", "monthMay": "May", "monthJun": "Jun", "monthJul": "Jul", "monthAug": "Aug", "monthSep": "Sep", "monthOct": "Oct", "monthNov": "Nov", "monthDec": "Dec",
+  "monthJanuary": "January", "monthFebruary": "February", "monthMarch": "March", "monthApril": "April", "monthMayLong": "May", "monthJune": "June", "monthJuly": "July", "monthAugust": "August", "monthSeptember": "September", "monthOctober": "October", "monthNovember": "November", "monthDecember": "December",
+  "weekdayMon": "Mon", "weekdayTue": "Tue", "weekdayWed": "Wed", "weekdayThu": "Thu", "weekdayFri": "Fri", "weekdaySat": "Sat", "weekdaySun": "Sun",
+  "bookATable": "Book a Table",
+  "guestsLabel": "Guests",
+  "selectTime": "Select Time",
+  "guestNameLabel": "Guest's name",
+  "banquet": "Banquet",
+  "guestsCount": "{count} guests",
+  "@guestsCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "noBookingsOn": "No bookings for {day} {month}",
+  "@noBookingsOn": {
+    "placeholders": {
+      "day": {},
+      "month": {}
+    }
+  },
+  "addBookingHint": "Add a new booking via the + button",
+  "failedToLoadBookings": "Failed to load bookings",
+  "retryBtn": "Retry",
+  "todayLabel": "Today",
+  "expectedGuests": "Expected guests",
+  "guestsInHall": "Guests in hall",
+  "bookingsLabel": "Bookings",
+  "supportComingSoon": "Support will be available soon",
+  "logOutImplNextStep": "Logout will be implemented in the next step",
+  "chronologyTitle": "Chronology",
+  "noActivityYet": "No activity yet",
+  "inDevelopment": "{title} is in development",
+  "@inDevelopment": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "guestTrafficTitle": "Guest traffic",
+  "hallOccupancyTitle": "Hall occupancy",
+  "drawerOpsGroup": "Operations",
+  "drawerStaffGroup": "Staff and integrations",
+  "drawerDashboard": "Dashboard",
+  "drawerChronology": "Chronology",
+  "drawerReports": "Reports",
+  "drawerShifts": "Shifts",
+  "drawerPosIntegration": "POS integration",
+  "drawerSettings": "Settings",
+  "guestsEmptyInHallTitle": "No guests in the hall right now",
+  "guestsEmptyInHallSubtitle": "Guests will appear here when they enter the hall.",
+  "guestsEmptyAllTitle": "Guest list is empty",
+  "guestsEmptyAllSubtitle": "Add guests to track history and notes.",
+  "failedToLoadGuests": "Failed to load guests",
+  "backBtn": "Back",
+  "guestInfoTitle": "Guest Information",
+  "vipGuest": "VIP Guest",
+  "regularGuest": "Guest",
+  "noContactInfo": "No contact information provided",
+  "visitHistoryTitle": "Visit History",
+  "noVisitHistory": "No visit history yet.",
+  "notesTitle": "Notes",
+  "noNotes": "No notes yet.",
+  "guestNotFound": "Guest not found",
+  "statsError": "Error: {error}",
+  "@statsError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "statsTotalBookings": "Total Bookings",
+  "statsTotalGuests": "Total Guests",
+  "statsOccupancyRate": "Occupancy Rate",
+  "statsRevenue": "Revenue",
+  "statsTitle": "Statistics",
+  "statsPeriodDaily": "Daily",
+  "statsPeriodWeekly": "Weekly",
+  "statsPeriodMonthly": "Monthly",
+  "viewCalendar": "View calendar",
+  "collapse": "Collapse",
+  "todayDate": "Today {date}",
+  "@todayDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "segmentAllGuests": "All Guests",
+  "segmentGuestsInHall": "Guests in Hall",
+  "logout": "Logout",
+  "support": "Support"
+}

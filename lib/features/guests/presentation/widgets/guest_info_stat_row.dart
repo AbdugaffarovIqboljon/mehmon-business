@@ -19,22 +19,13 @@ class GuestInfoStatRow extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: _StatColumn(
-            label: 'Стол',
-            value: tableLabel,
-          ),
+          child: _StatColumn(label: 'Стол', value: tableLabel),
         ),
         Expanded(
-          child: _StatColumn(
-            label: 'Date',
-            value: visitDate,
-          ),
+          child: _StatColumn(label: 'Date', value: visitDate),
         ),
         Expanded(
-          child: _StatColumn(
-            label: 'Кол.во гостей',
-            value: '$guestCount',
-          ),
+          child: _StatColumn(label: 'Кол.во гостей', value: '$guestCount'),
         ),
       ],
     );
@@ -42,10 +33,7 @@ class GuestInfoStatRow extends StatelessWidget {
 }
 
 class _StatColumn extends StatelessWidget {
-  const _StatColumn({
-    required this.label,
-    required this.value,
-  });
+  const _StatColumn({required this.label, required this.value});
 
   final String label;
   final String value;
@@ -67,9 +55,9 @@ class _StatColumn extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             value,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w500),
           ),
         ],
       ),

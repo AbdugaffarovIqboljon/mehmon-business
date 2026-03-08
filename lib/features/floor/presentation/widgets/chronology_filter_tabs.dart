@@ -48,8 +48,9 @@ class _ChronologyFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor =
-        isSelected ? Colors.transparent : const Color(0xFFD3D7DF);
+    final borderColor = isSelected
+        ? Colors.transparent
+        : const Color(0xFFD3D7DF);
 
     return Material(
       color: isSelected ? AppColors.primary : Colors.transparent,
@@ -74,17 +75,15 @@ class _ChronologyFilterChip extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: borderColor,
-            ),
+            border: Border.all(color: borderColor),
           ),
           child: Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: isSelected ? Colors.white : AppColors.textPrimary,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                ),
+              color: isSelected ? Colors.white : AppColors.textPrimary,
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
           ),
         ),
       ),

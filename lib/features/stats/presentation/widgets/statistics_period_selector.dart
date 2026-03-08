@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 enum StatisticsPeriod {
-  daily('Daily'),
-  weekly('Weekly'),
-  monthly('Monthly');
+  daily,
+  weekly,
+  monthly;
 
-  const StatisticsPeriod(this.label);
-  final String label;
+  String localizedLabel(BuildContext context) {
+    switch (this) {
+      case StatisticsPeriod.daily:
+        return AppLocalizations.of(context)!.statsPeriodDaily;
+      case StatisticsPeriod.weekly:
+        return AppLocalizations.of(context)!.statsPeriodWeekly;
+      case StatisticsPeriod.monthly:
+        return AppLocalizations.of(context)!.statsPeriodMonthly;
+    }
+  }
 }
 
 class StatisticsPeriodSelector extends StatelessWidget {
@@ -24,20 +33,24 @@ class StatisticsPeriodSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: StatisticsPeriod.values.map((period) {
-        return Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(
-              right: period == StatisticsPeriod.values.last ? 0 : AppSpacing.sm,
-            ),
-            child: _StatisticsPeriodButton(
-              label: period.label,
-              isSelected: selectedPeriod == period,
-              onTap: () => onChanged(period),
-            ),
-          ),
-        );
-      }).toList(growable: false),
+      children: StatisticsPeriod.values
+          .map((period) {
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  right: period == StatisticsPeriod.values.last
+                      ? 0
+                      : AppSpacing.sm,
+                ),
+                child: _StatisticsPeriodButton(
+                  label: period.localizedLabel(context),
+                  isSelected: selectedPeriod == period,
+                  onTap: () => onChanged(period),
+                ),
+              ),
+            );
+          })
+          .toList(growable: false),
     );
   }
 }
@@ -82,9 +95,9 @@ class _StatisticsPeriodButton extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.white : AppColors.textSecondary,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : AppColors.textSecondary,
+              ),
             ),
           ),
         ),

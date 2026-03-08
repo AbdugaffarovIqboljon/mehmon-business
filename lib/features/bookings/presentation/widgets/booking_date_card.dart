@@ -28,7 +28,8 @@ class BookingDateCard extends StatelessWidget {
     final cardKey = isSelected
         ? const ValueKey('booking-date-card-selected')
         : ValueKey<String>(
-            'booking-date-card-${normalizedDate.toIso8601String()}');
+            'booking-date-card-${normalizedDate.toIso8601String()}',
+          );
 
     return Material(
       key: cardKey,
@@ -49,27 +50,27 @@ class BookingDateCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  bookingMonthShortLabel(date),
+                  bookingMonthShortLabel(context, date),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: textColor,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: textColor,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   '${date.day}',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: textColor,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    color: textColor,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  bookingWeekdayLabel(date),
+                  bookingWeekdayLabel(context, date),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: secondaryTextColor,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: secondaryTextColor,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),

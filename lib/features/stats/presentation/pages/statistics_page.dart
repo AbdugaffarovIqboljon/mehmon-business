@@ -4,6 +4,7 @@ import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/stats/presentation/widgets/statistics_chart.dart';
 import 'package:mehmon/features/stats/presentation/widgets/statistics_date_selector.dart';
 import 'package:mehmon/features/stats/presentation/widgets/statistics_period_selector.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class StatisticsPage extends StatefulWidget {
   const StatisticsPage({super.key});
@@ -38,10 +39,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
         toolbarHeight: 60,
         centerTitle: true,
         title: Text(
-          'Statistics',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          AppLocalizations.of(context)!.statsTitle,
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
           onPressed: () => Navigator.of(context).maybePop(),
@@ -64,10 +65,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
             AppSpacing.lg,
           ),
           children: [
-            StatisticsDateSelector(
-              label: '4 Feb 2026',
-              onTap: () {},
-            ),
+            StatisticsDateSelector(label: '4 Feb 2026', onTap: () {}),
             const SizedBox(height: AppSpacing.md),
             ValueListenableBuilder<StatisticsPeriod>(
               valueListenable: _selectedPeriod,

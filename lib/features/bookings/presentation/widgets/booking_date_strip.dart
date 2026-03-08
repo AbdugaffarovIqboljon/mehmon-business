@@ -58,8 +58,9 @@ class _BookingDateStripState extends State<BookingDateStrip> {
         _visibleDates = List<DateTime>.of(widget.dates);
         _didCenterInitially = false;
       }
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => _centerSelectedDate());
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _centerSelectedDate(),
+      );
     }
   }
 
@@ -106,7 +107,8 @@ class _BookingDateStripState extends State<BookingDateStrip> {
     final previousDates = List<DateTime>.generate(
       _pageSize,
       (index) => DateUtils.dateOnly(
-          firstDate.subtract(Duration(days: _pageSize - index))),
+        firstDate.subtract(Duration(days: _pageSize - index)),
+      ),
     );
     final shift = previousDates.length * (_cardWidth + _cardGap);
     setState(() {
@@ -132,8 +134,9 @@ class _BookingDateStripState extends State<BookingDateStrip> {
     if (selectedIndex < 0) {
       _visibleDates = List<DateTime>.of(widget.dates);
       _didCenterInitially = false;
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => _centerSelectedDate());
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _centerSelectedDate(),
+      );
       return;
     }
 
@@ -161,8 +164,9 @@ class _BookingDateStripState extends State<BookingDateStrip> {
       height: 134,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final sidePadding =
-              math.max(0, (constraints.maxWidth - _cardWidth) / 2).toDouble();
+          final sidePadding = math
+              .max(0, (constraints.maxWidth - _cardWidth) / 2)
+              .toDouble();
 
           return ListView.separated(
             controller: _scrollController,

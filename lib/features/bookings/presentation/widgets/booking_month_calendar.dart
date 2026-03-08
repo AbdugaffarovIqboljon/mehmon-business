@@ -33,7 +33,8 @@ class BookingMonthCalendar extends StatelessWidget {
         const headerHeight = 52.0;
         const weekdaysHeight = 24.0;
         const verticalSpacing = 26.0;
-        final gridHeight = constraints.maxHeight -
+        final gridHeight =
+            constraints.maxHeight -
             headerHeight -
             weekdaysHeight -
             verticalSpacing;
@@ -58,18 +59,16 @@ class BookingMonthCalendar extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          bookingMonthLongLabel(focusedMonth),
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: const Color(0xFF2C3552),
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                          bookingMonthLongLabel(context, focusedMonth),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                color: const Color(0xFF2C3552),
+                                fontWeight: FontWeight.w500,
+                              ),
                         ),
                         Text(
                           '${focusedMonth.year}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(color: const Color(0xFF98A3BC)),
                         ),
                       ],
@@ -92,11 +91,11 @@ class BookingMonthCalendar extends StatelessWidget {
                         child: Text(
                           label,
                           textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: const Color(0xFF8996B3),
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: const Color(0xFF8996B3),
+                                fontWeight: FontWeight.w500,
+                              ),
                         ),
                       ),
                     )
@@ -122,7 +121,7 @@ class BookingMonthCalendar extends StatelessWidget {
                       final isSelected = DateUtils.isSameDay(day, selectedDate);
                       final isInFocusedMonth =
                           day.month == focusedMonth.month &&
-                              day.year == focusedMonth.year;
+                          day.year == focusedMonth.year;
                       final dayLabelColor = isInFocusedMonth
                           ? const Color(0xFF27304A)
                           : const Color(0xFF9AA5BE);
@@ -170,8 +169,9 @@ class BookingMonthCalendar extends StatelessWidget {
                                     Align(
                                       alignment: Alignment.bottomCenter,
                                       child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 1),
+                                        padding: const EdgeInsets.only(
+                                          bottom: 1,
+                                        ),
                                         child: _IndicatorDots(
                                           count: indicatorCount,
                                           dotSize: 4,
@@ -217,9 +217,7 @@ class BookingMonthCalendar extends StatelessWidget {
                                   if (showIndicators)
                                     const SizedBox(height: AppSpacing.xs),
                                   if (showIndicators)
-                                    _IndicatorDots(
-                                      count: indicatorCount,
-                                    ),
+                                    _IndicatorDots(count: indicatorCount),
                                 ],
                               ),
                       );
@@ -235,10 +233,7 @@ class BookingMonthCalendar extends StatelessWidget {
 }
 
 class _MonthButton extends StatelessWidget {
-  const _MonthButton({
-    required this.icon,
-    required this.onTap,
-  });
+  const _MonthButton({required this.icon, required this.onTap});
 
   final IconData icon;
   final VoidCallback onTap;
@@ -253,11 +248,7 @@ class _MonthButton extends StatelessWidget {
         onTap: onTap,
         child: SizedBox.square(
           dimension: 52,
-          child: Icon(
-            icon,
-            color: const Color(0xFF2E3855),
-            size: 32,
-          ),
+          child: Icon(icon, color: const Color(0xFF2E3855), size: 32),
         ),
       ),
     );
@@ -297,9 +288,7 @@ class _IndicatorDots extends StatelessWidget {
           (index) => Container(
             width: dotSize,
             height: dotSize,
-            margin: EdgeInsets.only(
-              left: index == 0 ? 0 : spacing,
-            ),
+            margin: EdgeInsets.only(left: index == 0 ? 0 : spacing),
             decoration: BoxDecoration(
               color: indicatorColors[index % indicatorColors.length],
               borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
@@ -316,10 +305,7 @@ List<DateTime> _buildMonthGridDays(DateTime focusedMonth) {
   final leadingDays = firstDayOfMonth.weekday - DateTime.monday;
   final calendarStart = firstDayOfMonth.subtract(Duration(days: leadingDays));
 
-  return List.generate(
-    42,
-    (index) => calendarStart.add(Duration(days: index)),
-  );
+  return List.generate(42, (index) => calendarStart.add(Duration(days: index)));
 }
 
 const _weekdayLabels = <String>[

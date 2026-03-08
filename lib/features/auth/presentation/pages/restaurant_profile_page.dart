@@ -13,17 +13,7 @@ import 'package:mehmon/features/auth/presentation/widgets/restaurant_photo_picke
 import 'package:mehmon/features/auth/presentation/widgets/restaurant_type_dropdown.dart';
 import 'package:mehmon/features/auth/presentation/widgets/working_hours_picker_row.dart';
 
-// ── Restaurant Profile Page strings ────────────────────────────────────────
-const _kTitle = 'Заполните профиль ресторана';
-const _kPhotoPlaceholder = 'Загрузите фото ресторана';
-const _kRestaurantTypeHint = 'Выберите тип заведения';
-const _kAddressLabel = 'Manzil';
-const _kAddressHint = 'Manzilni kiriting';
-const _kWorkingHoursLabel = 'Ish vaqti';
-const _kOpenTimeHint = 'Ochilish vaqti';
-const _kCloseTimeHint = 'Yopilish vaqti';
-const _kButtonLabel = 'Зарегистрироваться';
-const _kPhotoPickerError = 'Не удалось открыть галерею';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class RestaurantProfilePage extends StatefulWidget {
   const RestaurantProfilePage({super.key});
@@ -41,12 +31,15 @@ class _RestaurantProfilePageState extends State<RestaurantProfilePage> {
   TimeOfDay? _openingTime;
   TimeOfDay? _closingTime;
 
-  static const List<String> _restaurantTypes = [
-    'Кафе',
-    'Ресторан',
-    'Фастфуд',
-    'Чайхана',
-  ];
+  List<String> _getRestaurantTypes(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return [
+      loc.restTypeCafe,
+      loc.restTypeRestaurant,
+      loc.restTypeFastfood,
+      loc.restTypeChayhana,
+    ];
+  }
 
   @override
   void dispose() {
@@ -74,9 +67,9 @@ class _RestaurantProfilePageState extends State<RestaurantProfilePage> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text(_kPhotoPickerError)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.photoPickerError)),
+      );
     }
   }
 
@@ -87,10 +80,12 @@ class _RestaurantProfilePageState extends State<RestaurantProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+    final restaurantTypes = _getRestaurantTypes(context);
 
     return AppScaffold(
-      title: _kTitle,
+      title: loc.profileSetupTitle,
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -106,31 +101,31 @@ class _RestaurantProfilePageState extends State<RestaurantProfilePage> {
               children: [
                 RestaurantPhotoPicker(
                   imageBytes: _restaurantImageBytes,
-                  placeholderText: _kPhotoPlaceholder,
+                  placeholderText: loc.photoPlaceholder,
                   onTap: _pickRestaurantImage,
                 ),
                 const SizedBox(height: AppSpacing.xxl),
                 RestaurantTypeDropdown(
-                  items: _restaurantTypes,
-                  hintText: _kRestaurantTypeHint,
+                  items: restaurantTypes,
+                  hintText: loc.restaurantTypeHint,
                   value: _restaurantType,
                   onChanged: (value) => setState(() => _restaurantType = value),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 AppTextField(
                   controller: _addressController,
-                  label: _kAddressLabel,
-                  hint: _kAddressHint,
+                  label: loc.addressLabel,
+                  hint: loc.addressHint,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 AuthFormSection(
-                  title: _kWorkingHoursLabel,
+                  title: loc.workingHoursLabel,
                   bottomSpacing: 0,
                   child: WorkingHoursPickerRow(
                     openingTime: _openingTime,
                     closingTime: _closingTime,
-                    openingHintText: _kOpenTimeHint,
-                    closingHintText: _kCloseTimeHint,
+                    openingHintText: loc.openTimeHint,
+                    closingHintText: loc.closeTimeHint,
                     onOpeningTimeChanged: (value) =>
                         setState(() => _openingTime = value),
                     onClosingTimeChanged: (value) =>
@@ -146,7 +141,7 @@ class _RestaurantProfilePageState extends State<RestaurantProfilePage> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
-          child: PrimaryButton(label: _kButtonLabel, onPressed: _submit),
+          child: PrimaryButton(label: loc.profileRegisterBtn, onPressed: _submit),
         ),
       ),
     );

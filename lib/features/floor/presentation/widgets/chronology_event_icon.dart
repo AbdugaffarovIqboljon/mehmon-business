@@ -9,28 +9,25 @@ enum ChronologyEventType {
 
 extension ChronologyEventTypeX on ChronologyEventType {
   String get title => switch (this) {
-        ChronologyEventType.reservationCreated => 'Reservation created',
-        ChronologyEventType.guestArrived => 'Guest arrived',
-        ChronologyEventType.reservationCancelled => 'Reservation cancelled',
-        ChronologyEventType.reservationUpdated => 'Reservation updated',
-      };
+    ChronologyEventType.reservationCreated => 'Reservation created',
+    ChronologyEventType.guestArrived => 'Guest arrived',
+    ChronologyEventType.reservationCancelled => 'Reservation cancelled',
+    ChronologyEventType.reservationUpdated => 'Reservation updated',
+  };
 
   String get assetPath => switch (this) {
-        ChronologyEventType.reservationCreated =>
-          'assets/icons/ic_reservation_created.png',
-        ChronologyEventType.guestArrived => 'assets/icons/ic_guest_arrived.png',
-        ChronologyEventType.reservationCancelled =>
-          'assets/icons/ic_reservation_cancelled.png',
-        ChronologyEventType.reservationUpdated =>
-          'assets/icons/ic_reservation_updated.png',
-      };
+    ChronologyEventType.reservationCreated =>
+      'assets/icons/ic_reservation_created.png',
+    ChronologyEventType.guestArrived => 'assets/icons/ic_guest_arrived.png',
+    ChronologyEventType.reservationCancelled =>
+      'assets/icons/ic_reservation_cancelled.png',
+    ChronologyEventType.reservationUpdated =>
+      'assets/icons/ic_reservation_updated.png',
+  };
 }
 
 class ChronologyEventIcon extends StatelessWidget {
-  const ChronologyEventIcon({
-    required this.type,
-    super.key,
-  });
+  const ChronologyEventIcon({required this.type, super.key});
 
   final ChronologyEventType type;
 

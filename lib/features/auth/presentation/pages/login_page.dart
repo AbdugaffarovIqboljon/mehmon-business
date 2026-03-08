@@ -11,16 +11,9 @@ import 'package:mehmon/core/widgets/app_text_field.dart';
 import 'package:mehmon/core/widgets/primary_button.dart';
 import 'package:mehmon/features/auth/presentation/controllers/auth_controller.dart';
 
+import 'package:mehmon/l10n/app_localizations.dart';
+
 // ── Login Page strings ────────────────────────────────────────────────────
-// Kept inline; do NOT introduce a localization framework yet.
-const _kTitle = 'Tizimga kirish';
-const _kNameLabel = 'Ismingiz';
-const _kNameHint = 'Ismingizni kiriting';
-const _kPhoneLabel = 'Telefon raqamingiz';
-const _kPhoneHint = '+998 93 123 45 67';
-const _kButtonLabel = 'Kiritish';
-const _kRegisterLink = "Ro'yxatdan o'tish";
-const _kNewToApp = 'Нет аккаунта ?';
 const _kLogoPath = 'assets/images/img_app_logo.png';
 
 /// Login screen with name + phone fields.
@@ -105,6 +98,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final authState = ref.watch(authControllerProvider);
     final isLoading = authState.isLoading || _isSubmitting;
     final textTheme = Theme.of(context).textTheme;
@@ -145,7 +139,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                         Center(
                           child: Text(
-                            _kTitle,
+                            loc.loginTitle,
                             textAlign: TextAlign.center,
                             style: textTheme.headlineLarge,
                           ),
@@ -154,36 +148,36 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const SizedBox(height: AppSpacing.xxxl),
 
                         // ── Name field ─────────────────────────────
-                        Text(_kNameLabel, style: textTheme.titleMedium),
+                        Text(loc.nameLabel, style: textTheme.titleMedium),
                         const SizedBox(height: AppSpacing.sm),
                         AppTextField(
                           controller: _nameController,
                           textInputAction: TextInputAction.next,
-                          hint: _kNameHint,
+                          hint: loc.nameHint,
                           enabled: !isLoading,
                           validator: (v) => (v == null || v.trim().isEmpty)
-                              ? 'Ismingizni kiriting'
+                              ? loc.nameValidationError
                               : null,
                         ),
 
                         const SizedBox(height: AppSpacing.lg),
 
                         // ── Phone field ────────────────────────────
-                        Text(_kPhoneLabel, style: textTheme.titleMedium),
+                        Text(loc.phoneLabel, style: textTheme.titleMedium),
                         const SizedBox(height: AppSpacing.sm),
                         AppTextField(
                           controller: _phoneController,
-                          hint: _kPhoneHint,
+                          hint: loc.phoneHint,
                           keyboardType: TextInputType.phone,
                           inputFormatters: UzbekPhoneInput.inputFormatters,
                           onChanged: _onPhoneChanged,
                           enabled: !isLoading,
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
-                              return 'Telefon raqamingizni kiriting';
+                              return loc.phoneValidationError;
                             }
                             if (!UzbekPhoneInput.isValid(v)) {
-                              return "Telefon raqamni to'liq kiriting";
+                              return loc.phoneInvalidError;
                             }
                             return null;
                           },
@@ -193,7 +187,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                         // ── Bottom section: CTA + register link ────
                         PrimaryButton(
-                          label: _kButtonLabel,
+                          label: loc.loginBtn,
                           isLoading: isLoading,
                           onPressed: isLoading ? null : _submit,
                         ),
@@ -204,7 +198,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                _kNewToApp,
+                                loc.newToApp,
                                 style: AppTextStyles.bodyLarge.copyWith(
                                   color: AppColors.textPrimary,
                                 ),
@@ -216,7 +210,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     : () =>
                                           context.goNamed(RouteNames.register),
                                 child: Text(
-                                  _kRegisterLink,
+                                  loc.registerLink,
                                   style: AppTextStyles.bodyLarge.copyWith(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,

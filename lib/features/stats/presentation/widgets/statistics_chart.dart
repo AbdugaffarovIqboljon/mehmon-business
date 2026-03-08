@@ -40,10 +40,10 @@ class StatisticsChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedSpot = _spots[_selectedSpotIndex];
     final axisStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w600,
-          fontSize: 10.5,
-        );
+      color: AppColors.textPrimary,
+      fontWeight: FontWeight.w600,
+      fontSize: 10.5,
+    );
 
     return RepaintBoundary(
       child: SizedBox(
@@ -94,10 +94,7 @@ class StatisticsChart extends StatelessWidget {
                           axisPosition: meta.axisPosition,
                           distanceFromEdge: 8,
                         ),
-                        child: Text(
-                          label,
-                          style: axisStyle,
-                        ),
+                        child: Text(label, style: axisStyle),
                       );
                     },
                   ),

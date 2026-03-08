@@ -14,10 +14,7 @@ Future<TimeOfDay?> showRestaurantTimePickerSheet({
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) {
-      return RestaurantTimePickerSheet(
-        title: title,
-        initialTime: initialTime,
-      );
+      return RestaurantTimePickerSheet(title: title, initialTime: initialTime);
     },
   );
 }
@@ -179,9 +176,7 @@ class TimeWheelPicker extends StatelessWidget {
         selectionOverlay: Container(
           decoration: BoxDecoration(
             border: Border.symmetric(
-              horizontal: BorderSide(
-                color: AppColors.primary.withAlpha(56),
-              ),
+              horizontal: BorderSide(color: AppColors.primary.withAlpha(56)),
             ),
           ),
         ),
@@ -203,10 +198,7 @@ class TimeWheelPicker extends StatelessWidget {
 }
 
 class TimePreviewBox extends StatelessWidget {
-  const TimePreviewBox({
-    required this.value,
-    super.key,
-  });
+  const TimePreviewBox({required this.value, super.key});
 
   final String value;
 
