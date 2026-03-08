@@ -8,6 +8,7 @@ abstract final class AppTheme {
   static ThemeData get light {
     return ThemeData(
       useMaterial3: true,
+      fontFamily: 'Nunito',
 
       // ── Colors ──────────────────────────────────────────────────────
       scaffoldBackgroundColor: AppColors.scaffold,

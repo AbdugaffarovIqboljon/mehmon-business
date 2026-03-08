@@ -59,11 +59,12 @@ class FloorDrawerItem extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: textColor,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 42 / 2,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: textColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        height: 1.25,
+                      ),
                 ),
               ),
             ],

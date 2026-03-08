@@ -36,20 +36,24 @@ class GuestCard extends StatelessWidget {
                       children: [
                         Text(
                           guest.name,
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 17,
+                                    height: 1.25,
+                                    color: AppColors.textPrimary,
+                                  ),
                         ),
                         const SizedBox(height: AppSpacing.xs),
                         Text(
                           secondaryText,
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(
-                                color: AppColors.textHint,
-                                fontWeight: FontWeight.w400,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textHint,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    height: 1.3,
+                                  ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

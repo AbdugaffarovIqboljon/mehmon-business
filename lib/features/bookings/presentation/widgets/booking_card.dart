@@ -44,10 +44,12 @@ class BookingCard extends StatelessWidget {
                 const SizedBox(width: AppSpacing.sm),
                 Text(
                   '${bookingTimeLabel(booking.dateTime)}-${bookingTimeLabel(endTime)}',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: const Color(0xFF7F8BAA),
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: const Color(0xFF7F8BAA),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                        letterSpacing: 0.1,
+                      ),
                 ),
                 const Spacer(),
                 const Icon(Icons.more_horiz_rounded, color: Color(0xFF8E99B4)),
@@ -56,10 +58,11 @@ class BookingCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               AppLocalizations.of(context)!.banquet,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: const Color(0xFF27304A),
-                fontWeight: FontWeight.w500,
-              ),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: const Color(0xFF27304A),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 17,
+                  ),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
@@ -68,7 +71,11 @@ class BookingCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: Theme.of(
                 context,
-              ).textTheme.titleMedium?.copyWith(color: const Color(0xFF93A0BC)),
+              ).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF93A0BC),
+                    fontSize: 14,
+                    height: 1.3,
+                  ),
             ),
           ],
         ),

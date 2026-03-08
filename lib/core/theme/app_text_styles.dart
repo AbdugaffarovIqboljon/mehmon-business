@@ -3,7 +3,7 @@ import 'package:mehmon/core/theme/app_colors.dart';
 
 /// Centralized text styles for the MEHMON design system.
 abstract final class AppTextStyles {
-  static const String _fontFamily = 'Roboto';
+  static const String _fontFamily = 'Nunito';
 
   // ── Headings ──────────────────────────────────────────────────────────
   static const TextStyle headlineLarge = TextStyle(

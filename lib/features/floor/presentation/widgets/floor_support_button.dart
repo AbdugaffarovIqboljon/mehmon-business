@@ -56,11 +56,12 @@ class FloorSupportButton extends StatelessWidget {
                 const SizedBox(width: AppSpacing.sm),
                 Text(
                   AppLocalizations.of(context)!.support,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 42 / 2,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        letterSpacing: 0.1,
+                      ),
                 ),
               ],
             ),

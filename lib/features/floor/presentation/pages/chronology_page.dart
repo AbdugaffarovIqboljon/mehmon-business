@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_event_card.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_event_icon.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_filter_tabs.dart';
@@ -32,8 +33,7 @@ class _ChronologyPageState extends State<ChronologyPage> {
 
   late final ValueNotifier<ChronologyFilterType> _selectedFilter;
   late final List<_ChronologyEvent> _events;
-  late Map<ChronologyFilterType, List<_ChronologyListItem>>
-  _itemsByFilter;
+  late Map<ChronologyFilterType, List<_ChronologyListItem>> _itemsByFilter;
 
   @override
   void initState() {
@@ -63,104 +63,85 @@ class _ChronologyPageState extends State<ChronologyPage> {
         .map((item) => item.label)
         .toList();
 
-    return Scaffold(
-      backgroundColor: AppColors.scaffold,
-      appBar: AppBar(
-        backgroundColor: AppColors.scaffold,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).maybePop(),
-          icon: const Icon(Icons.arrow_back_rounded),
-        ),
-        title: Text(
-          AppLocalizations.of(context)!.chronologyTitle,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: AppColors.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+    return AppScaffold(
+      title: AppLocalizations.of(context)!.chronologyTitle,
+      body: Column(
+        children: [
+          const SizedBox(height: AppSpacing.xs),
+          ValueListenableBuilder<ChronologyFilterType>(
+            valueListenable: _selectedFilter,
+            builder: (context, selectedFilter, _) {
+              return ChronologyFilterTabs(
+                tabs: labels,
+                selectedTab: selectedFilter.label,
+                onSelected: (label) {
+                  final matchedFilter = ChronologyFilterType.values
+                      .firstWhere(
+                        (item) => item.label == label,
+                        orElse: () => ChronologyFilterType.all,
+                      );
+                  if (matchedFilter == selectedFilter) {
+                    return;
+                  }
+                  _selectedFilter.value = matchedFilter;
+                },
+              );
+            },
           ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        child: Column(
-          children: [
-            const SizedBox(height: AppSpacing.xs),
-            ValueListenableBuilder<ChronologyFilterType>(
+          const SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: ValueListenableBuilder<ChronologyFilterType>(
               valueListenable: _selectedFilter,
               builder: (context, selectedFilter, _) {
-                return ChronologyFilterTabs(
-                  tabs: labels,
-                  selectedTab: selectedFilter.label,
-                  onSelected: (label) {
-                    final matchedFilter = ChronologyFilterType.values
-                        .firstWhere(
-                          (item) => item.label == label,
-                          orElse: () => ChronologyFilterType.all,
-                        );
-                    if (matchedFilter == selectedFilter) {
-                      return;
+                final items = _itemsByFilter[selectedFilter] ?? const [];
+                if (items.isEmpty) {
+                  return Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.noActivityYet,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  );
+                }
+      
+                return ListView.builder(
+                  physics: _scrollPhysics,
+                  itemCount: items.length,
+                  cacheExtent: 720,
+                  padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    if (item.header != null) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          top: index == 0 ? AppSpacing.sm : AppSpacing.lg,
+                          bottom: AppSpacing.xs,
+                        ),
+                        child: ChronologySectionHeader(title: item.header!),
+                      );
                     }
-                    _selectedFilter.value = matchedFilter;
+      
+                    final event = item.event!;
+                    return Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.sm + 2),
+                      child: ChronologyEventCard(
+                        type: event.type,
+                        title: event.type.title,
+                        guestName: event.guestName,
+                        table: event.table,
+                        guestCount: event.guestCount,
+                        reservationNumber: event.reservationNumber,
+                        time: event.time,
+                      ),
+                    );
                   },
                 );
               },
             ),
-            const SizedBox(height: AppSpacing.md),
-            Expanded(
-              child: ValueListenableBuilder<ChronologyFilterType>(
-                valueListenable: _selectedFilter,
-                builder: (context, selectedFilter, _) {
-                  final items = _itemsByFilter[selectedFilter] ?? const [];
-                  if (items.isEmpty) {
-                    return Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.noActivityYet,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    physics: _scrollPhysics,
-                    itemCount: items.length,
-                    cacheExtent: 720,
-                    padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      if (item.header != null) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            top: index == 0 ? AppSpacing.sm : AppSpacing.lg,
-                            bottom: AppSpacing.xs,
-                          ),
-                          child: ChronologySectionHeader(title: item.header!),
-                        );
-                      }
-
-                      final event = item.event!;
-                      return Padding(
-                        padding: const EdgeInsets.only(top: AppSpacing.sm + 2),
-                        child: ChronologyEventCard(
-                          type: event.type,
-                          title: event.type.title,
-                          guestName: event.guestName,
-                          table: event.table,
-                          guestCount: event.guestCount,
-                          reservationNumber: event.reservationNumber,
-                          time: event.time,
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -173,7 +154,10 @@ class _ChronologyPageState extends State<ChronologyPage> {
     return _timeToMinutes(b.time).compareTo(_timeToMinutes(a.time));
   }
 
-  List<_ChronologyListItem> _buildItems(ChronologyFilterType filter, BuildContext context) {
+  List<_ChronologyListItem> _buildItems(
+    ChronologyFilterType filter,
+    BuildContext context,
+  ) {
     final filteredEvents = _events.where(
       (event) => _matchesFilter(filter, event),
     );

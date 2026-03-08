@@ -33,8 +33,7 @@ class BookingMonthCalendar extends StatelessWidget {
         const headerHeight = 52.0;
         const weekdaysHeight = 24.0;
         const verticalSpacing = 26.0;
-        final gridHeight =
-            constraints.maxHeight -
+        final gridHeight = constraints.maxHeight -
             headerHeight -
             weekdaysHeight -
             verticalSpacing;
@@ -60,15 +59,18 @@ class BookingMonthCalendar extends StatelessWidget {
                       children: [
                         Text(
                           bookingMonthLongLabel(context, focusedMonth),
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(
-                                color: const Color(0xFF2C3552),
-                                fontWeight: FontWeight.w500,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: const Color(0xFF2C3552),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 17,
+                                  ),
                         ),
                         Text(
                           '${focusedMonth.year}',
-                          style: Theme.of(context).textTheme.bodySmall
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
                               ?.copyWith(color: const Color(0xFF98A3BC)),
                         ),
                       ],
@@ -91,11 +93,12 @@ class BookingMonthCalendar extends StatelessWidget {
                         child: Text(
                           label,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: const Color(0xFF8996B3),
-                                fontWeight: FontWeight.w500,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: const Color(0xFF8996B3),
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12.5,
+                                  ),
                         ),
                       ),
                     )
@@ -121,7 +124,7 @@ class BookingMonthCalendar extends StatelessWidget {
                       final isSelected = DateUtils.isSameDay(day, selectedDate);
                       final isInFocusedMonth =
                           day.month == focusedMonth.month &&
-                          day.year == focusedMonth.year;
+                              day.year == focusedMonth.year;
                       final dayLabelColor = isInFocusedMonth
                           ? const Color(0xFF27304A)
                           : const Color(0xFF9AA5BE);
@@ -156,12 +159,13 @@ class BookingMonthCalendar extends StatelessWidget {
                                       '${day.day}',
                                       style: Theme.of(context)
                                           .textTheme
-                                          .titleMedium
+                                          .bodyLarge
                                           ?.copyWith(
                                             color: isSelected
                                                 ? AppColors.primary
                                                 : dayLabelColor,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15,
                                           ),
                                     ),
                                   ),
@@ -201,7 +205,7 @@ class BookingMonthCalendar extends StatelessWidget {
                                           '${day.day}',
                                           style: Theme.of(context)
                                               .textTheme
-                                              .headlineSmall
+                                              .titleMedium
                                               ?.copyWith(
                                                 color: isSelected
                                                     ? Colors.white
@@ -209,6 +213,7 @@ class BookingMonthCalendar extends StatelessWidget {
                                                 fontWeight: isSelected
                                                     ? FontWeight.w600
                                                     : FontWeight.w500,
+                                                fontSize: 16,
                                               ),
                                         ),
                                       ),

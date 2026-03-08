@@ -51,26 +51,30 @@ class BookingDateCard extends StatelessWidget {
               children: [
                 Text(
                   bookingMonthShortLabel(context, date),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: textColor,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: textColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13,
+                        letterSpacing: 0.2,
+                      ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   '${date.day}',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: textColor,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: textColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 19,
+                      ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   bookingWeekdayLabel(context, date),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: secondaryTextColor,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: secondaryTextColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.5,
+                      ),
                 ),
               ],
             ),

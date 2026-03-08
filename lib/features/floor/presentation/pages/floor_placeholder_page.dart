@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 class FloorPlaceholderPage extends StatelessWidget {
@@ -9,9 +9,8 @@ class FloorPlaceholderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.scaffold,
-      appBar: AppBar(title: Text(title)),
+    return AppScaffold(
+      title: title,
       body: Center(
         child: Text(
           AppLocalizations.of(context)!.inDevelopment(title),

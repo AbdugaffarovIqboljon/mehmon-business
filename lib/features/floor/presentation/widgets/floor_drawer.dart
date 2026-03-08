@@ -111,10 +111,13 @@ class FloorDrawer extends StatelessWidget {
                           const SizedBox(width: AppSpacing.md),
                           Text(
                             AppLocalizations.of(context)!.logout,
-                            style: Theme.of(context).textTheme.titleLarge
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
                                 ?.copyWith(
                                   color: const Color(0xFF7D8698),
-                                  fontWeight: FontWeight.w400,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
                                 ),
                           ),
                         ],

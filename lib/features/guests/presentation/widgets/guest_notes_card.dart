@@ -18,11 +18,12 @@ class GuestNotesCard extends StatelessWidget {
       ),
       child: Text(
         notes,
-        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w400,
-          height: 1.4,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              height: 1.5,
+            ),
         softWrap: true,
       ),
     );

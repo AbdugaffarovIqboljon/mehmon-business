@@ -88,10 +88,12 @@ class _BookingEmptyState extends StatelessWidget {
                   bookingMonthShortLabel(context, selectedDate),
                 ),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: const Color(0xFF2E3755),
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: const Color(0xFF2E3755),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      height: 1.3,
+                    ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
@@ -99,7 +101,11 @@ class _BookingEmptyState extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: Theme.of(
                   context,
-                ).textTheme.bodyLarge?.copyWith(color: const Color(0xFF95A1BC)),
+                ).textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF95A1BC),
+                      fontSize: 14,
+                      height: 1.35,
+                    ),
               ),
             ],
           ),

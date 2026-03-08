@@ -25,7 +25,7 @@ class DummyAuthRemoteDataSource implements AuthRemoteDataSource {
     return const AuthModel(
       id: 'usr_001',
       email: 'staff@mehmon.app',
-      name: 'Demo Staff',
+      name: 'Safia Restaurant',
       accessToken: 'mock_access_token',
       refreshToken: 'mock_refresh_token',
     );

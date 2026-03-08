@@ -25,11 +25,12 @@ class FloorDrawerSectionBlock extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Text(
             title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w500,
-              fontSize: 49 / 2,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  letterSpacing: 0.15,
+                ),
           ),
         ),
         const SizedBox(height: AppSpacing.sm),

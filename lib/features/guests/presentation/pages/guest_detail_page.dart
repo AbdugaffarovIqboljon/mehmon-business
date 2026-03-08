@@ -51,8 +51,8 @@ class GuestDetailPage extends ConsumerWidget {
     }
 
     return AppScaffold(
-      showAppBar: false,
       usePadding: false,
+      title: AppLocalizations.of(context)!.guestInfoTitle,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -64,33 +64,6 @@ class GuestDetailPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 48,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        onPressed: context.pop,
-                        icon: const Icon(Icons.arrow_back),
-                        iconSize: 36,
-                        color: const Color(0xFF393B3F),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    ),
-                    Text(
-                      AppLocalizations.of(context)!.guestInfoTitle,
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: AppSpacing.xl),
               Center(
                 child: Container(
@@ -109,9 +82,11 @@ class GuestDetailPage extends ConsumerWidget {
               Center(
                 child: Text(
                   guest.name,
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 24,
+                    height: 1.25,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -122,11 +97,12 @@ class GuestDetailPage extends ConsumerWidget {
                   guest.isVip
                       ? AppLocalizations.of(context)!.vipGuest
                       : AppLocalizations.of(context)!.regularGuest,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: guest.isVip
                         ? AppColors.primary
                         : AppColors.textSecondary,
                     fontWeight: FontWeight.w600,
+                    fontSize: 15,
                   ),
                 ),
               ),
@@ -140,9 +116,10 @@ class GuestDetailPage extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xl),
               Text(
                 AppLocalizations.of(context)!.visitHistoryTitle,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: const Color(0xFF0F1F36),
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -156,8 +133,10 @@ class GuestDetailPage extends ConsumerWidget {
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.noVisitHistory,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppColors.textSecondary,
+                      fontSize: 14,
+                      height: 1.35,
                     ),
                   ),
                 )
@@ -171,9 +150,10 @@ class GuestDetailPage extends ConsumerWidget {
               const SizedBox(height: AppSpacing.md),
               Text(
                 AppLocalizations.of(context)!.notesTitle,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: const Color(0xFF0F1F36),
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
