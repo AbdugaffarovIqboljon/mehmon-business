@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
+import 'package:mehmon/core/constants/api_constants.dart';
+import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/features/auth/data/models/auth_model.dart';
 
-/// Remote data source contract for auth operations.
 abstract class AuthRemoteDataSource {
   Future<AuthModel> login({required String email, required String password});
 
@@ -9,26 +11,27 @@ abstract class AuthRemoteDataSource {
     required String email,
     required String password,
   });
-
-  Future<void> logout();
 }
 
-/// Dummy implementation returning mock data for development.
-class DummyAuthRemoteDataSource implements AuthRemoteDataSource {
+class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+  const AuthRemoteDataSourceImpl({required Dio dio}) : _dio = dio;
+
+  final Dio _dio;
+
   @override
   Future<AuthModel> login({
     required String email,
     required String password,
   }) async {
-    // Simulate network delay.
-    await Future<void>.delayed(const Duration(milliseconds: 500));
-    return const AuthModel(
-      id: 'usr_001',
-      email: 'staff@mehmon.app',
-      name: 'Safia Restaurant',
-      accessToken: 'mock_access_token',
-      refreshToken: 'mock_refresh_token',
-    );
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        ApiConstants.login,
+        data: {'email': email, 'password': password},
+      );
+      return AuthModel.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
   }
 
   @override
@@ -37,18 +40,14 @@ class DummyAuthRemoteDataSource implements AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    await Future<void>.delayed(const Duration(milliseconds: 500));
-    return AuthModel(
-      id: 'usr_002',
-      email: email,
-      name: name,
-      accessToken: 'mock_access_token',
-      refreshToken: 'mock_refresh_token',
-    );
-  }
-
-  @override
-  Future<void> logout() async {
-    await Future<void>.delayed(const Duration(milliseconds: 200));
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        ApiConstants.register,
+        data: {'name': name, 'email': email, 'password': password},
+      );
+      return AuthModel.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
   }
 }

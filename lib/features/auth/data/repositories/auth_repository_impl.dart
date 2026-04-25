@@ -1,17 +1,20 @@
 import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/core/errors/failure.dart';
 import 'package:mehmon/core/errors/result.dart';
+import 'package:mehmon/core/networking/token_store.dart';
 import 'package:mehmon/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:mehmon/features/auth/domain/entities/auth_entity.dart';
 import 'package:mehmon/features/auth/domain/repositories/auth_repository.dart';
 
-/// Concrete [AuthRepository] implementation backed by a remote data source.
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl({required AuthRemoteDataSource remoteDataSource})
-    : _remoteDataSource = remoteDataSource;
+  AuthRepositoryImpl({
+    required AuthRemoteDataSource remoteDataSource,
+    required TokenStore tokenStore,
+  })  : _remoteDataSource = remoteDataSource,
+        _tokenStore = tokenStore;
 
   final AuthRemoteDataSource _remoteDataSource;
-  bool _isAuthenticated = false;
+  final TokenStore _tokenStore;
 
   @override
   Future<Result<AuthEntity>> login({
@@ -23,25 +26,28 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
-      _isAuthenticated = true;
-      return Success(
-        AuthEntity(
-          id: model.id,
-          email: model.email,
-          name: model.name,
-          phone: model.phone,
-          avatarUrl: model.avatarUrl,
-          role: model.role,
-        ),
+
+      await _tokenStore.saveTokens(
+        accessToken: model.accessToken,
+        refreshToken: model.refreshToken,
       );
+
+      return Success(AuthEntity(
+        accessToken: model.accessToken,
+        refreshToken: model.refreshToken,
+        user: UserEntity(
+          id: model.user.id,
+          name: model.user.name,
+          email: model.user.email,
+          role: model.user.role,
+        ),
+      ));
     } on ApiException catch (e, st) {
-      return Err(
-        ServerFailure(
-          message: e.message,
-          statusCode: e.statusCode,
-          stackTrace: st,
-        ),
-      );
+      return Err(ServerFailure(
+        message: e.message,
+        statusCode: e.statusCode,
+        stackTrace: st,
+      ));
     } on Exception catch (e, st) {
       return Err(UnknownFailure(message: e.toString(), stackTrace: st));
     }
@@ -59,41 +65,31 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
-      _isAuthenticated = true;
-      return Success(
-        AuthEntity(
-          id: model.id,
-          email: model.email,
-          name: model.name,
-          phone: model.phone,
-          avatarUrl: model.avatarUrl,
-          role: model.role,
-        ),
+
+      await _tokenStore.saveTokens(
+        accessToken: model.accessToken,
+        refreshToken: model.refreshToken,
       );
+
+      return Success(AuthEntity(
+        accessToken: model.accessToken,
+        refreshToken: model.refreshToken,
+        user: UserEntity(
+          id: model.user.id,
+          name: model.user.name,
+          email: model.user.email,
+          role: model.user.role,
+        ),
+      ));
     } on ApiException catch (e, st) {
-      return Err(
-        ServerFailure(
-          message: e.message,
-          statusCode: e.statusCode,
-          stackTrace: st,
-        ),
-      );
+      return Err(ServerFailure(
+        message: e.message,
+        statusCode: e.statusCode,
+        stackTrace: st,
+      ));
     } on Exception catch (e, st) {
       return Err(UnknownFailure(message: e.toString(), stackTrace: st));
     }
   }
 
-  @override
-  Future<Result<void>> logout() async {
-    try {
-      await _remoteDataSource.logout();
-      _isAuthenticated = false;
-      return const Success(null);
-    } on Exception catch (e, st) {
-      return Err(ServerFailure(message: e.toString(), stackTrace: st));
-    }
-  }
-
-  @override
-  Future<bool> isAuthenticated() async => _isAuthenticated;
 }

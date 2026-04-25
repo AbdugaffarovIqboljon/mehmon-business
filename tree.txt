@@ -12,7 +12,9 @@ lib
 │   ├── formatters
 │   │   └── uzbek_phone_input_formatter.dart
 │   ├── local
-│   │   └── local_data_source.dart
+│   │   ├── local_data_source.dart
+│   │   ├── locale_provider.dart
+│   │   └── shared_prefs_provider.dart
 │   ├── networking
 │   │   ├── auth_interceptor.dart
 │   │   ├── dio_client.dart
@@ -182,8 +184,14 @@ lib
 │   │           └── guests_segmented_control.dart
 │   ├── settings
 │   │   └── presentation
-│   │       └── pages
-│   │           └── settings_page.dart
+│   │       ├── pages
+│   │       │   ├── about_us_page.dart
+│   │       │   ├── edit_profile_page.dart
+│   │       │   └── settings_page.dart
+│   │       └── widgets
+│   │           ├── change_language_sheet.dart
+│   │           ├── profile_action_tile.dart
+│   │           └── profile_header_card.dart
 │   ├── shell
 │   │   └── presentation
 │   │       ├── models
@@ -218,4 +226,12 @@ lib
 │               ├── statistics_chart.dart
 │               ├── statistics_date_selector.dart
 │               └── statistics_period_selector.dart
+├── l10n
+│   ├── app_en.arb
+│   ├── app_localizations.dart
+│   ├── app_localizations_en.dart
+│   ├── app_localizations_ru.dart
+│   ├── app_localizations_uz.dart
+│   ├── app_ru.arb
+│   └── app_uz.arb
 └── main.dart

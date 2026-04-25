@@ -1,14 +1,15 @@
 /// API endpoint paths and configuration constants.
-///
-/// The base URL is resolved from the Env class at runtime.
 abstract final class ApiConstants {
+  static const String baseUrl = 'https://kardise.engineering';
+
   // ── Auth ───────────────────────────────────────────────────────────
-  static const String login = '/auth/login';
-  static const String register = '/auth/register';
-  static const String refreshToken = '/auth/refresh';
+  static const String login = '/api/auth/login';
+  static const String register = '/api/auth/register';
+  static const String refreshToken = '/api/auth/refresh';
 
   // ── Bookings ──────────────────────────────────────────────────────
-  static const String bookings = '/bookings';
+  static const String bookings = '/api/bookings';
+  static const String bookingById = '/api/bookings/';
 
   // ── Guests ────────────────────────────────────────────────────────
   static const String guests = '/guests';

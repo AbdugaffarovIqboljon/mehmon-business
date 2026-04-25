@@ -13,9 +13,14 @@ class AuthInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final token = await _tokenStore.getAccessToken();
-    if (token != null && token.isNotEmpty) {
+    if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
     handler.next(options);
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    handler.next(err);
   }
 }

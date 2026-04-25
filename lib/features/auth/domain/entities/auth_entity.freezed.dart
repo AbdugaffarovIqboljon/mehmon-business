@@ -16,13 +16,204 @@ final _privateConstructorUsedError = UnsupportedError(
 );
 
 /// @nodoc
-mixin _$AuthEntity {
+mixin _$UserEntity {
   String get id => throw _privateConstructorUsedError;
-  String get email => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String? get phone => throw _privateConstructorUsedError;
-  String? get avatarUrl => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
   String get role => throw _privateConstructorUsedError;
+
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $UserEntityCopyWith<UserEntity> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UserEntityCopyWith<$Res> {
+  factory $UserEntityCopyWith(
+    UserEntity value,
+    $Res Function(UserEntity) then,
+  ) = _$UserEntityCopyWithImpl<$Res, UserEntity>;
+  @useResult
+  $Res call({String id, String name, String email, String role});
+}
+
+/// @nodoc
+class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
+    implements $UserEntityCopyWith<$Res> {
+  _$UserEntityCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? email = null,
+    Object? role = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            email: null == email
+                ? _value.email
+                : email // ignore: cast_nullable_to_non_nullable
+                      as String,
+            role: null == role
+                ? _value.role
+                : role // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$UserEntityImplCopyWith<$Res>
+    implements $UserEntityCopyWith<$Res> {
+  factory _$$UserEntityImplCopyWith(
+    _$UserEntityImpl value,
+    $Res Function(_$UserEntityImpl) then,
+  ) = __$$UserEntityImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String name, String email, String role});
+}
+
+/// @nodoc
+class __$$UserEntityImplCopyWithImpl<$Res>
+    extends _$UserEntityCopyWithImpl<$Res, _$UserEntityImpl>
+    implements _$$UserEntityImplCopyWith<$Res> {
+  __$$UserEntityImplCopyWithImpl(
+    _$UserEntityImpl _value,
+    $Res Function(_$UserEntityImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? email = null,
+    Object? role = null,
+  }) {
+    return _then(
+      _$UserEntityImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        email: null == email
+            ? _value.email
+            : email // ignore: cast_nullable_to_non_nullable
+                  as String,
+        role: null == role
+            ? _value.role
+            : role // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$UserEntityImpl implements _UserEntity {
+  const _$UserEntityImpl({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.role,
+  });
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String email;
+  @override
+  final String role;
+
+  @override
+  String toString() {
+    return 'UserEntity(id: $id, name: $name, email: $email, role: $role)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UserEntityImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.role, role) || other.role == role));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name, email, role);
+
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UserEntityImplCopyWith<_$UserEntityImpl> get copyWith =>
+      __$$UserEntityImplCopyWithImpl<_$UserEntityImpl>(this, _$identity);
+}
+
+abstract class _UserEntity implements UserEntity {
+  const factory _UserEntity({
+    required final String id,
+    required final String name,
+    required final String email,
+    required final String role,
+  }) = _$UserEntityImpl;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get email;
+  @override
+  String get role;
+
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UserEntityImplCopyWith<_$UserEntityImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+mixin _$AuthEntity {
+  String get accessToken => throw _privateConstructorUsedError;
+  String get refreshToken => throw _privateConstructorUsedError;
+  UserEntity get user => throw _privateConstructorUsedError;
 
   /// Create a copy of AuthEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -38,14 +229,9 @@ abstract class $AuthEntityCopyWith<$Res> {
     $Res Function(AuthEntity) then,
   ) = _$AuthEntityCopyWithImpl<$Res, AuthEntity>;
   @useResult
-  $Res call({
-    String id,
-    String email,
-    String name,
-    String? phone,
-    String? avatarUrl,
-    String role,
-  });
+  $Res call({String accessToken, String refreshToken, UserEntity user});
+
+  $UserEntityCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -63,42 +249,37 @@ class _$AuthEntityCopyWithImpl<$Res, $Val extends AuthEntity>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? email = null,
-    Object? name = null,
-    Object? phone = freezed,
-    Object? avatarUrl = freezed,
-    Object? role = null,
+    Object? accessToken = null,
+    Object? refreshToken = null,
+    Object? user = null,
   }) {
     return _then(
       _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
+            accessToken: null == accessToken
+                ? _value.accessToken
+                : accessToken // ignore: cast_nullable_to_non_nullable
                       as String,
-            email: null == email
-                ? _value.email
-                : email // ignore: cast_nullable_to_non_nullable
+            refreshToken: null == refreshToken
+                ? _value.refreshToken
+                : refreshToken // ignore: cast_nullable_to_non_nullable
                       as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            phone: freezed == phone
-                ? _value.phone
-                : phone // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            avatarUrl: freezed == avatarUrl
-                ? _value.avatarUrl
-                : avatarUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            role: null == role
-                ? _value.role
-                : role // ignore: cast_nullable_to_non_nullable
-                      as String,
+            user: null == user
+                ? _value.user
+                : user // ignore: cast_nullable_to_non_nullable
+                      as UserEntity,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of AuthEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserEntityCopyWith<$Res> get user {
+    return $UserEntityCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
+    });
   }
 }
 
@@ -111,14 +292,10 @@ abstract class _$$AuthEntityImplCopyWith<$Res>
   ) = __$$AuthEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    String email,
-    String name,
-    String? phone,
-    String? avatarUrl,
-    String role,
-  });
+  $Res call({String accessToken, String refreshToken, UserEntity user});
+
+  @override
+  $UserEntityCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -135,39 +312,24 @@ class __$$AuthEntityImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? email = null,
-    Object? name = null,
-    Object? phone = freezed,
-    Object? avatarUrl = freezed,
-    Object? role = null,
+    Object? accessToken = null,
+    Object? refreshToken = null,
+    Object? user = null,
   }) {
     return _then(
       _$AuthEntityImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
+        accessToken: null == accessToken
+            ? _value.accessToken
+            : accessToken // ignore: cast_nullable_to_non_nullable
                   as String,
-        email: null == email
-            ? _value.email
-            : email // ignore: cast_nullable_to_non_nullable
+        refreshToken: null == refreshToken
+            ? _value.refreshToken
+            : refreshToken // ignore: cast_nullable_to_non_nullable
                   as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        phone: freezed == phone
-            ? _value.phone
-            : phone // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        avatarUrl: freezed == avatarUrl
-            ? _value.avatarUrl
-            : avatarUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        role: null == role
-            ? _value.role
-            : role // ignore: cast_nullable_to_non_nullable
-                  as String,
+        user: null == user
+            ? _value.user
+            : user // ignore: cast_nullable_to_non_nullable
+                  as UserEntity,
       ),
     );
   }
@@ -177,31 +339,21 @@ class __$$AuthEntityImplCopyWithImpl<$Res>
 
 class _$AuthEntityImpl implements _AuthEntity {
   const _$AuthEntityImpl({
-    required this.id,
-    required this.email,
-    required this.name,
-    this.phone,
-    this.avatarUrl,
-    this.role = 'staff',
+    required this.accessToken,
+    required this.refreshToken,
+    required this.user,
   });
 
   @override
-  final String id;
+  final String accessToken;
   @override
-  final String email;
+  final String refreshToken;
   @override
-  final String name;
-  @override
-  final String? phone;
-  @override
-  final String? avatarUrl;
-  @override
-  @JsonKey()
-  final String role;
+  final UserEntity user;
 
   @override
   String toString() {
-    return 'AuthEntity(id: $id, email: $email, name: $name, phone: $phone, avatarUrl: $avatarUrl, role: $role)';
+    return 'AuthEntity(accessToken: $accessToken, refreshToken: $refreshToken, user: $user)';
   }
 
   @override
@@ -209,18 +361,15 @@ class _$AuthEntityImpl implements _AuthEntity {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AuthEntityImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.email, email) || other.email == email) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.avatarUrl, avatarUrl) ||
-                other.avatarUrl == avatarUrl) &&
-            (identical(other.role, role) || other.role == role));
+            (identical(other.accessToken, accessToken) ||
+                other.accessToken == accessToken) &&
+            (identical(other.refreshToken, refreshToken) ||
+                other.refreshToken == refreshToken) &&
+            (identical(other.user, user) || other.user == user));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, email, name, phone, avatarUrl, role);
+  int get hashCode => Object.hash(runtimeType, accessToken, refreshToken, user);
 
   /// Create a copy of AuthEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -233,26 +382,17 @@ class _$AuthEntityImpl implements _AuthEntity {
 
 abstract class _AuthEntity implements AuthEntity {
   const factory _AuthEntity({
-    required final String id,
-    required final String email,
-    required final String name,
-    final String? phone,
-    final String? avatarUrl,
-    final String role,
+    required final String accessToken,
+    required final String refreshToken,
+    required final UserEntity user,
   }) = _$AuthEntityImpl;
 
   @override
-  String get id;
+  String get accessToken;
   @override
-  String get email;
+  String get refreshToken;
   @override
-  String get name;
-  @override
-  String? get phone;
-  @override
-  String? get avatarUrl;
-  @override
-  String get role;
+  UserEntity get user;
 
   /// Create a copy of AuthEntity
   /// with the given fields replaced by the non-null parameter values.

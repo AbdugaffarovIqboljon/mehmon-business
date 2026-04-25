@@ -1,95 +1,137 @@
+import 'package:dio/dio.dart';
+import 'package:mehmon/core/constants/api_constants.dart';
+import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/features/bookings/data/models/booking_model.dart';
 
-/// Remote data source contract for booking operations.
 abstract class BookingRemoteDataSource {
   Future<List<BookingModel>> getBookings();
-  Future<BookingModel> getBookingById(String id);
-  Future<BookingModel> createBooking(BookingModel booking);
-  Future<void> cancelBooking(String id);
+
+  Future<BookingModel> createBooking({
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    String? notes,
+  });
+
+  Future<BookingModel> updateBooking({
+    required String id,
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    required String status,
+    String? notes,
+  });
+
+  Future<String> deleteBooking({required String id});
 }
 
-/// Dummy implementation returning mock data.
-class DummyBookingRemoteDataSource implements BookingRemoteDataSource {
+class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
+  const BookingRemoteDataSourceImpl({required Dio dio}) : _dio = dio;
+
+  final Dio _dio;
+
   @override
   Future<List<BookingModel>> getBookings() async {
-    await Future<void>.delayed(const Duration(milliseconds: 300));
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
-    return [
-      BookingModel(
-        id: 'bk_01',
-        guestName: 'Алишер Ибрагимов',
-        dateTime: today.add(const Duration(hours: 10)),
-        partySize: 6,
-        status: 'confirmed',
-        notes: 'День рождения, нужен длинный стол',
-      ),
-      BookingModel(
-        id: 'bk_02',
-        guestName: 'Гульноза Каримова',
-        dateTime: today.add(const Duration(hours: 14)),
-        notes: 'Без острых блюд',
-      ),
-      BookingModel(
-        id: 'bk_03',
-        guestName: 'Фаррух Нуруллаев',
-        dateTime: today.add(const Duration(hours: 19)),
-        partySize: 3,
-        status: 'new',
-      ),
-      BookingModel(
-        id: 'bk_04',
-        guestName: 'Дилдора Сатторова',
-        dateTime: today.add(const Duration(days: 1, hours: 13)),
-        partySize: 4,
-        status: 'confirmed',
-        tableId: 'tbl_05',
-      ),
-      BookingModel(
-        id: 'bk_05',
-        guestName: 'Исломбек Рахимов',
-        dateTime: today.add(const Duration(days: 2, hours: 20)),
-      ),
-      BookingModel(
-        id: 'bk_06',
-        guestName: 'Мехрибон Абдуллаева',
-        dateTime: today
-            .subtract(const Duration(days: 1))
-            .add(const Duration(hours: 12)),
-        partySize: 5,
-        status: 'confirmed',
-      ),
-      BookingModel(
-        id: 'bk_07',
-        guestName: 'Сардор Мусаев',
-        dateTime: today.add(const Duration(days: 4, hours: 18)),
-        partySize: 7,
-        status: 'new',
-      ),
-    ];
+    try {
+      final response = await _dio.get<Object>(ApiConstants.bookings);
+      return (response.data! as List)
+          .map((e) => BookingModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
   }
 
   @override
-  Future<BookingModel> getBookingById(String id) async {
-    await Future<void>.delayed(const Duration(milliseconds: 200));
-    return BookingModel(
-      id: id,
-      guestName: 'John Doe',
-      dateTime: DateTime.now().add(const Duration(hours: 2)),
-      partySize: 4,
-      status: 'confirmed',
-    );
+  Future<BookingModel> createBooking({
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    String? notes,
+  }) async {
+    try {
+      final response = await _dio.post<Object>(
+        ApiConstants.bookings,
+        data: {
+          'guestName': guestName,
+          'phone': phone,
+          'tableId': tableId,
+          'date': date,
+          'timeSlot': timeSlot,
+          'numberOfGuests': numberOfGuests,
+          if (notes != null) 'notes': notes,
+        },
+      );
+      return _parseBookingResponse(response.data! as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
   }
 
   @override
-  Future<BookingModel> createBooking(BookingModel booking) async {
-    await Future<void>.delayed(const Duration(milliseconds: 400));
-    return booking;
+  Future<BookingModel> updateBooking({
+    required String id,
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    required String status,
+    String? notes,
+  }) async {
+    try {
+      final response = await _dio.put<Object>(
+        '${ApiConstants.bookingById}$id',
+        data: {
+          'guestName': guestName,
+          'phone': phone,
+          'tableId': tableId,
+          'date': date,
+          'timeSlot': timeSlot,
+          'numberOfGuests': numberOfGuests,
+          'status': status,
+          if (notes != null) 'notes': notes,
+        },
+      );
+      return _parseBookingResponse(response.data! as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
   }
 
   @override
-  Future<void> cancelBooking(String id) async {
-    await Future<void>.delayed(const Duration(milliseconds: 200));
+  Future<String> deleteBooking({required String id}) async {
+    try {
+      final response = await _dio.delete<Object>(
+        '${ApiConstants.bookingById}$id',
+      );
+      final data = response.data! as Map<String, dynamic>;
+      return data['message'] as String;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  // POST/PUT responses return tableId as a plain String instead of an object.
+  BookingModel _parseBookingResponse(Map<String, dynamic> data) {
+    final tableIdRaw = data['tableId'];
+    final tableInfo = tableIdRaw is Map<String, dynamic>
+        ? TableInfoModel.fromJson(tableIdRaw)
+        : TableInfoModel(
+            id: tableIdRaw as String,
+            number: '',
+            capacity: 0,
+          );
+    return BookingModel.fromJson(data).copyWith(tableId: tableInfo);
   }
 }

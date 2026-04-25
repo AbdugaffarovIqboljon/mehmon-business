@@ -105,8 +105,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     _seedProfileValues(
       loc: loc,
-      authName: auth?.name,
-      authPhone: auth?.phone,
+      authName: auth?.user.name,
+      authPhone: auth?.user.email,
     );
 
     return AppScaffold(

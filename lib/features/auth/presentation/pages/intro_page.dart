@@ -35,7 +35,7 @@ class IntroPage extends StatelessWidget {
 
               // App logo
               Row(
-                mainAxisAlignment: .center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
                     _kLogoPath,

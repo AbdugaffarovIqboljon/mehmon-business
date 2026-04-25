@@ -3,18 +3,25 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'auth_model.freezed.dart';
 part 'auth_model.g.dart';
 
-/// Data model for API serialization of auth responses.
+@freezed
+abstract class UserModel with _$UserModel {
+  const factory UserModel({
+    @JsonKey(name: '_id') required String id,
+    required String name,
+    required String email,
+    required String role,
+  }) = _UserModel;
+
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
+}
+
 @freezed
 abstract class AuthModel with _$AuthModel {
   const factory AuthModel({
-    required String id,
-    required String email,
-    required String name,
-    String? phone,
-    @JsonKey(name: 'avatar_url') String? avatarUrl,
-    @Default('staff') String role,
-    @JsonKey(name: 'access_token') String? accessToken,
-    @JsonKey(name: 'refresh_token') String? refreshToken,
+    required String accessToken,
+    required String refreshToken,
+    required UserModel user,
   }) = _AuthModel;
 
   factory AuthModel.fromJson(Map<String, dynamic> json) =>

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/formatters/uzbek_phone_input_formatter.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/widgets/app_text_field.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/book_a_table_date_controller.dart';
+import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_date_selector.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_form_actions.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_time_selector.dart';
@@ -146,16 +148,51 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     setState(() => _guestCount++);
   }
 
-  void _confirm() {
+  Future<void> _confirm() async {
+    final guestName = _guestNameController.text.trim();
+    final phone = _phoneController.text.trim();
+
+    if (guestName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Mehmon ismini kiriting')),
+      );
+      return;
+    }
+    if (!UzbekPhoneInput.isValid(phone)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Telefon raqamini kiriting')),
+      );
+      return;
+    }
+
     final dateState = ref.read(bookATableDateControllerProvider);
-    final payload = BookATableFormPayload(
-      guestCount: _guestCount,
-      selectedTime: _selectedTime,
-      selectedDate: dateState.selectedDate,
-      guestName: _guestNameController.text.trim(),
-      phoneNumber: _phoneController.text.trim(),
-    );
-    Navigator.of(context).pop(payload);
+    final dateStr = DateFormat('yyyy-MM-dd').format(dateState.selectedDate);
+    // TODO: wire table selection UI when available — backend will reject empty tableId
+    const tableId = '';
+
+    final success = await ref
+        .read(bookingControllerProvider.notifier)
+        .createBooking(
+          guestName: guestName,
+          phone: UzbekPhoneInput.toE164(phone),
+          tableId: tableId,
+          date: dateStr,
+          timeSlot: _selectedTime,
+          numberOfGuests: _guestCount,
+        );
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Bron qo'shildi")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Xatolik yuz berdi')),
+      );
+    }
   }
 
   @override

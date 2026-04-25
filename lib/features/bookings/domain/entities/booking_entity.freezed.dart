@@ -16,14 +16,197 @@ final _privateConstructorUsedError = UnsupportedError(
 );
 
 /// @nodoc
+mixin _$TableInfoEntity {
+  String get id => throw _privateConstructorUsedError;
+  String get number => throw _privateConstructorUsedError;
+  int get capacity => throw _privateConstructorUsedError;
+
+  /// Create a copy of TableInfoEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $TableInfoEntityCopyWith<TableInfoEntity> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TableInfoEntityCopyWith<$Res> {
+  factory $TableInfoEntityCopyWith(
+    TableInfoEntity value,
+    $Res Function(TableInfoEntity) then,
+  ) = _$TableInfoEntityCopyWithImpl<$Res, TableInfoEntity>;
+  @useResult
+  $Res call({String id, String number, int capacity});
+}
+
+/// @nodoc
+class _$TableInfoEntityCopyWithImpl<$Res, $Val extends TableInfoEntity>
+    implements $TableInfoEntityCopyWith<$Res> {
+  _$TableInfoEntityCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of TableInfoEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? number = null,
+    Object? capacity = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            number: null == number
+                ? _value.number
+                : number // ignore: cast_nullable_to_non_nullable
+                      as String,
+            capacity: null == capacity
+                ? _value.capacity
+                : capacity // ignore: cast_nullable_to_non_nullable
+                      as int,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$TableInfoEntityImplCopyWith<$Res>
+    implements $TableInfoEntityCopyWith<$Res> {
+  factory _$$TableInfoEntityImplCopyWith(
+    _$TableInfoEntityImpl value,
+    $Res Function(_$TableInfoEntityImpl) then,
+  ) = __$$TableInfoEntityImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String number, int capacity});
+}
+
+/// @nodoc
+class __$$TableInfoEntityImplCopyWithImpl<$Res>
+    extends _$TableInfoEntityCopyWithImpl<$Res, _$TableInfoEntityImpl>
+    implements _$$TableInfoEntityImplCopyWith<$Res> {
+  __$$TableInfoEntityImplCopyWithImpl(
+    _$TableInfoEntityImpl _value,
+    $Res Function(_$TableInfoEntityImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of TableInfoEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? number = null,
+    Object? capacity = null,
+  }) {
+    return _then(
+      _$TableInfoEntityImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        number: null == number
+            ? _value.number
+            : number // ignore: cast_nullable_to_non_nullable
+                  as String,
+        capacity: null == capacity
+            ? _value.capacity
+            : capacity // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$TableInfoEntityImpl implements _TableInfoEntity {
+  const _$TableInfoEntityImpl({
+    required this.id,
+    required this.number,
+    required this.capacity,
+  });
+
+  @override
+  final String id;
+  @override
+  final String number;
+  @override
+  final int capacity;
+
+  @override
+  String toString() {
+    return 'TableInfoEntity(id: $id, number: $number, capacity: $capacity)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TableInfoEntityImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.number, number) || other.number == number) &&
+            (identical(other.capacity, capacity) ||
+                other.capacity == capacity));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id, number, capacity);
+
+  /// Create a copy of TableInfoEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TableInfoEntityImplCopyWith<_$TableInfoEntityImpl> get copyWith =>
+      __$$TableInfoEntityImplCopyWithImpl<_$TableInfoEntityImpl>(
+        this,
+        _$identity,
+      );
+}
+
+abstract class _TableInfoEntity implements TableInfoEntity {
+  const factory _TableInfoEntity({
+    required final String id,
+    required final String number,
+    required final int capacity,
+  }) = _$TableInfoEntityImpl;
+
+  @override
+  String get id;
+  @override
+  String get number;
+  @override
+  int get capacity;
+
+  /// Create a copy of TableInfoEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TableInfoEntityImplCopyWith<_$TableInfoEntityImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$BookingEntity {
   String get id => throw _privateConstructorUsedError;
   String get guestName => throw _privateConstructorUsedError;
-  DateTime get dateTime => throw _privateConstructorUsedError;
-  int get partySize => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  TableInfoEntity get tableInfo => throw _privateConstructorUsedError;
+  String get date => throw _privateConstructorUsedError;
+  String get timeSlot => throw _privateConstructorUsedError;
+  int get numberOfGuests => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
+  String get createdAt => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
-  String? get tableId => throw _privateConstructorUsedError;
 
   /// Create a copy of BookingEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -42,12 +225,17 @@ abstract class $BookingEntityCopyWith<$Res> {
   $Res call({
     String id,
     String guestName,
-    DateTime dateTime,
-    int partySize,
+    String phone,
+    TableInfoEntity tableInfo,
+    String date,
+    String timeSlot,
+    int numberOfGuests,
     String status,
+    String createdAt,
     String? notes,
-    String? tableId,
   });
+
+  $TableInfoEntityCopyWith<$Res> get tableInfo;
 }
 
 /// @nodoc
@@ -67,11 +255,14 @@ class _$BookingEntityCopyWithImpl<$Res, $Val extends BookingEntity>
   $Res call({
     Object? id = null,
     Object? guestName = null,
-    Object? dateTime = null,
-    Object? partySize = null,
+    Object? phone = null,
+    Object? tableInfo = null,
+    Object? date = null,
+    Object? timeSlot = null,
+    Object? numberOfGuests = null,
     Object? status = null,
+    Object? createdAt = null,
     Object? notes = freezed,
-    Object? tableId = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -83,29 +274,51 @@ class _$BookingEntityCopyWithImpl<$Res, $Val extends BookingEntity>
                 ? _value.guestName
                 : guestName // ignore: cast_nullable_to_non_nullable
                       as String,
-            dateTime: null == dateTime
-                ? _value.dateTime
-                : dateTime // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            partySize: null == partySize
-                ? _value.partySize
-                : partySize // ignore: cast_nullable_to_non_nullable
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            tableInfo: null == tableInfo
+                ? _value.tableInfo
+                : tableInfo // ignore: cast_nullable_to_non_nullable
+                      as TableInfoEntity,
+            date: null == date
+                ? _value.date
+                : date // ignore: cast_nullable_to_non_nullable
+                      as String,
+            timeSlot: null == timeSlot
+                ? _value.timeSlot
+                : timeSlot // ignore: cast_nullable_to_non_nullable
+                      as String,
+            numberOfGuests: null == numberOfGuests
+                ? _value.numberOfGuests
+                : numberOfGuests // ignore: cast_nullable_to_non_nullable
                       as int,
             status: null == status
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as String,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as String,
             notes: freezed == notes
                 ? _value.notes
                 : notes // ignore: cast_nullable_to_non_nullable
                       as String?,
-            tableId: freezed == tableId
-                ? _value.tableId
-                : tableId // ignore: cast_nullable_to_non_nullable
-                      as String?,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of BookingEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $TableInfoEntityCopyWith<$Res> get tableInfo {
+    return $TableInfoEntityCopyWith<$Res>(_value.tableInfo, (value) {
+      return _then(_value.copyWith(tableInfo: value) as $Val);
+    });
   }
 }
 
@@ -121,12 +334,18 @@ abstract class _$$BookingEntityImplCopyWith<$Res>
   $Res call({
     String id,
     String guestName,
-    DateTime dateTime,
-    int partySize,
+    String phone,
+    TableInfoEntity tableInfo,
+    String date,
+    String timeSlot,
+    int numberOfGuests,
     String status,
+    String createdAt,
     String? notes,
-    String? tableId,
   });
+
+  @override
+  $TableInfoEntityCopyWith<$Res> get tableInfo;
 }
 
 /// @nodoc
@@ -145,11 +364,14 @@ class __$$BookingEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? guestName = null,
-    Object? dateTime = null,
-    Object? partySize = null,
+    Object? phone = null,
+    Object? tableInfo = null,
+    Object? date = null,
+    Object? timeSlot = null,
+    Object? numberOfGuests = null,
     Object? status = null,
+    Object? createdAt = null,
     Object? notes = freezed,
-    Object? tableId = freezed,
   }) {
     return _then(
       _$BookingEntityImpl(
@@ -161,25 +383,37 @@ class __$$BookingEntityImplCopyWithImpl<$Res>
             ? _value.guestName
             : guestName // ignore: cast_nullable_to_non_nullable
                   as String,
-        dateTime: null == dateTime
-            ? _value.dateTime
-            : dateTime // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        partySize: null == partySize
-            ? _value.partySize
-            : partySize // ignore: cast_nullable_to_non_nullable
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        tableInfo: null == tableInfo
+            ? _value.tableInfo
+            : tableInfo // ignore: cast_nullable_to_non_nullable
+                  as TableInfoEntity,
+        date: null == date
+            ? _value.date
+            : date // ignore: cast_nullable_to_non_nullable
+                  as String,
+        timeSlot: null == timeSlot
+            ? _value.timeSlot
+            : timeSlot // ignore: cast_nullable_to_non_nullable
+                  as String,
+        numberOfGuests: null == numberOfGuests
+            ? _value.numberOfGuests
+            : numberOfGuests // ignore: cast_nullable_to_non_nullable
                   as int,
         status: null == status
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as String,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as String,
         notes: freezed == notes
             ? _value.notes
             : notes // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        tableId: freezed == tableId
-            ? _value.tableId
-            : tableId // ignore: cast_nullable_to_non_nullable
                   as String?,
       ),
     );
@@ -192,11 +426,14 @@ class _$BookingEntityImpl implements _BookingEntity {
   const _$BookingEntityImpl({
     required this.id,
     required this.guestName,
-    required this.dateTime,
-    this.partySize = 2,
-    this.status = 'pending',
+    required this.phone,
+    required this.tableInfo,
+    required this.date,
+    required this.timeSlot,
+    required this.numberOfGuests,
+    required this.status,
+    required this.createdAt,
     this.notes,
-    this.tableId,
   });
 
   @override
@@ -204,21 +441,25 @@ class _$BookingEntityImpl implements _BookingEntity {
   @override
   final String guestName;
   @override
-  final DateTime dateTime;
+  final String phone;
   @override
-  @JsonKey()
-  final int partySize;
+  final TableInfoEntity tableInfo;
   @override
-  @JsonKey()
+  final String date;
+  @override
+  final String timeSlot;
+  @override
+  final int numberOfGuests;
+  @override
   final String status;
   @override
-  final String? notes;
+  final String createdAt;
   @override
-  final String? tableId;
+  final String? notes;
 
   @override
   String toString() {
-    return 'BookingEntity(id: $id, guestName: $guestName, dateTime: $dateTime, partySize: $partySize, status: $status, notes: $notes, tableId: $tableId)';
+    return 'BookingEntity(id: $id, guestName: $guestName, phone: $phone, tableInfo: $tableInfo, date: $date, timeSlot: $timeSlot, numberOfGuests: $numberOfGuests, status: $status, createdAt: $createdAt, notes: $notes)';
   }
 
   @override
@@ -229,13 +470,18 @@ class _$BookingEntityImpl implements _BookingEntity {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.guestName, guestName) ||
                 other.guestName == guestName) &&
-            (identical(other.dateTime, dateTime) ||
-                other.dateTime == dateTime) &&
-            (identical(other.partySize, partySize) ||
-                other.partySize == partySize) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.tableInfo, tableInfo) ||
+                other.tableInfo == tableInfo) &&
+            (identical(other.date, date) || other.date == date) &&
+            (identical(other.timeSlot, timeSlot) ||
+                other.timeSlot == timeSlot) &&
+            (identical(other.numberOfGuests, numberOfGuests) ||
+                other.numberOfGuests == numberOfGuests) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.notes, notes) || other.notes == notes) &&
-            (identical(other.tableId, tableId) || other.tableId == tableId));
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.notes, notes) || other.notes == notes));
   }
 
   @override
@@ -243,11 +489,14 @@ class _$BookingEntityImpl implements _BookingEntity {
     runtimeType,
     id,
     guestName,
-    dateTime,
-    partySize,
+    phone,
+    tableInfo,
+    date,
+    timeSlot,
+    numberOfGuests,
     status,
+    createdAt,
     notes,
-    tableId,
   );
 
   /// Create a copy of BookingEntity
@@ -263,11 +512,14 @@ abstract class _BookingEntity implements BookingEntity {
   const factory _BookingEntity({
     required final String id,
     required final String guestName,
-    required final DateTime dateTime,
-    final int partySize,
-    final String status,
+    required final String phone,
+    required final TableInfoEntity tableInfo,
+    required final String date,
+    required final String timeSlot,
+    required final int numberOfGuests,
+    required final String status,
+    required final String createdAt,
     final String? notes,
-    final String? tableId,
   }) = _$BookingEntityImpl;
 
   @override
@@ -275,15 +527,21 @@ abstract class _BookingEntity implements BookingEntity {
   @override
   String get guestName;
   @override
-  DateTime get dateTime;
+  String get phone;
   @override
-  int get partySize;
+  TableInfoEntity get tableInfo;
+  @override
+  String get date;
+  @override
+  String get timeSlot;
+  @override
+  int get numberOfGuests;
   @override
   String get status;
   @override
-  String? get notes;
+  String get createdAt;
   @override
-  String? get tableId;
+  String? get notes;
 
   /// Create a copy of BookingEntity
   /// with the given fields replaced by the non-null parameter values.

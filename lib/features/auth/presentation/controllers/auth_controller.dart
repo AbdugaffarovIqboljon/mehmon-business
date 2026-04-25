@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mehmon/core/networking/dio_client.dart';
+import 'package:mehmon/core/networking/token_store.dart';
 import 'package:mehmon/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:mehmon/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:mehmon/features/auth/domain/entities/auth_entity.dart';
@@ -8,37 +10,37 @@ import 'package:mehmon/features/auth/domain/repositories/auth_repository.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────
 
-final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>(
-  (ref) => DummyAuthRemoteDataSource(),
-);
-
-final authRepositoryProvider = Provider<AuthRepository>(
-  (ref) => AuthRepositoryImpl(
-    remoteDataSource: ref.watch(authRemoteDataSourceProvider),
-  ),
-);
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  return AuthRepositoryImpl(
+    remoteDataSource: AuthRemoteDataSourceImpl(
+      dio: ref.watch(dioClientProvider),
+    ),
+    tokenStore: ref.watch(tokenStoreProvider),
+  );
+});
 
 final authControllerProvider =
     AsyncNotifierProvider<AuthController, AuthEntity?>(AuthController.new);
 
 // ── Controller ────────────────────────────────────────────────────────────
 
-/// Manages authentication state using [AsyncNotifier].
 class AuthController extends AsyncNotifier<AuthEntity?> {
   late final AuthRepository _repo;
+  late TokenStore _tokenStore;
 
   @override
   FutureOr<AuthEntity?> build() {
     _repo = ref.watch(authRepositoryProvider);
-    return null; // No user initially.
+    _tokenStore = ref.watch(tokenStoreProvider);
+    return null;
   }
 
   Future<void> login({required String email, required String password}) async {
     state = const AsyncLoading();
     final result = await _repo.login(email: email, password: password);
-    state = result.when(
-      success: AsyncData.new,
-      error: (f) => AsyncError(f, StackTrace.current),
+    result.when(
+      success: (entity) => state = AsyncData(entity),
+      error: (failure) => state = AsyncError(failure.message, StackTrace.current),
     );
   }
 
@@ -48,21 +50,13 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
     required String password,
   }) async {
     state = const AsyncLoading();
-    final result = await _repo.register(
-      name: name,
-      email: email,
-      password: password,
-    );
-    state = result.when(
-      success: AsyncData.new,
-      error: (f) => AsyncError(f, StackTrace.current),
+    final result = await _repo.register(name: name, email: email, password: password);
+    result.when(
+      success: (entity) => state = AsyncData(entity),
+      error: (failure) => state = AsyncError(failure.message, StackTrace.current),
     );
   }
 
-  /// Login using name and phone number.
-  ///
-  /// Passes [phone] as the email field to the existing dummy data source
-  /// until the backend supports phone-based auth.
   Future<void> loginByPhone({
     required String name,
     required String phone,
@@ -75,10 +69,6 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
     );
   }
 
-  /// Register using restaurant name, user name, and phone number.
-  ///
-  /// Passes [phone] as the email field to the existing dummy data source
-  /// until the backend supports phone-based auth.
   Future<void> registerByPhone({
     required String restaurantName,
     required String name,
@@ -97,7 +87,7 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
   }
 
   Future<void> logout() async {
-    await _repo.logout();
+    await _tokenStore.clearTokens();
     state = const AsyncData(null);
   }
 }
