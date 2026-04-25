@@ -2,31 +2,28 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'guest_entity.freezed.dart';
 
-@freezed
-abstract class GuestVisitEntity with _$GuestVisitEntity {
-  const factory GuestVisitEntity({
-    required String date,
-    required String tableLabel,
-    @Default(1) int guestCount,
-  }) = _GuestVisitEntity;
+class GuestVisitEntity {
+  const GuestVisitEntity({
+    required this.date,
+    required this.tableLabel,
+    required this.guestCount,
+  });
+
+  final String date;
+  final String tableLabel;
+  final int guestCount;
 }
 
-/// Domain entity representing a restaurant guest.
 @freezed
 abstract class GuestEntity with _$GuestEntity {
   const factory GuestEntity({
     required String id,
     required String name,
-    String? avatarUrl,
-    String? phone,
+    required String phone,
+    required int visitCount,
+    required bool isVIP,
+    required String lastVisit,
     String? email,
-    String? tableLabel,
-    String? visitDate,
-    @Default(1) int guestCount,
-    @Default(0) int visitCount,
     String? notes,
-    @Default(false) bool isVip,
-    @Default(false) bool isInHall,
-    @Default(<GuestVisitEntity>[]) List<GuestVisitEntity> visitHistory,
   }) = _GuestEntity;
 }

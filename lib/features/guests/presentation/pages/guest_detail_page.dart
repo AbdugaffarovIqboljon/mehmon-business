@@ -9,7 +9,6 @@ import 'package:mehmon/features/guests/presentation/controllers/guest_controller
 import 'package:mehmon/features/guests/presentation/widgets/guest_avatar.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_contact_row.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_notes_card.dart';
-import 'package:mehmon/features/guests/presentation/widgets/guest_visit_history_card.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 class GuestDetailPage extends ConsumerWidget {
@@ -36,9 +35,9 @@ class GuestDetailPage extends ConsumerWidget {
     }
 
     final contacts = <Widget>[];
-    if (guest.phone != null && guest.phone!.trim().isNotEmpty) {
+    if (guest.phone.trim().isNotEmpty) {
       contacts.add(
-        GuestContactRow(icon: Icons.call_outlined, value: guest.phone!),
+        GuestContactRow(icon: Icons.call_outlined, value: guest.phone),
       );
     }
     if (guest.email != null && guest.email!.trim().isNotEmpty) {
@@ -73,7 +72,6 @@ class GuestDetailPage extends ConsumerWidget {
                   ),
                   child: GuestAvatar(
                     name: guest.name,
-                    imageUrl: guest.avatarUrl,
                     radius: 84,
                   ),
                 ),
@@ -94,11 +92,11 @@ class GuestDetailPage extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xs),
               Center(
                 child: Text(
-                  guest.isVip
+                  guest.isVIP
                       ? AppLocalizations.of(context)!.vipGuest
                       : AppLocalizations.of(context)!.regularGuest,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: guest.isVip
+                    color: guest.isVIP
                         ? AppColors.primary
                         : AppColors.textSecondary,
                     fontWeight: FontWeight.w600,
@@ -123,30 +121,22 @@ class GuestDetailPage extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              if (guest.visitHistory.isEmpty)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(22),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.noVisitHistory,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                      fontSize: 14,
-                      height: 1.35,
-                    ),
-                  ),
-                )
-              else
-                ...guest.visitHistory.map(
-                  (visit) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                    child: GuestVisitHistoryCard(visit: visit),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.noVisitHistory,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                    height: 1.35,
                   ),
                 ),
+              ),
               const SizedBox(height: AppSpacing.md),
               Text(
                 AppLocalizations.of(context)!.notesTitle,

@@ -12,7 +12,8 @@ abstract final class ApiConstants {
   static const String bookingById = '/api/bookings/';
 
   // ── Guests ────────────────────────────────────────────────────────
-  static const String guests = '/guests';
+  static const String guests = '/api/guests';
+  static const String guestById = '/api/guests/';
 
   // ── Floor ─────────────────────────────────────────────────────────
   static const String floors = '/floors';

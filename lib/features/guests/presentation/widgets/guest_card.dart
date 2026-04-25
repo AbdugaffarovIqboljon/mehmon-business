@@ -28,7 +28,7 @@ class GuestCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GuestAvatar(name: guest.name, imageUrl: guest.avatarUrl),
+                  GuestAvatar(name: guest.name),
                   const SizedBox(width: AppSpacing.lg),
                   Expanded(
                     child: Column(
@@ -73,9 +73,9 @@ class GuestCard extends StatelessWidget {
               const Divider(height: 1),
               const SizedBox(height: AppSpacing.md),
               GuestInfoStatRow(
-                tableLabel: guest.tableLabel ?? '-',
-                visitDate: guest.visitDate ?? '-',
-                guestCount: guest.guestCount,
+                tableLabel: '-',
+                visitDate: guest.lastVisit,
+                guestCount: guest.visitCount,
               ),
             ],
           ),
@@ -86,7 +86,7 @@ class GuestCard extends StatelessWidget {
 
   String _buildSecondaryText(GuestEntity guest) {
     final phone = guest.phone;
-    if (phone != null && phone.trim().isNotEmpty) {
+    if (phone.trim().isNotEmpty) {
       return phone;
     }
 
