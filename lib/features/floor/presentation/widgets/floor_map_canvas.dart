@@ -2,22 +2,29 @@ import 'package:flutter/material.dart';
 
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/models/floor_table_config.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_table_widget.dart';
 
 /// The floor map area that positions table widgets using [Stack] + [Positioned].
 ///
+/// Accepts a [tables] list from the controller; falls back to the static
+/// [kFloorTables] fixture when no data is provided.
+///
 /// Uses [LayoutBuilder] to convert fractional coordinates from
 /// [FloorTableConfig] into actual pixel offsets.
 class FloorMapCanvas extends StatefulWidget {
-  const FloorMapCanvas({super.key});
+  const FloorMapCanvas({this.tables, super.key});
+
+  /// Real table data from the backend. When null or empty, the static
+  /// fixture layout is shown instead.
+  final List<FloorEntity>? tables;
 
   @override
   State<FloorMapCanvas> createState() => _FloorMapCanvasState();
 }
 
 class _FloorMapCanvasState extends State<FloorMapCanvas> {
-  /// Holds the ID of the currently selected table. Null if no table is selected.
   late final ValueNotifier<String?> _selectedTableNotifier;
 
   @override
@@ -33,16 +40,29 @@ class _FloorMapCanvasState extends State<FloorMapCanvas> {
   }
 
   void _onTableTap(String tableId) {
-    if (_selectedTableNotifier.value == tableId) {
-      // Optional: uncomment the next line if tapping an already selected table should deselect it.
-      // _selectedTableNotifier.value = null;
-      return;
-    }
+    if (_selectedTableNotifier.value == tableId) return;
     _selectedTableNotifier.value = tableId;
+  }
+
+  List<FloorTableConfig> get _configs {
+    final entities = widget.tables;
+    if (entities == null || entities.isEmpty) return kFloorTables;
+
+    final useAutoLayout = entities.every((e) => e.x == 0.0 && e.y == 0.0);
+    return [
+      for (var i = 0; i < entities.length; i++)
+        FloorTableConfig.fromEntity(
+          entities[i],
+          index: i,
+          useAutoLayout: useAutoLayout,
+        ),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
+    final configs = _configs;
+
     return ColoredBox(
       color: AppColors.floorCanvasBg,
       child: Padding(
@@ -57,7 +77,7 @@ class _FloorMapCanvasState extends State<FloorMapCanvas> {
 
             return Stack(
               children: [
-                for (final table in kFloorTables)
+                for (final table in configs)
                   Positioned(
                     left: table.left * canvasW,
                     top: table.top * canvasH,

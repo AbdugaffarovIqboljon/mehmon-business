@@ -21,11 +21,12 @@ FloorModel _$FloorModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$FloorModel {
+  @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  @JsonKey(name: 'table_count')
-  int get tableCount => throw _privateConstructorUsedError;
+  String get number => throw _privateConstructorUsedError;
   int get capacity => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  String get location => throw _privateConstructorUsedError;
 
   /// Serializes this FloorModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,10 +46,11 @@ abstract class $FloorModelCopyWith<$Res> {
   ) = _$FloorModelCopyWithImpl<$Res, FloorModel>;
   @useResult
   $Res call({
-    String id,
-    String name,
-    @JsonKey(name: 'table_count') int tableCount,
+    @JsonKey(name: '_id') String id,
+    String number,
     int capacity,
+    String status,
+    String location,
   });
 }
 
@@ -68,9 +70,10 @@ class _$FloorModelCopyWithImpl<$Res, $Val extends FloorModel>
   @override
   $Res call({
     Object? id = null,
-    Object? name = null,
-    Object? tableCount = null,
+    Object? number = null,
     Object? capacity = null,
+    Object? status = null,
+    Object? location = null,
   }) {
     return _then(
       _value.copyWith(
@@ -78,18 +81,22 @@ class _$FloorModelCopyWithImpl<$Res, $Val extends FloorModel>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
+            number: null == number
+                ? _value.number
+                : number // ignore: cast_nullable_to_non_nullable
                       as String,
-            tableCount: null == tableCount
-                ? _value.tableCount
-                : tableCount // ignore: cast_nullable_to_non_nullable
-                      as int,
             capacity: null == capacity
                 ? _value.capacity
                 : capacity // ignore: cast_nullable_to_non_nullable
                       as int,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            location: null == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -106,10 +113,11 @@ abstract class _$$FloorModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String id,
-    String name,
-    @JsonKey(name: 'table_count') int tableCount,
+    @JsonKey(name: '_id') String id,
+    String number,
     int capacity,
+    String status,
+    String location,
   });
 }
 
@@ -128,9 +136,10 @@ class __$$FloorModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? name = null,
-    Object? tableCount = null,
+    Object? number = null,
     Object? capacity = null,
+    Object? status = null,
+    Object? location = null,
   }) {
     return _then(
       _$FloorModelImpl(
@@ -138,18 +147,22 @@ class __$$FloorModelImplCopyWithImpl<$Res>
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
+        number: null == number
+            ? _value.number
+            : number // ignore: cast_nullable_to_non_nullable
                   as String,
-        tableCount: null == tableCount
-            ? _value.tableCount
-            : tableCount // ignore: cast_nullable_to_non_nullable
-                  as int,
         capacity: null == capacity
             ? _value.capacity
             : capacity // ignore: cast_nullable_to_non_nullable
                   as int,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        location: null == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -159,29 +172,31 @@ class __$$FloorModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$FloorModelImpl implements _FloorModel {
   const _$FloorModelImpl({
-    required this.id,
-    required this.name,
-    @JsonKey(name: 'table_count') this.tableCount = 0,
-    this.capacity = 0,
+    @JsonKey(name: '_id') required this.id,
+    required this.number,
+    required this.capacity,
+    required this.status,
+    required this.location,
   });
 
   factory _$FloorModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$FloorModelImplFromJson(json);
 
   @override
+  @JsonKey(name: '_id')
   final String id;
   @override
-  final String name;
+  final String number;
   @override
-  @JsonKey(name: 'table_count')
-  final int tableCount;
-  @override
-  @JsonKey()
   final int capacity;
+  @override
+  final String status;
+  @override
+  final String location;
 
   @override
   String toString() {
-    return 'FloorModel(id: $id, name: $name, tableCount: $tableCount, capacity: $capacity)';
+    return 'FloorModel(id: $id, number: $number, capacity: $capacity, status: $status, location: $location)';
   }
 
   @override
@@ -190,16 +205,18 @@ class _$FloorModelImpl implements _FloorModel {
         (other.runtimeType == runtimeType &&
             other is _$FloorModelImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.tableCount, tableCount) ||
-                other.tableCount == tableCount) &&
+            (identical(other.number, number) || other.number == number) &&
             (identical(other.capacity, capacity) ||
-                other.capacity == capacity));
+                other.capacity == capacity) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.location, location) ||
+                other.location == location));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, tableCount, capacity);
+  int get hashCode =>
+      Object.hash(runtimeType, id, number, capacity, status, location);
 
   /// Create a copy of FloorModel
   /// with the given fields replaced by the non-null parameter values.
@@ -217,24 +234,27 @@ class _$FloorModelImpl implements _FloorModel {
 
 abstract class _FloorModel implements FloorModel {
   const factory _FloorModel({
-    required final String id,
-    required final String name,
-    @JsonKey(name: 'table_count') final int tableCount,
-    final int capacity,
+    @JsonKey(name: '_id') required final String id,
+    required final String number,
+    required final int capacity,
+    required final String status,
+    required final String location,
   }) = _$FloorModelImpl;
 
   factory _FloorModel.fromJson(Map<String, dynamic> json) =
       _$FloorModelImpl.fromJson;
 
   @override
+  @JsonKey(name: '_id')
   String get id;
   @override
-  String get name;
-  @override
-  @JsonKey(name: 'table_count')
-  int get tableCount;
+  String get number;
   @override
   int get capacity;
+  @override
+  String get status;
+  @override
+  String get location;
 
   /// Create a copy of FloorModel
   /// with the given fields replaced by the non-null parameter values.

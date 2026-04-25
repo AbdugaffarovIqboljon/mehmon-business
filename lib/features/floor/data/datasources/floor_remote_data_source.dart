@@ -1,31 +1,96 @@
+import 'package:dio/dio.dart';
+import 'package:mehmon/core/constants/api_constants.dart';
+import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/features/floor/data/models/floor_model.dart';
 
-/// Remote data source contract for floor operations.
 abstract class FloorRemoteDataSource {
-  Future<List<FloorModel>> getFloors();
-  Future<FloorModel> getFloorById(String id);
+  Future<List<FloorModel>> getTables();
+
+  Future<FloorModel> createTable({
+    required String number,
+    required int capacity,
+    required String location,
+  });
+
+  Future<FloorModel> updateTable({
+    required String id,
+    required String number,
+    required int capacity,
+    required String location,
+  });
+
+  Future<String> deleteTable({required String id});
 }
 
-/// Dummy implementation returning mock data.
-class DummyFloorRemoteDataSource implements FloorRemoteDataSource {
+class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
+  const FloorRemoteDataSourceImpl({required Dio dio}) : _dio = dio;
+
+  final Dio _dio;
+
   @override
-  Future<List<FloorModel>> getFloors() async {
-    await Future<void>.delayed(const Duration(milliseconds: 300));
-    return const [
-      FloorModel(id: 'fl_01', name: 'Main Hall', tableCount: 12, capacity: 48),
-      FloorModel(id: 'fl_02', name: 'Terrace', tableCount: 8, capacity: 32),
-      FloorModel(id: 'fl_03', name: 'VIP Room', tableCount: 4, capacity: 16),
-    ];
+  Future<List<FloorModel>> getTables() async {
+    try {
+      final response = await _dio.get<dynamic>(ApiConstants.tables);
+      return (response.data as List)
+          .map((e) => FloorModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
   }
 
   @override
-  Future<FloorModel> getFloorById(String id) async {
-    await Future<void>.delayed(const Duration(milliseconds: 200));
-    return const FloorModel(
-      id: 'fl_01',
-      name: 'Main Hall',
-      tableCount: 12,
-      capacity: 48,
-    );
+  Future<FloorModel> createTable({
+    required String number,
+    required int capacity,
+    required String location,
+  }) async {
+    try {
+      final response = await _dio.post<dynamic>(
+        ApiConstants.tables,
+        data: {
+          'number': number,
+          'capacity': capacity,
+          'location': location,
+        },
+      );
+      return FloorModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<FloorModel> updateTable({
+    required String id,
+    required String number,
+    required int capacity,
+    required String location,
+  }) async {
+    try {
+      final response = await _dio.put<dynamic>(
+        '${ApiConstants.tableById}$id',
+        data: {
+          'number': number,
+          'capacity': capacity,
+          'location': location,
+        },
+      );
+      return FloorModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<String> deleteTable({required String id}) async {
+    try {
+      final response = await _dio.delete<dynamic>(
+        '${ApiConstants.tableById}$id',
+      );
+      return (response.data as Map<String, dynamic>)['message'] as String;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
   }
 }

@@ -18,9 +18,13 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$FloorEntity {
   String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  int get tableCount => throw _privateConstructorUsedError;
+  String get number => throw _privateConstructorUsedError;
   int get capacity => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  String get location => throw _privateConstructorUsedError;
+  String? get tableType => throw _privateConstructorUsedError;
+  double get x => throw _privateConstructorUsedError;
+  double get y => throw _privateConstructorUsedError;
 
   /// Create a copy of FloorEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -36,7 +40,16 @@ abstract class $FloorEntityCopyWith<$Res> {
     $Res Function(FloorEntity) then,
   ) = _$FloorEntityCopyWithImpl<$Res, FloorEntity>;
   @useResult
-  $Res call({String id, String name, int tableCount, int capacity});
+  $Res call({
+    String id,
+    String number,
+    int capacity,
+    String status,
+    String location,
+    String? tableType,
+    double x,
+    double y,
+  });
 }
 
 /// @nodoc
@@ -55,9 +68,13 @@ class _$FloorEntityCopyWithImpl<$Res, $Val extends FloorEntity>
   @override
   $Res call({
     Object? id = null,
-    Object? name = null,
-    Object? tableCount = null,
+    Object? number = null,
     Object? capacity = null,
+    Object? status = null,
+    Object? location = null,
+    Object? tableType = freezed,
+    Object? x = null,
+    Object? y = null,
   }) {
     return _then(
       _value.copyWith(
@@ -65,18 +82,34 @@ class _$FloorEntityCopyWithImpl<$Res, $Val extends FloorEntity>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
+            number: null == number
+                ? _value.number
+                : number // ignore: cast_nullable_to_non_nullable
                       as String,
-            tableCount: null == tableCount
-                ? _value.tableCount
-                : tableCount // ignore: cast_nullable_to_non_nullable
-                      as int,
             capacity: null == capacity
                 ? _value.capacity
                 : capacity // ignore: cast_nullable_to_non_nullable
                       as int,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            location: null == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as String,
+            tableType: freezed == tableType
+                ? _value.tableType
+                : tableType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            x: null == x
+                ? _value.x
+                : x // ignore: cast_nullable_to_non_nullable
+                      as double,
+            y: null == y
+                ? _value.y
+                : y // ignore: cast_nullable_to_non_nullable
+                      as double,
           )
           as $Val,
     );
@@ -92,7 +125,16 @@ abstract class _$$FloorEntityImplCopyWith<$Res>
   ) = __$$FloorEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String name, int tableCount, int capacity});
+  $Res call({
+    String id,
+    String number,
+    int capacity,
+    String status,
+    String location,
+    String? tableType,
+    double x,
+    double y,
+  });
 }
 
 /// @nodoc
@@ -110,9 +152,13 @@ class __$$FloorEntityImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? name = null,
-    Object? tableCount = null,
+    Object? number = null,
     Object? capacity = null,
+    Object? status = null,
+    Object? location = null,
+    Object? tableType = freezed,
+    Object? x = null,
+    Object? y = null,
   }) {
     return _then(
       _$FloorEntityImpl(
@@ -120,18 +166,34 @@ class __$$FloorEntityImplCopyWithImpl<$Res>
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
+        number: null == number
+            ? _value.number
+            : number // ignore: cast_nullable_to_non_nullable
                   as String,
-        tableCount: null == tableCount
-            ? _value.tableCount
-            : tableCount // ignore: cast_nullable_to_non_nullable
-                  as int,
         capacity: null == capacity
             ? _value.capacity
             : capacity // ignore: cast_nullable_to_non_nullable
                   as int,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        location: null == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as String,
+        tableType: freezed == tableType
+            ? _value.tableType
+            : tableType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        x: null == x
+            ? _value.x
+            : x // ignore: cast_nullable_to_non_nullable
+                  as double,
+        y: null == y
+            ? _value.y
+            : y // ignore: cast_nullable_to_non_nullable
+                  as double,
       ),
     );
   }
@@ -142,25 +204,38 @@ class __$$FloorEntityImplCopyWithImpl<$Res>
 class _$FloorEntityImpl implements _FloorEntity {
   const _$FloorEntityImpl({
     required this.id,
-    required this.name,
-    this.tableCount = 0,
-    this.capacity = 0,
+    required this.number,
+    required this.capacity,
+    required this.status,
+    required this.location,
+    this.tableType = null,
+    this.x = 0.0,
+    this.y = 0.0,
   });
 
   @override
   final String id;
   @override
-  final String name;
+  final String number;
   @override
-  @JsonKey()
-  final int tableCount;
-  @override
-  @JsonKey()
   final int capacity;
+  @override
+  final String status;
+  @override
+  final String location;
+  @override
+  @JsonKey()
+  final String? tableType;
+  @override
+  @JsonKey()
+  final double x;
+  @override
+  @JsonKey()
+  final double y;
 
   @override
   String toString() {
-    return 'FloorEntity(id: $id, name: $name, tableCount: $tableCount, capacity: $capacity)';
+    return 'FloorEntity(id: $id, number: $number, capacity: $capacity, status: $status, location: $location, tableType: $tableType, x: $x, y: $y)';
   }
 
   @override
@@ -169,15 +244,30 @@ class _$FloorEntityImpl implements _FloorEntity {
         (other.runtimeType == runtimeType &&
             other is _$FloorEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.tableCount, tableCount) ||
-                other.tableCount == tableCount) &&
+            (identical(other.number, number) || other.number == number) &&
             (identical(other.capacity, capacity) ||
-                other.capacity == capacity));
+                other.capacity == capacity) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.location, location) ||
+                other.location == location) &&
+            (identical(other.tableType, tableType) ||
+                other.tableType == tableType) &&
+            (identical(other.x, x) || other.x == x) &&
+            (identical(other.y, y) || other.y == y));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, tableCount, capacity);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    number,
+    capacity,
+    status,
+    location,
+    tableType,
+    x,
+    y,
+  );
 
   /// Create a copy of FloorEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -191,19 +281,31 @@ class _$FloorEntityImpl implements _FloorEntity {
 abstract class _FloorEntity implements FloorEntity {
   const factory _FloorEntity({
     required final String id,
-    required final String name,
-    final int tableCount,
-    final int capacity,
+    required final String number,
+    required final int capacity,
+    required final String status,
+    required final String location,
+    final String? tableType,
+    final double x,
+    final double y,
   }) = _$FloorEntityImpl;
 
   @override
   String get id;
   @override
-  String get name;
-  @override
-  int get tableCount;
+  String get number;
   @override
   int get capacity;
+  @override
+  String get status;
+  @override
+  String get location;
+  @override
+  String? get tableType;
+  @override
+  double get x;
+  @override
+  double get y;
 
   /// Create a copy of FloorEntity
   /// with the given fields replaced by the non-null parameter values.

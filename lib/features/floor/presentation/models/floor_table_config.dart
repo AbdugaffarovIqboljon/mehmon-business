@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+
+import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
+
 /// Lightweight configuration for a single table on the floor map.
 ///
 /// Positions use **fractional coordinates** (0 – 1) so the layout scales
@@ -10,12 +14,33 @@ class FloorTableConfig {
     required this.top,
     this.label,
     this.width = 0.18,
+    this.statusColor,
   });
+
+  factory FloorTableConfig.fromEntity(
+    FloorEntity entity, {
+    required int index,
+    required bool useAutoLayout,
+  }) {
+    final (left, top, width) = useAutoLayout
+        ? _autoLayoutFor(index, entity.capacity)
+        : (entity.x, entity.y, _widthForCapacity(entity.capacity));
+
+    return FloorTableConfig(
+      id: entity.id,
+      label: entity.displayNumber,
+      assetPath: _assetFor(entity, index),
+      left: left,
+      top: top,
+      width: width,
+      statusColor: _statusColorFor(entity.status),
+    );
+  }
 
   /// Unique table identifier.
   final String id;
 
-  /// Optional visible label, e.g. "No.1".
+  /// Optional visible label, e.g. "T-01".
   final String? label;
 
   /// Path to the PNG asset used for this table.
@@ -29,6 +54,47 @@ class FloorTableConfig {
 
   /// Fractional width of the table relative to canvas width.
   final double width;
+
+  /// Optional status indicator color: green=available, red=occupied, purple=other.
+  final Color? statusColor;
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  static (double left, double top, double width) _autoLayoutFor(
+    int index,
+    int capacity,
+  ) {
+    if (index < kFloorTables.length) {
+      final t = kFloorTables[index];
+      return (t.left, t.top, t.width);
+    }
+    // Simple 3-column grid for tables beyond the fixed layout.
+    const colPositions = [0.06, 0.41, 0.76];
+    final col = index % 3;
+    final row = index ~/ 3;
+    return (colPositions[col], (row * 0.21).clamp(0.0, 0.84), 0.18);
+  }
+
+  static double _widthForCapacity(int capacity) =>
+      capacity >= 5 ? 0.32 : 0.18;
+
+  static Color _statusColorFor(String status) => switch (status) {
+        'available' => Colors.green,
+        'occupied' => Colors.red,
+        _ => Colors.purple,
+      };
+
+  static String _assetFor(FloorEntity entity, int index) {
+    final type = entity.tableType?.toLowerCase();
+    if (type == 'rectangle') return _seats6;
+    if (type == 'square') return _seats4;
+    if (type == 'circle') return _seats3;
+    if (entity.capacity >= 5) return _seats6;
+    if (entity.capacity >= 4) {
+      return index.isOdd ? _seats4r : _seats4;
+    }
+    return _seats3;
+  }
 }
 
 // ── Asset paths ───────────────────────────────────────────────────────────

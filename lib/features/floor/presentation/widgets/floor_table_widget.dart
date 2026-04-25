@@ -6,9 +6,8 @@ import 'package:mehmon/features/floor/presentation/models/floor_table_config.dar
 
 /// Renders a single table on the floor map using its PNG asset.
 ///
-/// Optionally overlays a label and provides an [onTap] callback
-/// for future tap interaction. Subscribes to [selectedNotifier] to
-/// show a premium highlight when selected.
+/// Shows a small status dot in the top-right corner when
+/// [FloorTableConfig.statusColor] is provided.
 class FloorTableWidget extends StatelessWidget {
   const FloorTableWidget({
     required this.config,
@@ -17,21 +16,13 @@ class FloorTableWidget extends StatelessWidget {
     super.key,
   });
 
-  /// Configuration for this table (asset, label, etc.).
   final FloorTableConfig config;
-
-  /// Notifier containing the ID of the currently selected table.
   final ValueListenable<String?>? selectedNotifier;
-
-  /// Called when the user taps the table.
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    // If no notifier is provided, just render statically (for safety)
-    if (selectedNotifier == null) {
-      return _buildStatic();
-    }
+    if (selectedNotifier == null) return _buildStatic();
 
     return ValueListenableBuilder<String?>(
       valueListenable: selectedNotifier!,
@@ -44,7 +35,6 @@ class FloorTableWidget extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeOutCubic,
-            // Premium highlight: subtle scale and soft shadow accent.
             transform: Matrix4.diagonal3Values(
               isSelected ? 1.05 : 1,
               isSelected ? 1.05 : 1,
@@ -72,56 +62,53 @@ class FloorTableWidget extends StatelessWidget {
           ),
         );
       },
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.asset(
-            config.assetPath,
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.low,
-          ),
-          if (config.label != null)
-            Positioned(
-              child: Text(
-                config.label!,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
-                ),
-              ),
-            ),
-        ],
-      ),
+      child: _tableContent(),
     );
   }
 
   Widget _buildStatic() {
     return GestureDetector(
       onTap: onTap,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.asset(
-            config.assetPath,
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.low,
-          ),
-          if (config.label != null)
-            Positioned(
-              child: Text(
-                config.label!,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
-                ),
+      child: _tableContent(),
+    );
+  }
+
+  Widget _tableContent() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Image.asset(
+          config.assetPath,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.low,
+        ),
+        if (config.label != null)
+          Positioned(
+            child: Text(
+              config.label!,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
               ),
             ),
-        ],
-      ),
+          ),
+        if (config.statusColor != null)
+          Positioned(
+            top: 2,
+            right: 2,
+            child: Container(
+              width: 9,
+              height: 9,
+              decoration: BoxDecoration(
+                color: config.statusColor,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
