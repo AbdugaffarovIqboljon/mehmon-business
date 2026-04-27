@@ -227,13 +227,14 @@ mixin _$BookingModel {
   String get id => throw _privateConstructorUsedError;
   String get guestName => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
-  TableInfoModel get tableId => throw _privateConstructorUsedError;
   String get date => throw _privateConstructorUsedError;
   String get timeSlot => throw _privateConstructorUsedError;
   int get numberOfGuests => throw _privateConstructorUsedError;
   String get createdAt => throw _privateConstructorUsedError;
+  TableInfoModel? get tableId => throw _privateConstructorUsedError;
+  String? get endTime => throw _privateConstructorUsedError;
+  String? get bookingType => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
-  @JsonKey(includeIfNull: true)
   String? get notes => throw _privateConstructorUsedError;
 
   /// Serializes this BookingModel to a JSON map.
@@ -257,16 +258,18 @@ abstract class $BookingModelCopyWith<$Res> {
     @JsonKey(name: '_id') String id,
     String guestName,
     String phone,
-    TableInfoModel tableId,
     String date,
     String timeSlot,
     int numberOfGuests,
     String createdAt,
+    TableInfoModel? tableId,
+    String? endTime,
+    String? bookingType,
     String status,
-    @JsonKey(includeIfNull: true) String? notes,
+    String? notes,
   });
 
-  $TableInfoModelCopyWith<$Res> get tableId;
+  $TableInfoModelCopyWith<$Res>? get tableId;
 }
 
 /// @nodoc
@@ -287,11 +290,13 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
     Object? id = null,
     Object? guestName = null,
     Object? phone = null,
-    Object? tableId = null,
     Object? date = null,
     Object? timeSlot = null,
     Object? numberOfGuests = null,
     Object? createdAt = null,
+    Object? tableId = freezed,
+    Object? endTime = freezed,
+    Object? bookingType = freezed,
     Object? status = null,
     Object? notes = freezed,
   }) {
@@ -309,10 +314,6 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
                 ? _value.phone
                 : phone // ignore: cast_nullable_to_non_nullable
                       as String,
-            tableId: null == tableId
-                ? _value.tableId
-                : tableId // ignore: cast_nullable_to_non_nullable
-                      as TableInfoModel,
             date: null == date
                 ? _value.date
                 : date // ignore: cast_nullable_to_non_nullable
@@ -329,6 +330,18 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as String,
+            tableId: freezed == tableId
+                ? _value.tableId
+                : tableId // ignore: cast_nullable_to_non_nullable
+                      as TableInfoModel?,
+            endTime: freezed == endTime
+                ? _value.endTime
+                : endTime // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bookingType: freezed == bookingType
+                ? _value.bookingType
+                : bookingType // ignore: cast_nullable_to_non_nullable
+                      as String?,
             status: null == status
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
@@ -346,8 +359,12 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $TableInfoModelCopyWith<$Res> get tableId {
-    return $TableInfoModelCopyWith<$Res>(_value.tableId, (value) {
+  $TableInfoModelCopyWith<$Res>? get tableId {
+    if (_value.tableId == null) {
+      return null;
+    }
+
+    return $TableInfoModelCopyWith<$Res>(_value.tableId!, (value) {
       return _then(_value.copyWith(tableId: value) as $Val);
     });
   }
@@ -366,17 +383,19 @@ abstract class _$$BookingModelImplCopyWith<$Res>
     @JsonKey(name: '_id') String id,
     String guestName,
     String phone,
-    TableInfoModel tableId,
     String date,
     String timeSlot,
     int numberOfGuests,
     String createdAt,
+    TableInfoModel? tableId,
+    String? endTime,
+    String? bookingType,
     String status,
-    @JsonKey(includeIfNull: true) String? notes,
+    String? notes,
   });
 
   @override
-  $TableInfoModelCopyWith<$Res> get tableId;
+  $TableInfoModelCopyWith<$Res>? get tableId;
 }
 
 /// @nodoc
@@ -396,11 +415,13 @@ class __$$BookingModelImplCopyWithImpl<$Res>
     Object? id = null,
     Object? guestName = null,
     Object? phone = null,
-    Object? tableId = null,
     Object? date = null,
     Object? timeSlot = null,
     Object? numberOfGuests = null,
     Object? createdAt = null,
+    Object? tableId = freezed,
+    Object? endTime = freezed,
+    Object? bookingType = freezed,
     Object? status = null,
     Object? notes = freezed,
   }) {
@@ -418,10 +439,6 @@ class __$$BookingModelImplCopyWithImpl<$Res>
             ? _value.phone
             : phone // ignore: cast_nullable_to_non_nullable
                   as String,
-        tableId: null == tableId
-            ? _value.tableId
-            : tableId // ignore: cast_nullable_to_non_nullable
-                  as TableInfoModel,
         date: null == date
             ? _value.date
             : date // ignore: cast_nullable_to_non_nullable
@@ -438,6 +455,18 @@ class __$$BookingModelImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as String,
+        tableId: freezed == tableId
+            ? _value.tableId
+            : tableId // ignore: cast_nullable_to_non_nullable
+                  as TableInfoModel?,
+        endTime: freezed == endTime
+            ? _value.endTime
+            : endTime // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bookingType: freezed == bookingType
+            ? _value.bookingType
+            : bookingType // ignore: cast_nullable_to_non_nullable
+                  as String?,
         status: null == status
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
@@ -458,13 +487,15 @@ class _$BookingModelImpl implements _BookingModel {
     @JsonKey(name: '_id') required this.id,
     required this.guestName,
     required this.phone,
-    required this.tableId,
     required this.date,
     required this.timeSlot,
     required this.numberOfGuests,
     required this.createdAt,
+    this.tableId,
+    this.endTime,
+    this.bookingType,
     this.status = 'pending',
-    @JsonKey(includeIfNull: true) this.notes,
+    this.notes,
   });
 
   factory _$BookingModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -478,8 +509,6 @@ class _$BookingModelImpl implements _BookingModel {
   @override
   final String phone;
   @override
-  final TableInfoModel tableId;
-  @override
   final String date;
   @override
   final String timeSlot;
@@ -488,15 +517,20 @@ class _$BookingModelImpl implements _BookingModel {
   @override
   final String createdAt;
   @override
+  final TableInfoModel? tableId;
+  @override
+  final String? endTime;
+  @override
+  final String? bookingType;
+  @override
   @JsonKey()
   final String status;
   @override
-  @JsonKey(includeIfNull: true)
   final String? notes;
 
   @override
   String toString() {
-    return 'BookingModel(id: $id, guestName: $guestName, phone: $phone, tableId: $tableId, date: $date, timeSlot: $timeSlot, numberOfGuests: $numberOfGuests, createdAt: $createdAt, status: $status, notes: $notes)';
+    return 'BookingModel(id: $id, guestName: $guestName, phone: $phone, date: $date, timeSlot: $timeSlot, numberOfGuests: $numberOfGuests, createdAt: $createdAt, tableId: $tableId, endTime: $endTime, bookingType: $bookingType, status: $status, notes: $notes)';
   }
 
   @override
@@ -508,7 +542,6 @@ class _$BookingModelImpl implements _BookingModel {
             (identical(other.guestName, guestName) ||
                 other.guestName == guestName) &&
             (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.tableId, tableId) || other.tableId == tableId) &&
             (identical(other.date, date) || other.date == date) &&
             (identical(other.timeSlot, timeSlot) ||
                 other.timeSlot == timeSlot) &&
@@ -516,6 +549,10 @@ class _$BookingModelImpl implements _BookingModel {
                 other.numberOfGuests == numberOfGuests) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
+            (identical(other.tableId, tableId) || other.tableId == tableId) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.bookingType, bookingType) ||
+                other.bookingType == bookingType) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.notes, notes) || other.notes == notes));
   }
@@ -527,11 +564,13 @@ class _$BookingModelImpl implements _BookingModel {
     id,
     guestName,
     phone,
-    tableId,
     date,
     timeSlot,
     numberOfGuests,
     createdAt,
+    tableId,
+    endTime,
+    bookingType,
     status,
     notes,
   );
@@ -555,13 +594,15 @@ abstract class _BookingModel implements BookingModel {
     @JsonKey(name: '_id') required final String id,
     required final String guestName,
     required final String phone,
-    required final TableInfoModel tableId,
     required final String date,
     required final String timeSlot,
     required final int numberOfGuests,
     required final String createdAt,
+    final TableInfoModel? tableId,
+    final String? endTime,
+    final String? bookingType,
     final String status,
-    @JsonKey(includeIfNull: true) final String? notes,
+    final String? notes,
   }) = _$BookingModelImpl;
 
   factory _BookingModel.fromJson(Map<String, dynamic> json) =
@@ -575,8 +616,6 @@ abstract class _BookingModel implements BookingModel {
   @override
   String get phone;
   @override
-  TableInfoModel get tableId;
-  @override
   String get date;
   @override
   String get timeSlot;
@@ -585,9 +624,14 @@ abstract class _BookingModel implements BookingModel {
   @override
   String get createdAt;
   @override
+  TableInfoModel? get tableId;
+  @override
+  String? get endTime;
+  @override
+  String? get bookingType;
+  @override
   String get status;
   @override
-  @JsonKey(includeIfNull: true)
   String? get notes;
 
   /// Create a copy of BookingModel

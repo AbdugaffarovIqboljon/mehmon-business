@@ -11,6 +11,8 @@ abstract class BookingRepository {
     required String date,
     required String timeSlot,
     required int numberOfGuests,
+    String? endTime,
+    String? bookingType,
     String? notes,
   });
 
@@ -23,6 +25,8 @@ abstract class BookingRepository {
     required String timeSlot,
     required int numberOfGuests,
     required String status,
+    String? endTime,
+    String? bookingType,
     String? notes,
   });
 

@@ -30,12 +30,14 @@ abstract class BookingEntity with _$BookingEntity {
     required String id,
     required String guestName,
     required String phone,
-    required TableInfoEntity tableInfo,
     required String date,
     required String timeSlot,
     required int numberOfGuests,
     required String status,
     required String createdAt,
+    TableInfoEntity? tableInfo,
+    String? endTime,
+    String? bookingType,
     String? notes,
   }) = _BookingEntity;
 }

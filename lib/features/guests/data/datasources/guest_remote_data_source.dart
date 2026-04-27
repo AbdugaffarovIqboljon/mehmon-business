@@ -13,6 +13,7 @@ abstract class GuestRemoteDataSource {
     required String phone,
     String? email,
     String? notes,
+    String? avatarUrl,
   });
 
   Future<GuestModel> updateGuest({
@@ -60,6 +61,7 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
     required String phone,
     String? email,
     String? notes,
+    String? avatarUrl,
   }) async {
     try {
       final response = await _dio.post<dynamic>(
@@ -69,6 +71,7 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
           'phone': phone,
           if (email != null) 'email': email,
           if (notes != null) 'notes': notes,
+          if (avatarUrl != null) 'avatarUrl': avatarUrl,
         },
       );
       return GuestModel.fromJson(response.data as Map<String, dynamic>);

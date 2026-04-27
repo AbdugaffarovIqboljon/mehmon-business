@@ -5,18 +5,18 @@ class GuestAvatar extends StatelessWidget {
   const GuestAvatar({
     required this.name,
     super.key,
-    this.imageUrl,
+    this.avatarUrl,
     this.radius = 30,
   });
 
   final String name;
-  final String? imageUrl;
+  final String? avatarUrl;
   final double radius;
 
   @override
   Widget build(BuildContext context) {
     final size = radius * 2;
-    final hasImage = imageUrl != null && imageUrl!.trim().isNotEmpty;
+    final hasImage = avatarUrl != null && avatarUrl!.trim().isNotEmpty;
 
     if (!hasImage) {
       return _AvatarPlaceholder(name: name, radius: radius);
@@ -24,7 +24,7 @@ class GuestAvatar extends StatelessWidget {
 
     return ClipOval(
       child: Image.network(
-        imageUrl!,
+        avatarUrl!,
         width: size,
         height: size,
         fit: BoxFit.cover,

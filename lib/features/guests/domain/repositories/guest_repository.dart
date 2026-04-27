@@ -13,6 +13,7 @@ abstract class GuestRepository {
     required String phone,
     String? email,
     String? notes,
+    String? avatarUrl,
   });
 
   Future<Result<GuestEntity>> updateGuest({

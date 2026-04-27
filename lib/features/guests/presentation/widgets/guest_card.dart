@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/guests/domain/entities/guest_entity.dart';
@@ -28,7 +29,7 @@ class GuestCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GuestAvatar(name: guest.name),
+                  GuestAvatar(name: guest.name, avatarUrl: guest.avatarUrl),
                   const SizedBox(width: AppSpacing.lg),
                   Expanded(
                     child: Column(
@@ -73,15 +74,24 @@ class GuestCard extends StatelessWidget {
               const Divider(height: 1),
               const SizedBox(height: AppSpacing.md),
               GuestInfoStatRow(
-                tableLabel: '-',
-                visitDate: guest.lastVisit,
-                guestCount: guest.visitCount,
+                tableLabel: guest.lastVisitTableNumber ?? '-',
+                visitDate: _formatDate(guest.lastVisit),
+                guestCount: guest.lastVisitGuestCount,
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  String _formatDate(String isoDate) {
+    if (isoDate.trim().isEmpty) return '-';
+    try {
+      return DateFormat('dd.MM.yy').format(DateTime.parse(isoDate));
+    } on FormatException {
+      return '-';
+    }
   }
 
   String _buildSecondaryText(GuestEntity guest) {

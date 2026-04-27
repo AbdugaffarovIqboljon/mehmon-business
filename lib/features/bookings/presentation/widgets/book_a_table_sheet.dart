@@ -108,8 +108,12 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   final _phoneController = TextEditingController();
   String _lastPhoneValue = UzbekPhoneInput.countryCode;
 
+  static const List<String> _bookingTypes = ['Standard', 'Banket'];
+
   late int _guestCount;
   late String _selectedTime;
+  String? _selectedEndTime;
+  String _selectedBookingType = 'Standard';
 
   @override
   void initState() {
@@ -179,6 +183,8 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
           date: dateStr,
           timeSlot: _selectedTime,
           numberOfGuests: _guestCount,
+          endTime: _selectedEndTime,
+          bookingType: _selectedBookingType,
         );
 
     if (!mounted) return;
@@ -279,6 +285,37 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       },
                     ),
                     const SizedBox(height: AppSpacing.xxl),
+                    Text(
+                      'Tugash vaqti',
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _EndTimeSelector(
+                      times: widget.timeSlots,
+                      selectedTime: _selectedEndTime,
+                      onTimeSelected: (String time) {
+                        setState(() => _selectedEndTime =
+                            _selectedEndTime == time ? null : time);
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.xxl),
+                    Text(
+                      'Bron turi',
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _BookingTypeSelector(
+                      types: _bookingTypes,
+                      selectedType: _selectedBookingType,
+                      onTypeSelected: (String type) {
+                        setState(() => _selectedBookingType = type);
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.xxl),
                     BookingDateSelector(
                       selectedMonth: dateState.selectedMonth,
                       selectedDate: dateState.selectedDate,
@@ -327,6 +364,125 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _EndTimeSelector extends StatelessWidget {
+  const _EndTimeSelector({
+    required this.times,
+    required this.selectedTime,
+    required this.onTimeSelected,
+  });
+
+  final List<String> times;
+  final String? selectedTime;
+  final ValueChanged<String> onTimeSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = AppSpacing.md;
+        final itemWidth =
+            ((constraints.maxWidth - (spacing * 3)) / 4).clamp(72.0, 120.0);
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: times.map((time) {
+            final isSelected = time == selectedTime;
+            return SizedBox(
+              width: itemWidth,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  onTap: () => onTimeSelected(time),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color:
+                          isSelected ? AppColors.primary : AppColors.surface,
+                      borderRadius:
+                          BorderRadius.circular(AppSpacing.radiusMd),
+                      border: Border.all(color: AppColors.primary),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.md,
+                      ),
+                      child: Text(
+                        time,
+                        textAlign: TextAlign.center,
+                        style: textTheme.titleLarge?.copyWith(
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.primaryDark,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
+
+class _BookingTypeSelector extends StatelessWidget {
+  const _BookingTypeSelector({
+    required this.types,
+    required this.selectedType,
+    required this.onTypeSelected,
+  });
+
+  final List<String> types;
+  final String selectedType;
+  final ValueChanged<String> onTypeSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Row(
+      children: types.map((type) {
+        final isSelected = type == selectedType;
+        return Padding(
+          padding: const EdgeInsets.only(right: AppSpacing.md),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+              onTap: () => onTypeSelected(type),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.primary : AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  border: Border.all(color: AppColors.primary),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.md,
+                  ),
+                  child: Text(
+                    type,
+                    style: textTheme.titleLarge?.copyWith(
+                      color:
+                          isSelected ? Colors.white : AppColors.primaryDark,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

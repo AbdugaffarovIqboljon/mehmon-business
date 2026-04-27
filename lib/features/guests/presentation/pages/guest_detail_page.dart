@@ -9,6 +9,7 @@ import 'package:mehmon/features/guests/presentation/controllers/guest_controller
 import 'package:mehmon/features/guests/presentation/widgets/guest_avatar.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_contact_row.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_notes_card.dart';
+import 'package:mehmon/features/guests/presentation/widgets/guest_visit_history_card.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 class GuestDetailPage extends ConsumerWidget {
@@ -72,6 +73,7 @@ class GuestDetailPage extends ConsumerWidget {
                   ),
                   child: GuestAvatar(
                     name: guest.name,
+                    avatarUrl: guest.avatarUrl,
                     radius: 84,
                   ),
                 ),
@@ -121,22 +123,7 @@ class GuestDetailPage extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.noVisitHistory,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontSize: 14,
-                    height: 1.35,
-                  ),
-                ),
-              ),
+              GuestVisitHistoryCard(visits: guest.visits),
               const SizedBox(height: AppSpacing.md),
               Text(
                 AppLocalizations.of(context)!.notesTitle,

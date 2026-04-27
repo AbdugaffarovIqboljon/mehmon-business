@@ -16,11 +16,22 @@ class GuestRepositoryImpl implements GuestRepository {
         id: m.id,
         name: m.name,
         phone: m.phone,
+        email: m.email,
         visitCount: m.visitCount,
+        avatarUrl: m.avatarUrl,
+        visits: m.visits
+            .map((v) => VisitEntity(
+                  id: v.id,
+                  date: v.date,
+                  tableNumber: v.tableNumber,
+                  numberOfGuests: v.numberOfGuests,
+                ))
+            .toList(),
+        notes: m.notes,
         isVIP: m.isVIP,
         lastVisit: m.lastVisit,
-        email: m.email,
-        notes: m.notes,
+        lastVisitTableNumber: m.lastVisitTableNumber,
+        lastVisitGuestCount: m.lastVisitGuestCount,
       );
 
   @override
@@ -53,6 +64,7 @@ class GuestRepositoryImpl implements GuestRepository {
     required String phone,
     String? email,
     String? notes,
+    String? avatarUrl,
   }) async {
     try {
       final model = await _dataSource.createGuest(
@@ -60,6 +72,7 @@ class GuestRepositoryImpl implements GuestRepository {
         phone: phone,
         email: email,
         notes: notes,
+        avatarUrl: avatarUrl,
       );
       return Success(_toEntity(model));
     } on ApiException catch (e) {

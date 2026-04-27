@@ -13,6 +13,8 @@ abstract class BookingRemoteDataSource {
     required String date,
     required String timeSlot,
     required int numberOfGuests,
+    String? endTime,
+    String? bookingType,
     String? notes,
   });
 
@@ -25,6 +27,8 @@ abstract class BookingRemoteDataSource {
     required String timeSlot,
     required int numberOfGuests,
     required String status,
+    String? endTime,
+    String? bookingType,
     String? notes,
   });
 
@@ -56,6 +60,8 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     required String date,
     required String timeSlot,
     required int numberOfGuests,
+    String? endTime,
+    String? bookingType,
     String? notes,
   }) async {
     try {
@@ -68,10 +74,12 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
           'date': date,
           'timeSlot': timeSlot,
           'numberOfGuests': numberOfGuests,
+          if (endTime != null) 'endTime': endTime,
+          if (bookingType != null) 'bookingType': bookingType,
           if (notes != null) 'notes': notes,
         },
       );
-      return _parseBookingResponse(response.data! as Map<String, dynamic>);
+      return BookingModel.fromJson(response.data! as Map<String, dynamic>);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
@@ -87,6 +95,8 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     required String timeSlot,
     required int numberOfGuests,
     required String status,
+    String? endTime,
+    String? bookingType,
     String? notes,
   }) async {
     try {
@@ -100,10 +110,12 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
           'timeSlot': timeSlot,
           'numberOfGuests': numberOfGuests,
           'status': status,
+          if (endTime != null) 'endTime': endTime,
+          if (bookingType != null) 'bookingType': bookingType,
           if (notes != null) 'notes': notes,
         },
       );
-      return _parseBookingResponse(response.data! as Map<String, dynamic>);
+      return BookingModel.fromJson(response.data! as Map<String, dynamic>);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
@@ -120,18 +132,5 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
-  }
-
-  // POST/PUT responses return tableId as a plain String instead of an object.
-  BookingModel _parseBookingResponse(Map<String, dynamic> data) {
-    final tableIdRaw = data['tableId'];
-    final tableInfo = tableIdRaw is Map<String, dynamic>
-        ? TableInfoModel.fromJson(tableIdRaw)
-        : TableInfoModel(
-            id: tableIdRaw as String,
-            number: '',
-            capacity: 0,
-          );
-    return BookingModel.fromJson(data).copyWith(tableId: tableInfo);
   }
 }

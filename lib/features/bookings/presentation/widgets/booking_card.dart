@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
-import 'package:mehmon/features/bookings/presentation/widgets/booking_date_formatters.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 class BookingCard extends StatelessWidget {
@@ -12,9 +11,9 @@ class BookingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final endTime = booking.dateTime.add(
-      Duration(hours: booking.partySize >= 4 ? 2 : 1),
-    );
+    final timeLabel = booking.endTime != null
+        ? '${booking.timeSlot}-${booking.endTime}'
+        : booking.timeSlot;
     final subtitle = booking.notes?.trim().isNotEmpty ?? false
         ? booking.notes!
         : AppLocalizations.of(context)!.guestsCount(booking.partySize);
@@ -43,7 +42,7 @@ class BookingCard extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Text(
-                  '${bookingTimeLabel(booking.dateTime)}-${bookingTimeLabel(endTime)}',
+                  timeLabel,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF7F8BAA),
                         fontWeight: FontWeight.w500,
@@ -57,7 +56,7 @@ class BookingCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              AppLocalizations.of(context)!.banquet,
+              booking.bookingType ?? '',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: const Color(0xFF27304A),
                     fontWeight: FontWeight.w600,

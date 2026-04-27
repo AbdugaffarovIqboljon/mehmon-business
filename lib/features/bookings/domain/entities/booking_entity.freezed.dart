@@ -200,12 +200,14 @@ mixin _$BookingEntity {
   String get id => throw _privateConstructorUsedError;
   String get guestName => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
-  TableInfoEntity get tableInfo => throw _privateConstructorUsedError;
   String get date => throw _privateConstructorUsedError;
   String get timeSlot => throw _privateConstructorUsedError;
   int get numberOfGuests => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String get createdAt => throw _privateConstructorUsedError;
+  TableInfoEntity? get tableInfo => throw _privateConstructorUsedError;
+  String? get endTime => throw _privateConstructorUsedError;
+  String? get bookingType => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
 
   /// Create a copy of BookingEntity
@@ -226,16 +228,18 @@ abstract class $BookingEntityCopyWith<$Res> {
     String id,
     String guestName,
     String phone,
-    TableInfoEntity tableInfo,
     String date,
     String timeSlot,
     int numberOfGuests,
     String status,
     String createdAt,
+    TableInfoEntity? tableInfo,
+    String? endTime,
+    String? bookingType,
     String? notes,
   });
 
-  $TableInfoEntityCopyWith<$Res> get tableInfo;
+  $TableInfoEntityCopyWith<$Res>? get tableInfo;
 }
 
 /// @nodoc
@@ -256,12 +260,14 @@ class _$BookingEntityCopyWithImpl<$Res, $Val extends BookingEntity>
     Object? id = null,
     Object? guestName = null,
     Object? phone = null,
-    Object? tableInfo = null,
     Object? date = null,
     Object? timeSlot = null,
     Object? numberOfGuests = null,
     Object? status = null,
     Object? createdAt = null,
+    Object? tableInfo = freezed,
+    Object? endTime = freezed,
+    Object? bookingType = freezed,
     Object? notes = freezed,
   }) {
     return _then(
@@ -278,10 +284,6 @@ class _$BookingEntityCopyWithImpl<$Res, $Val extends BookingEntity>
                 ? _value.phone
                 : phone // ignore: cast_nullable_to_non_nullable
                       as String,
-            tableInfo: null == tableInfo
-                ? _value.tableInfo
-                : tableInfo // ignore: cast_nullable_to_non_nullable
-                      as TableInfoEntity,
             date: null == date
                 ? _value.date
                 : date // ignore: cast_nullable_to_non_nullable
@@ -302,6 +304,18 @@ class _$BookingEntityCopyWithImpl<$Res, $Val extends BookingEntity>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as String,
+            tableInfo: freezed == tableInfo
+                ? _value.tableInfo
+                : tableInfo // ignore: cast_nullable_to_non_nullable
+                      as TableInfoEntity?,
+            endTime: freezed == endTime
+                ? _value.endTime
+                : endTime // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bookingType: freezed == bookingType
+                ? _value.bookingType
+                : bookingType // ignore: cast_nullable_to_non_nullable
+                      as String?,
             notes: freezed == notes
                 ? _value.notes
                 : notes // ignore: cast_nullable_to_non_nullable
@@ -315,8 +329,12 @@ class _$BookingEntityCopyWithImpl<$Res, $Val extends BookingEntity>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $TableInfoEntityCopyWith<$Res> get tableInfo {
-    return $TableInfoEntityCopyWith<$Res>(_value.tableInfo, (value) {
+  $TableInfoEntityCopyWith<$Res>? get tableInfo {
+    if (_value.tableInfo == null) {
+      return null;
+    }
+
+    return $TableInfoEntityCopyWith<$Res>(_value.tableInfo!, (value) {
       return _then(_value.copyWith(tableInfo: value) as $Val);
     });
   }
@@ -335,17 +353,19 @@ abstract class _$$BookingEntityImplCopyWith<$Res>
     String id,
     String guestName,
     String phone,
-    TableInfoEntity tableInfo,
     String date,
     String timeSlot,
     int numberOfGuests,
     String status,
     String createdAt,
+    TableInfoEntity? tableInfo,
+    String? endTime,
+    String? bookingType,
     String? notes,
   });
 
   @override
-  $TableInfoEntityCopyWith<$Res> get tableInfo;
+  $TableInfoEntityCopyWith<$Res>? get tableInfo;
 }
 
 /// @nodoc
@@ -365,12 +385,14 @@ class __$$BookingEntityImplCopyWithImpl<$Res>
     Object? id = null,
     Object? guestName = null,
     Object? phone = null,
-    Object? tableInfo = null,
     Object? date = null,
     Object? timeSlot = null,
     Object? numberOfGuests = null,
     Object? status = null,
     Object? createdAt = null,
+    Object? tableInfo = freezed,
+    Object? endTime = freezed,
+    Object? bookingType = freezed,
     Object? notes = freezed,
   }) {
     return _then(
@@ -387,10 +409,6 @@ class __$$BookingEntityImplCopyWithImpl<$Res>
             ? _value.phone
             : phone // ignore: cast_nullable_to_non_nullable
                   as String,
-        tableInfo: null == tableInfo
-            ? _value.tableInfo
-            : tableInfo // ignore: cast_nullable_to_non_nullable
-                  as TableInfoEntity,
         date: null == date
             ? _value.date
             : date // ignore: cast_nullable_to_non_nullable
@@ -411,6 +429,18 @@ class __$$BookingEntityImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as String,
+        tableInfo: freezed == tableInfo
+            ? _value.tableInfo
+            : tableInfo // ignore: cast_nullable_to_non_nullable
+                  as TableInfoEntity?,
+        endTime: freezed == endTime
+            ? _value.endTime
+            : endTime // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bookingType: freezed == bookingType
+            ? _value.bookingType
+            : bookingType // ignore: cast_nullable_to_non_nullable
+                  as String?,
         notes: freezed == notes
             ? _value.notes
             : notes // ignore: cast_nullable_to_non_nullable
@@ -427,12 +457,14 @@ class _$BookingEntityImpl implements _BookingEntity {
     required this.id,
     required this.guestName,
     required this.phone,
-    required this.tableInfo,
     required this.date,
     required this.timeSlot,
     required this.numberOfGuests,
     required this.status,
     required this.createdAt,
+    this.tableInfo,
+    this.endTime,
+    this.bookingType,
     this.notes,
   });
 
@@ -442,8 +474,6 @@ class _$BookingEntityImpl implements _BookingEntity {
   final String guestName;
   @override
   final String phone;
-  @override
-  final TableInfoEntity tableInfo;
   @override
   final String date;
   @override
@@ -455,11 +485,17 @@ class _$BookingEntityImpl implements _BookingEntity {
   @override
   final String createdAt;
   @override
+  final TableInfoEntity? tableInfo;
+  @override
+  final String? endTime;
+  @override
+  final String? bookingType;
+  @override
   final String? notes;
 
   @override
   String toString() {
-    return 'BookingEntity(id: $id, guestName: $guestName, phone: $phone, tableInfo: $tableInfo, date: $date, timeSlot: $timeSlot, numberOfGuests: $numberOfGuests, status: $status, createdAt: $createdAt, notes: $notes)';
+    return 'BookingEntity(id: $id, guestName: $guestName, phone: $phone, date: $date, timeSlot: $timeSlot, numberOfGuests: $numberOfGuests, status: $status, createdAt: $createdAt, tableInfo: $tableInfo, endTime: $endTime, bookingType: $bookingType, notes: $notes)';
   }
 
   @override
@@ -471,8 +507,6 @@ class _$BookingEntityImpl implements _BookingEntity {
             (identical(other.guestName, guestName) ||
                 other.guestName == guestName) &&
             (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.tableInfo, tableInfo) ||
-                other.tableInfo == tableInfo) &&
             (identical(other.date, date) || other.date == date) &&
             (identical(other.timeSlot, timeSlot) ||
                 other.timeSlot == timeSlot) &&
@@ -481,6 +515,11 @@ class _$BookingEntityImpl implements _BookingEntity {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
+            (identical(other.tableInfo, tableInfo) ||
+                other.tableInfo == tableInfo) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.bookingType, bookingType) ||
+                other.bookingType == bookingType) &&
             (identical(other.notes, notes) || other.notes == notes));
   }
 
@@ -490,12 +529,14 @@ class _$BookingEntityImpl implements _BookingEntity {
     id,
     guestName,
     phone,
-    tableInfo,
     date,
     timeSlot,
     numberOfGuests,
     status,
     createdAt,
+    tableInfo,
+    endTime,
+    bookingType,
     notes,
   );
 
@@ -513,12 +554,14 @@ abstract class _BookingEntity implements BookingEntity {
     required final String id,
     required final String guestName,
     required final String phone,
-    required final TableInfoEntity tableInfo,
     required final String date,
     required final String timeSlot,
     required final int numberOfGuests,
     required final String status,
     required final String createdAt,
+    final TableInfoEntity? tableInfo,
+    final String? endTime,
+    final String? bookingType,
     final String? notes,
   }) = _$BookingEntityImpl;
 
@@ -529,8 +572,6 @@ abstract class _BookingEntity implements BookingEntity {
   @override
   String get phone;
   @override
-  TableInfoEntity get tableInfo;
-  @override
   String get date;
   @override
   String get timeSlot;
@@ -540,6 +581,12 @@ abstract class _BookingEntity implements BookingEntity {
   String get status;
   @override
   String get createdAt;
+  @override
+  TableInfoEntity? get tableInfo;
+  @override
+  String? get endTime;
+  @override
+  String? get bookingType;
   @override
   String? get notes;
 

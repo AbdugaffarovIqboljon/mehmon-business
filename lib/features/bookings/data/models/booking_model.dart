@@ -21,13 +21,15 @@ abstract class BookingModel with _$BookingModel {
     @JsonKey(name: '_id') required String id,
     required String guestName,
     required String phone,
-    required TableInfoModel tableId,
     required String date,
     required String timeSlot,
     required int numberOfGuests,
     required String createdAt,
+    TableInfoModel? tableId,
+    String? endTime,
+    String? bookingType,
     @Default('pending') String status,
-    @JsonKey(includeIfNull: true) String? notes,
+    String? notes,
   }) = _BookingModel;
 
   factory BookingModel.fromJson(Map<String, dynamic> json) =>

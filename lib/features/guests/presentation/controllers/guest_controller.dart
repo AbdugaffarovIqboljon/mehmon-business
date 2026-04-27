@@ -78,10 +78,11 @@ class GuestController extends AsyncNotifier<List<GuestEntity>> {
     required String phone,
     String? email,
     String? notes,
+    String? avatarUrl,
   }) async {
     final result = await ref
         .read(guestRepositoryProvider)
-        .createGuest(name: name, phone: phone, email: email, notes: notes);
+        .createGuest(name: name, phone: phone, email: email, notes: notes, avatarUrl: avatarUrl);
     return result.when(
       success: (entity) {
         final current = state.valueOrNull ?? [];

@@ -29,6 +29,8 @@ class BookingRepositoryImpl implements BookingRepository {
     required String date,
     required String timeSlot,
     required int numberOfGuests,
+    String? endTime,
+    String? bookingType,
     String? notes,
   }) async {
     try {
@@ -39,6 +41,8 @@ class BookingRepositoryImpl implements BookingRepository {
         date: date,
         timeSlot: timeSlot,
         numberOfGuests: numberOfGuests,
+        endTime: endTime,
+        bookingType: bookingType,
         notes: notes,
       );
       return Success(_toEntity(model));
@@ -57,6 +61,8 @@ class BookingRepositoryImpl implements BookingRepository {
     required String timeSlot,
     required int numberOfGuests,
     required String status,
+    String? endTime,
+    String? bookingType,
     String? notes,
   }) async {
     try {
@@ -69,6 +75,8 @@ class BookingRepositoryImpl implements BookingRepository {
         timeSlot: timeSlot,
         numberOfGuests: numberOfGuests,
         status: status,
+        endTime: endTime,
+        bookingType: bookingType,
         notes: notes,
       );
       return Success(_toEntity(model));
@@ -91,16 +99,20 @@ class BookingRepositoryImpl implements BookingRepository {
         id: m.id,
         guestName: m.guestName,
         phone: m.phone,
-        tableInfo: TableInfoEntity(
-          id: m.tableId.id,
-          number: m.tableId.number,
-          capacity: m.tableId.capacity,
-        ),
         date: m.date,
         timeSlot: m.timeSlot,
         numberOfGuests: m.numberOfGuests,
         status: m.status,
         createdAt: m.createdAt,
+        tableInfo: m.tableId == null
+            ? null
+            : TableInfoEntity(
+                id: m.tableId!.id,
+                number: m.tableId!.number,
+                capacity: m.tableId!.capacity,
+              ),
+        endTime: m.endTime,
+        bookingType: m.bookingType,
         notes: m.notes,
       );
 }

@@ -49,6 +49,8 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
     required String date,
     required String timeSlot,
     required int numberOfGuests,
+    String? endTime,
+    String? bookingType,
     String? notes,
   }) async {
     final result = await ref.read(bookingRepositoryProvider).createBooking(
@@ -58,6 +60,8 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
           date: date,
           timeSlot: timeSlot,
           numberOfGuests: numberOfGuests,
+          endTime: endTime,
+          bookingType: bookingType,
           notes: notes,
         );
     return result.when(
@@ -79,6 +83,8 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
     required String timeSlot,
     required int numberOfGuests,
     required String status,
+    String? endTime,
+    String? bookingType,
     String? notes,
   }) async {
     final result = await ref.read(bookingRepositoryProvider).updateBooking(
@@ -90,6 +96,8 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
           timeSlot: timeSlot,
           numberOfGuests: numberOfGuests,
           status: status,
+          endTime: endTime,
+          bookingType: bookingType,
           notes: notes,
         );
     return result.when(
