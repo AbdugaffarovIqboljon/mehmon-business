@@ -35,9 +35,9 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
     return null;
   }
 
-  Future<void> login({required String email, required String password}) async {
+  Future<void> login({required String phone, required String password}) async {
     state = const AsyncLoading();
-    final result = await _repo.login(email: email, password: password);
+    final result = await _repo.login(phone: phone, password: password);
     result.when(
       success: (entity) => state = AsyncData(entity),
       error: (failure) => state = AsyncError(failure.message, StackTrace.current),
@@ -46,11 +46,17 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
 
   Future<void> register({
     required String name,
-    required String email,
+    required String phone,
+    required String cafeName,
     required String password,
   }) async {
     state = const AsyncLoading();
-    final result = await _repo.register(name: name, email: email, password: password);
+    final result = await _repo.register(
+      name: name,
+      phone: phone,
+      cafeName: cafeName,
+      password: password,
+    );
     result.when(
       success: (entity) => state = AsyncData(entity),
       error: (failure) => state = AsyncError(failure.message, StackTrace.current),
@@ -62,7 +68,8 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
     required String phone,
   }) async {
     state = const AsyncLoading();
-    final result = await _repo.login(email: phone, password: name);
+    // name field doubles as password in the simplified phone-only login UX
+    final result = await _repo.login(phone: phone, password: name);
     state = result.when(
       success: AsyncData.new,
       error: (f) => AsyncError(f, StackTrace.current),
@@ -75,9 +82,11 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
     required String phone,
   }) async {
     state = const AsyncLoading();
+    // name field doubles as password in the simplified phone-only register UX
     final result = await _repo.register(
-      name: '$restaurantName / $name',
-      email: phone,
+      name: name,
+      phone: phone,
+      cafeName: restaurantName,
       password: name,
     );
     state = result.when(

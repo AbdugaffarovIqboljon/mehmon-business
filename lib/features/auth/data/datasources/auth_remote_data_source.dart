@@ -4,11 +4,12 @@ import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/features/auth/data/models/auth_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<AuthModel> login({required String email, required String password});
+  Future<AuthModel> login({required String phone, required String password});
 
   Future<AuthModel> register({
     required String name,
-    required String email,
+    required String phone,
+    required String cafeName,
     required String password,
   });
 }
@@ -20,13 +21,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<AuthModel> login({
-    required String email,
+    required String phone,
     required String password,
   }) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
         ApiConstants.login,
-        data: {'email': email, 'password': password},
+        data: {'phone': phone, 'password': password},
       );
       return AuthModel.fromJson(response.data!);
     } on DioException catch (e) {
@@ -37,13 +38,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<AuthModel> register({
     required String name,
-    required String email,
+    required String phone,
+    required String cafeName,
     required String password,
   }) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
         ApiConstants.register,
-        data: {'name': name, 'email': email, 'password': password},
+        data: {
+          'name': name,
+          'phone': phone,
+          'cafeName': cafeName,
+          'password': password,
+        },
       );
       return AuthModel.fromJson(response.data!);
     } on DioException catch (e) {

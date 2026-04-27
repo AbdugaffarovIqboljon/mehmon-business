@@ -24,7 +24,8 @@ mixin _$UserModel {
   @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get email => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  String get cafeName => throw _privateConstructorUsedError;
   String get role => throw _privateConstructorUsedError;
 
   /// Serializes this UserModel to a JSON map.
@@ -45,7 +46,8 @@ abstract class $UserModelCopyWith<$Res> {
   $Res call({
     @JsonKey(name: '_id') String id,
     String name,
-    String email,
+    String phone,
+    String cafeName,
     String role,
   });
 }
@@ -67,7 +69,8 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? email = null,
+    Object? phone = null,
+    Object? cafeName = null,
     Object? role = null,
   }) {
     return _then(
@@ -80,9 +83,13 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            email: null == email
-                ? _value.email
-                : email // ignore: cast_nullable_to_non_nullable
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            cafeName: null == cafeName
+                ? _value.cafeName
+                : cafeName // ignore: cast_nullable_to_non_nullable
                       as String,
             role: null == role
                 ? _value.role
@@ -106,7 +113,8 @@ abstract class _$$UserModelImplCopyWith<$Res>
   $Res call({
     @JsonKey(name: '_id') String id,
     String name,
-    String email,
+    String phone,
+    String cafeName,
     String role,
   });
 }
@@ -127,7 +135,8 @@ class __$$UserModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? email = null,
+    Object? phone = null,
+    Object? cafeName = null,
     Object? role = null,
   }) {
     return _then(
@@ -140,9 +149,13 @@ class __$$UserModelImplCopyWithImpl<$Res>
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        email: null == email
-            ? _value.email
-            : email // ignore: cast_nullable_to_non_nullable
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        cafeName: null == cafeName
+            ? _value.cafeName
+            : cafeName // ignore: cast_nullable_to_non_nullable
                   as String,
         role: null == role
             ? _value.role
@@ -159,7 +172,8 @@ class _$UserModelImpl implements _UserModel {
   const _$UserModelImpl({
     @JsonKey(name: '_id') required this.id,
     required this.name,
-    required this.email,
+    required this.phone,
+    required this.cafeName,
     required this.role,
   });
 
@@ -172,13 +186,15 @@ class _$UserModelImpl implements _UserModel {
   @override
   final String name;
   @override
-  final String email;
+  final String phone;
+  @override
+  final String cafeName;
   @override
   final String role;
 
   @override
   String toString() {
-    return 'UserModel(id: $id, name: $name, email: $email, role: $role)';
+    return 'UserModel(id: $id, name: $name, phone: $phone, cafeName: $cafeName, role: $role)';
   }
 
   @override
@@ -188,13 +204,15 @@ class _$UserModelImpl implements _UserModel {
             other is _$UserModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.email, email) || other.email == email) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.cafeName, cafeName) ||
+                other.cafeName == cafeName) &&
             (identical(other.role, role) || other.role == role));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, email, role);
+  int get hashCode => Object.hash(runtimeType, id, name, phone, cafeName, role);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -214,7 +232,8 @@ abstract class _UserModel implements UserModel {
   const factory _UserModel({
     @JsonKey(name: '_id') required final String id,
     required final String name,
-    required final String email,
+    required final String phone,
+    required final String cafeName,
     required final String role,
   }) = _$UserModelImpl;
 
@@ -227,7 +246,9 @@ abstract class _UserModel implements UserModel {
   @override
   String get name;
   @override
-  String get email;
+  String get phone;
+  @override
+  String get cafeName;
   @override
   String get role;
 

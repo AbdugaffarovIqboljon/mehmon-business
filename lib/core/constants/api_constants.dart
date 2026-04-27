@@ -6,6 +6,8 @@ abstract final class ApiConstants {
   static const String login = '/api/auth/login';
   static const String register = '/api/auth/register';
   static const String refreshToken = '/api/auth/refresh';
+  static const String profile = '/api/auth/profile';
+  static const String logout = '/api/auth/logout';
 
   // ── Bookings ──────────────────────────────────────────────────────
   static const String bookings = '/api/bookings';

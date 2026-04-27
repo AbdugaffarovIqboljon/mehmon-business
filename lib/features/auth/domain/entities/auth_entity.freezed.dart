@@ -19,7 +19,8 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$UserEntity {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get email => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  String get cafeName => throw _privateConstructorUsedError;
   String get role => throw _privateConstructorUsedError;
 
   /// Create a copy of UserEntity
@@ -36,7 +37,13 @@ abstract class $UserEntityCopyWith<$Res> {
     $Res Function(UserEntity) then,
   ) = _$UserEntityCopyWithImpl<$Res, UserEntity>;
   @useResult
-  $Res call({String id, String name, String email, String role});
+  $Res call({
+    String id,
+    String name,
+    String phone,
+    String cafeName,
+    String role,
+  });
 }
 
 /// @nodoc
@@ -56,7 +63,8 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? email = null,
+    Object? phone = null,
+    Object? cafeName = null,
     Object? role = null,
   }) {
     return _then(
@@ -69,9 +77,13 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            email: null == email
-                ? _value.email
-                : email // ignore: cast_nullable_to_non_nullable
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            cafeName: null == cafeName
+                ? _value.cafeName
+                : cafeName // ignore: cast_nullable_to_non_nullable
                       as String,
             role: null == role
                 ? _value.role
@@ -92,7 +104,13 @@ abstract class _$$UserEntityImplCopyWith<$Res>
   ) = __$$UserEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String name, String email, String role});
+  $Res call({
+    String id,
+    String name,
+    String phone,
+    String cafeName,
+    String role,
+  });
 }
 
 /// @nodoc
@@ -111,7 +129,8 @@ class __$$UserEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? email = null,
+    Object? phone = null,
+    Object? cafeName = null,
     Object? role = null,
   }) {
     return _then(
@@ -124,9 +143,13 @@ class __$$UserEntityImplCopyWithImpl<$Res>
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        email: null == email
-            ? _value.email
-            : email // ignore: cast_nullable_to_non_nullable
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        cafeName: null == cafeName
+            ? _value.cafeName
+            : cafeName // ignore: cast_nullable_to_non_nullable
                   as String,
         role: null == role
             ? _value.role
@@ -143,7 +166,8 @@ class _$UserEntityImpl implements _UserEntity {
   const _$UserEntityImpl({
     required this.id,
     required this.name,
-    required this.email,
+    required this.phone,
+    required this.cafeName,
     required this.role,
   });
 
@@ -152,13 +176,15 @@ class _$UserEntityImpl implements _UserEntity {
   @override
   final String name;
   @override
-  final String email;
+  final String phone;
+  @override
+  final String cafeName;
   @override
   final String role;
 
   @override
   String toString() {
-    return 'UserEntity(id: $id, name: $name, email: $email, role: $role)';
+    return 'UserEntity(id: $id, name: $name, phone: $phone, cafeName: $cafeName, role: $role)';
   }
 
   @override
@@ -168,12 +194,14 @@ class _$UserEntityImpl implements _UserEntity {
             other is _$UserEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.email, email) || other.email == email) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.cafeName, cafeName) ||
+                other.cafeName == cafeName) &&
             (identical(other.role, role) || other.role == role));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, email, role);
+  int get hashCode => Object.hash(runtimeType, id, name, phone, cafeName, role);
 
   /// Create a copy of UserEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -188,7 +216,8 @@ abstract class _UserEntity implements UserEntity {
   const factory _UserEntity({
     required final String id,
     required final String name,
-    required final String email,
+    required final String phone,
+    required final String cafeName,
     required final String role,
   }) = _$UserEntityImpl;
 
@@ -197,7 +226,9 @@ abstract class _UserEntity implements UserEntity {
   @override
   String get name;
   @override
-  String get email;
+  String get phone;
+  @override
+  String get cafeName;
   @override
   String get role;
 

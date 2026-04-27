@@ -8,7 +8,8 @@ abstract class UserModel with _$UserModel {
   const factory UserModel({
     @JsonKey(name: '_id') required String id,
     required String name,
-    required String email,
+    required String phone,
+    required String cafeName,
     required String role,
   }) = _UserModel;
 

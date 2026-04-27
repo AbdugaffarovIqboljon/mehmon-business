@@ -18,12 +18,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Result<AuthEntity>> login({
-    required String email,
+    required String phone,
     required String password,
   }) async {
     try {
       final model = await _remoteDataSource.login(
-        email: email,
+        phone: phone,
         password: password,
       );
 
@@ -38,7 +38,8 @@ class AuthRepositoryImpl implements AuthRepository {
         user: UserEntity(
           id: model.user.id,
           name: model.user.name,
-          email: model.user.email,
+          phone: model.user.phone,
+          cafeName: model.user.cafeName,
           role: model.user.role,
         ),
       ));
@@ -56,13 +57,15 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Result<AuthEntity>> register({
     required String name,
-    required String email,
+    required String phone,
+    required String cafeName,
     required String password,
   }) async {
     try {
       final model = await _remoteDataSource.register(
         name: name,
-        email: email,
+        phone: phone,
+        cafeName: cafeName,
         password: password,
       );
 
@@ -77,7 +80,8 @@ class AuthRepositoryImpl implements AuthRepository {
         user: UserEntity(
           id: model.user.id,
           name: model.user.name,
-          email: model.user.email,
+          phone: model.user.phone,
+          cafeName: model.user.cafeName,
           role: model.user.role,
         ),
       ));
@@ -91,5 +95,4 @@ class AuthRepositoryImpl implements AuthRepository {
       return Err(UnknownFailure(message: e.toString(), stackTrace: st));
     }
   }
-
 }

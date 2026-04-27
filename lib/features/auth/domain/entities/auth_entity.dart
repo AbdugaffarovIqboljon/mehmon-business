@@ -7,7 +7,8 @@ abstract class UserEntity with _$UserEntity {
   const factory UserEntity({
     required String id,
     required String name,
-    required String email,
+    required String phone,
+    required String cafeName,
     required String role,
   }) = _UserEntity;
 }
