@@ -411,6 +411,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsRevenue => 'Revenue';
 
   @override
+  String get statsConfirmedBookings => 'Confirmed Bookings';
+
+  @override
   String get statsTitle => 'Statistics';
 
   @override

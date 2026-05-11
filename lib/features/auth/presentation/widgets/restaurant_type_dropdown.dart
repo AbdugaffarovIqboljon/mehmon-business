@@ -14,14 +14,20 @@ class RestaurantTypeDropdown extends StatelessWidget {
     this.sheetTitle = 'Тип заведения',
   });
 
-  final List<String> items;
+  /// Map of stable English key (e.g. `cafe`) → localized display label.
+  final Map<String, String> items;
   final String hintText;
+
+  /// Stable English key of the currently selected item, or `null`.
   final String? value;
+
+  /// Emits the stable English key of the chosen item.
   final ValueChanged<String> onChanged;
   final String sheetTitle;
 
   Future<void> openSelectionSheet(BuildContext context) async {
-    final selectedValue = await showModalBottomSheet<String>(
+    final entries = items.entries.toList();
+    final selectedKey = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
@@ -56,25 +62,25 @@ class RestaurantTypeDropdown extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.sm,
                     ),
-                    itemCount: items.length,
+                    itemCount: entries.length,
                     separatorBuilder: (_, __) =>
                         const Divider(color: AppColors.divider),
                     itemBuilder: (context, index) {
-                      final item = items[index];
-                      final isSelected = value == item;
+                      final entry = entries[index];
+                      final isSelected = value == entry.key;
 
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md,
                         ),
-                        title: Text(item, style: AppTextStyles.bodyLarge),
+                        title: Text(entry.value, style: AppTextStyles.bodyLarge),
                         trailing: isSelected
                             ? const Icon(
                                 Icons.check_rounded,
                                 color: AppColors.primary,
                               )
                             : null,
-                        onTap: () => Navigator.of(context).pop(item),
+                        onTap: () => Navigator.of(context).pop(entry.key),
                       );
                     },
                   ),
@@ -86,16 +92,17 @@ class RestaurantTypeDropdown extends StatelessWidget {
       },
     );
 
-    if (selectedValue != null) {
-      onChanged(selectedValue);
+    if (selectedKey != null) {
+      onChanged(selectedKey);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final selectedLabel = value == null ? null : items[value];
     return AuthSelectionField(
-      text: value ?? hintText,
-      isPlaceholder: value == null,
+      text: selectedLabel ?? hintText,
+      isPlaceholder: selectedLabel == null,
       onTap: () => openSelectionSheet(context),
     );
   }

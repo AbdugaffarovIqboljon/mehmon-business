@@ -11,7 +11,7 @@ class StatsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final statsAsync = ref.watch(statsControllerProvider);
+    final statsAsync = ref.watch(summaryControllerProvider);
 
     return AppScaffold(
       title: AppLocalizations.of(context)!.statsTitle,
@@ -24,7 +24,11 @@ class StatsPage extends ConsumerWidget {
               ),
             ),
         data:
-            (stats) => Padding(
+            (stats) => stats == null
+                ? Center(
+                    child: Text(AppLocalizations.of(context)!.statsError('')),
+                  )
+                : Padding(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,9 +52,9 @@ class StatsPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   _StatCard(
-                    label: AppLocalizations.of(context)!.statsRevenue,
-                    value: '\$${stats.revenue.toStringAsFixed(2)}',
-                    icon: Icons.attach_money,
+                    label: AppLocalizations.of(context)!.statsConfirmedBookings,
+                    value: stats.confirmedBookings.toString(),
+                    icon: Icons.check_circle_outline,
                   ),
                 ],
               ),

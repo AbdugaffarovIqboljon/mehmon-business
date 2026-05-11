@@ -1,3 +1,4 @@
+import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/core/errors/failure.dart';
 import 'package:mehmon/core/errors/result.dart';
 import 'package:mehmon/features/stats/data/datasources/stats_remote_data_source.dart';
@@ -5,26 +6,58 @@ import 'package:mehmon/features/stats/domain/entities/stats_entity.dart';
 import 'package:mehmon/features/stats/domain/repositories/stats_repository.dart';
 
 class StatsRepositoryImpl implements StatsRepository {
-  StatsRepositoryImpl({required StatsRemoteDataSource remoteDataSource})
-    : _remoteDataSource = remoteDataSource;
+  const StatsRepositoryImpl({required StatsRemoteDataSource dataSource})
+      : _dataSource = dataSource;
 
-  final StatsRemoteDataSource _remoteDataSource;
+  final StatsRemoteDataSource _dataSource;
 
   @override
-  Future<Result<StatsEntity>> getStats({String period = 'daily'}) async {
+  Future<Result<AnalyticsSummaryEntity>> getSummary() async {
     try {
-      final m = await _remoteDataSource.getStats(period: period);
+      final model = await _dataSource.getSummary();
       return Success(
-        StatsEntity(
-          totalBookings: m.totalBookings,
-          totalGuests: m.totalGuests,
-          occupancyRate: m.occupancyRate,
-          revenue: m.revenue,
-          period: m.period,
+        AnalyticsSummaryEntity(
+          totalBookings: model.totalBookings,
+          confirmedBookings: model.confirmedBookings,
+          pendingBookings: model.pendingBookings,
+          totalGuests: model.totalGuests,
+          totalTables: model.totalTables,
+          occupancyRate: model.occupancyRate,
         ),
       );
-    } on Exception catch (e, st) {
-      return Err(ServerFailure(message: e.toString(), stackTrace: st));
+    } on ApiException catch (e) {
+      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on Exception catch (e) {
+      return Err(UnknownFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<AnalyticsReportEntity>> getReports({
+    String? startDate,
+    String? endDate,
+  }) async {
+    try {
+      final model = await _dataSource.getReports(
+        startDate: startDate,
+        endDate: endDate,
+      );
+      return Success(
+        AnalyticsReportEntity(
+          period: AnalyticsPeriodEntity(
+            startDate: model.period.startDate,
+            endDate: model.period.endDate,
+          ),
+          totalBookings: model.totalBookings,
+          completed: model.completed,
+          cancelled: model.cancelled,
+          totalGuests: model.totalGuests,
+        ),
+      );
+    } on ApiException catch (e) {
+      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on Exception catch (e) {
+      return Err(UnknownFailure(message: e.toString()));
     }
   }
 }

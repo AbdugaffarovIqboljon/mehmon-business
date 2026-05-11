@@ -28,8 +28,9 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _passwordVisible = ValueNotifier<bool>(false);
   String _lastPhoneValue = UzbekPhoneInput.countryCode;
   bool _isSubmitting = false;
 
@@ -42,8 +43,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   void dispose() {
-    _nameController.dispose();
     _phoneController.dispose();
+    _passwordController.dispose();
+    _passwordVisible.dispose();
     super.dispose();
   }
 
@@ -57,8 +59,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       await ref
           .read(authControllerProvider.notifier)
           .loginByPhone(
-            name: _nameController.text.trim(),
             phone: UzbekPhoneInput.toE164(_phoneController.text),
+            password: _passwordController.text,
           );
     } finally {
       if (mounted) {
@@ -147,21 +149,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                         const SizedBox(height: AppSpacing.xxxl),
 
-                        // ── Name field ─────────────────────────────
-                        Text(loc.nameLabel, style: textTheme.titleMedium),
-                        const SizedBox(height: AppSpacing.sm),
-                        AppTextField(
-                          controller: _nameController,
-                          textInputAction: TextInputAction.next,
-                          hint: loc.nameHint,
-                          enabled: !isLoading,
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? loc.nameValidationError
-                              : null,
-                        ),
-
-                        const SizedBox(height: AppSpacing.lg),
-
                         // ── Phone field ────────────────────────────
                         Text(loc.phoneLabel, style: textTheme.titleMedium),
                         const SizedBox(height: AppSpacing.sm),
@@ -181,6 +168,36 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             }
                             return null;
                           },
+                        ),
+
+                        const SizedBox(height: AppSpacing.lg),
+
+                        // ── Password field ─────────────────────────
+                        Text('Parol', style: textTheme.titleMedium),
+                        const SizedBox(height: AppSpacing.sm),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: _passwordVisible,
+                          builder: (context, visible, _) => AppTextField(
+                            controller: _passwordController,
+                            hint: 'Parolni kiriting',
+                            obscureText: !visible,
+                            enabled: !isLoading,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                visible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: AppColors.textSecondary,
+                              ),
+                              onPressed: () =>
+                                  _passwordVisible.value = !visible,
+                            ),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return 'Parolni kiriting';
+                              if (v.length < 4) return "Parol kamida 4 ta belgidan iborat bo'lishi kerak";
+                              return null;
+                            },
+                          ),
                         ),
 
                         const Spacer(),

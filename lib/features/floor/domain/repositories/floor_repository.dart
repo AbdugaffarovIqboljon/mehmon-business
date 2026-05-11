@@ -1,5 +1,7 @@
 import 'package:mehmon/core/errors/result.dart';
+import 'package:mehmon/features/floor/domain/entities/activity_log_entity.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
+import 'package:mehmon/features/floor/domain/entities/shift_entity.dart';
 
 abstract class FloorRepository {
   Future<Result<List<FloorEntity>>> getTables();
@@ -18,4 +20,18 @@ abstract class FloorRepository {
   });
 
   Future<Result<String>> deleteTable({required String id});
+
+  Future<Result<List<ActivityLogEntity>>> getActivityLog();
+
+  Future<Result<List<ShiftEntity>>> getShifts();
+
+  Future<Result<ShiftEntity>> createShift({
+    required String staffName,
+    required String startTime,
+    required String endTime,
+    required String date,
+    String? notes,
+  });
+
+  Future<Result<void>> deleteShift(String id);
 }

@@ -410,6 +410,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get statsRevenue => 'Выручка';
 
   @override
+  String get statsConfirmedBookings => 'Подтверждённые брони';
+
+  @override
   String get statsTitle => 'Статистика';
 
   @override

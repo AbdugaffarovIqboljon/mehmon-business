@@ -27,6 +27,18 @@ abstract final class ApiConstants {
   // ── Stats ─────────────────────────────────────────────────────────
   static const String stats = '/stats';
 
+  // ── Analytics ─────────────────────────────────────────────────────
+  static const String analyticsSummary = '/api/analytics/summary';
+  static const String analyticsReports = '/api/analytics/reports';
+
+  // ── Activity Log ──────────────────────────────────────────────────
+  static const String activityLog = '/api/activity-log';
+
+  // ── Shifts ────────────────────────────────────────────────────────
+  static const String shifts = '/api/shifts';
+  static const String shiftById = '/api/shifts/{id}';
+  static String shiftId(String id) => '/api/shifts/$id';
+
   // ── Timeouts ──────────────────────────────────────────────────────
   static const int connectTimeoutMs = 15000;
   static const int receiveTimeoutMs = 15000;

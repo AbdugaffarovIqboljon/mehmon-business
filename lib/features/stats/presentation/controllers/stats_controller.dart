@@ -2,47 +2,73 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:mehmon/core/networking/dio_client.dart';
 import 'package:mehmon/features/stats/data/datasources/stats_remote_data_source.dart';
 import 'package:mehmon/features/stats/data/repositories/stats_repository_impl.dart';
 import 'package:mehmon/features/stats/domain/entities/stats_entity.dart';
 import 'package:mehmon/features/stats/domain/repositories/stats_repository.dart';
 
-// ── Providers ─────────────────────────────────────────────────────────────
+// ── Infrastructure ─────────────────────────────────────────────────────────
 
-final statsRemoteDataSourceProvider = Provider<StatsRemoteDataSource>(
-  (ref) => DummyStatsRemoteDataSource(),
-);
+final statsRepositoryProvider = Provider<StatsRepository>((ref) {
+  return StatsRepositoryImpl(
+    dataSource: StatsRemoteDataSourceImpl(
+      dio: ref.watch(dioClientProvider),
+    ),
+  );
+});
 
-final statsRepositoryProvider = Provider<StatsRepository>(
-  (ref) => StatsRepositoryImpl(
-    remoteDataSource: ref.watch(statsRemoteDataSourceProvider),
-  ),
-);
+// ── Summary ────────────────────────────────────────────────────────────────
 
-final statsControllerProvider =
-    AsyncNotifierProvider<StatsController, StatsEntity>(StatsController.new);
+final summaryControllerProvider =
+    AsyncNotifierProvider<SummaryController, AnalyticsSummaryEntity?>(
+      SummaryController.new,
+    );
 
-// ── Controller ────────────────────────────────────────────────────────────
-
-class StatsController extends AsyncNotifier<StatsEntity> {
-  late final StatsRepository _repo;
-
+class SummaryController extends AsyncNotifier<AnalyticsSummaryEntity?> {
   @override
-  FutureOr<StatsEntity> build() async {
-    _repo = ref.watch(statsRepositoryProvider);
-    return _loadStats();
-  }
-
-  Future<StatsEntity> _loadStats({String period = 'daily'}) async {
-    final result = await _repo.getStats(period: period);
+  FutureOr<AnalyticsSummaryEntity?> build() async {
+    final result = await ref.read(statsRepositoryProvider).getSummary();
     return result.when(
-      success: (stats) => stats,
-      error: (f) => throw Exception(f.message),
+      success: (e) => e,
+      error: (_) => null,
     );
   }
 
-  Future<void> refresh({String period = 'daily'}) async {
+  Future<void> refresh() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _loadStats(period: period));
+    state = await AsyncValue.guard(() async {
+      final result = await ref.read(statsRepositoryProvider).getSummary();
+      return result.when(
+        success: (e) => e,
+        error: (_) => null,
+      );
+    });
+  }
+}
+
+// ── Reports ────────────────────────────────────────────────────────────────
+
+typedef ReportsArg = ({String? startDate, String? endDate});
+
+final reportsControllerProvider = AsyncNotifierProvider.autoDispose
+    .family<ReportsController, AnalyticsReportEntity?, ReportsArg>(
+      ReportsController.new,
+    );
+
+class ReportsController
+    extends AutoDisposeFamilyAsyncNotifier<AnalyticsReportEntity?, ReportsArg> {
+  @override
+  FutureOr<AnalyticsReportEntity?> build(ReportsArg arg) async {
+    final result = await ref
+        .read(statsRepositoryProvider)
+        .getReports(
+          startDate: arg.startDate,
+          endDate: arg.endDate,
+        );
+    return result.when(
+      success: (e) => e,
+      error: (_) => null,
+    );
   }
 }

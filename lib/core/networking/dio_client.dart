@@ -6,6 +6,13 @@ import 'package:mehmon/core/networking/auth_interceptor.dart';
 import 'package:mehmon/core/networking/logging_interceptor.dart';
 import 'package:mehmon/core/networking/token_store.dart';
 
+/// App-level callback fired when the refresh flow fails and the user must be
+/// logged out. Override this provider at app startup to wire it to the
+/// auth/Riverpod layer without a BuildContext dependency.
+final onLogoutProvider = Provider<VoidCallback>((ref) {
+  return () {};
+});
+
 final dioClientProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
@@ -20,7 +27,10 @@ final dioClientProvider = Provider<Dio>((ref) {
   );
 
   dio.interceptors.add(
-    AuthInterceptor(tokenStore: ref.watch(tokenStoreProvider)),
+    AuthInterceptor(
+      tokenStore: ref.watch(tokenStoreProvider),
+      onLogout: ref.watch(onLogoutProvider),
+    ),
   );
 
   if (kDebugMode) {

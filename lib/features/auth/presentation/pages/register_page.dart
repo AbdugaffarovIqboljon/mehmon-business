@@ -31,6 +31,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _restaurantController = TextEditingController();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _passwordVisible = ValueNotifier<bool>(false);
   String _lastPhoneValue = UzbekPhoneInput.countryCode;
   bool _isSubmitting = false;
 
@@ -46,6 +48,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     _restaurantController.dispose();
     _nameController.dispose();
     _phoneController.dispose();
+    _passwordController.dispose();
+    _passwordVisible.dispose();
     super.dispose();
   }
 
@@ -59,9 +63,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       await ref
           .read(authControllerProvider.notifier)
           .registerByPhone(
-            restaurantName: _restaurantController.text.trim(),
             name: _nameController.text.trim(),
             phone: UzbekPhoneInput.toE164(_phoneController.text),
+            cafeName: _restaurantController.text.trim(),
+            password: _passwordController.text,
           );
     } finally {
       if (mounted) {
@@ -196,6 +201,35 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             }
                             return null;
                           },
+                        ),
+
+                        const SizedBox(height: AppSpacing.lg),
+
+                        // ── Password field ────────────────────────────
+                        ValueListenableBuilder<bool>(
+                          valueListenable: _passwordVisible,
+                          builder: (context, visible, _) => AppTextField(
+                            controller: _passwordController,
+                            label: 'Parol',
+                            hint: 'Parolni kiriting',
+                            obscureText: !visible,
+                            enabled: !isLoading,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                visible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: AppColors.textSecondary,
+                              ),
+                              onPressed: () =>
+                                  _passwordVisible.value = !visible,
+                            ),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return 'Parolni kiriting';
+                              if (v.length < 4) return "Parol kamida 4 ta belgidan iborat bo'lishi kerak";
+                              return null;
+                            },
+                          ),
                         ),
                       ],
                     ),

@@ -183,7 +183,24 @@ lib
 │   │           ├── guest_visit_history_card.dart
 │   │           └── guests_segmented_control.dart
 │   ├── settings
+│   │   ├── data
+│   │   │   ├── datasources
+│   │   │   │   └── profile_remote_data_source.dart
+│   │   │   ├── models
+│   │   │   │   ├── profile_model.dart
+│   │   │   │   ├── profile_model.freezed.dart
+│   │   │   │   └── profile_model.g.dart
+│   │   │   └── repositories
+│   │   │       └── profile_repository_impl.dart
+│   │   ├── domain
+│   │   │   ├── entities
+│   │   │   │   ├── profile_entity.dart
+│   │   │   │   └── profile_entity.freezed.dart
+│   │   │   └── repositories
+│   │   │       └── profile_repository.dart
 │   │   └── presentation
+│   │       ├── controllers
+│   │       │   └── profile_controller.dart
 │   │       ├── pages
 │   │       │   ├── about_us_page.dart
 │   │       │   ├── edit_profile_page.dart

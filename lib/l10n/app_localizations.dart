@@ -880,6 +880,12 @@ abstract class AppLocalizations {
   /// **'Revenue'**
   String get statsRevenue;
 
+  /// No description provided for @statsConfirmedBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed Bookings'**
+  String get statsConfirmedBookings;
+
   /// No description provided for @statsTitle.
   ///
   /// In en, this message translates to:

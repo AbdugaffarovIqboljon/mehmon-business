@@ -4,15 +4,42 @@ part 'stats_model.freezed.dart';
 part 'stats_model.g.dart';
 
 @freezed
-abstract class StatsModel with _$StatsModel {
-  const factory StatsModel({
-    @JsonKey(name: 'total_bookings') required int totalBookings,
-    @JsonKey(name: 'total_guests') required int totalGuests,
-    @JsonKey(name: 'occupancy_rate') required double occupancyRate,
-    required double revenue,
-    @Default('daily') String period,
-  }) = _StatsModel;
+abstract class AnalyticsPeriodModel with _$AnalyticsPeriodModel {
+  const factory AnalyticsPeriodModel({
+    @JsonKey(name: 'start_date') required String startDate,
+    @JsonKey(name: 'end_date') required String endDate,
+  }) = _AnalyticsPeriodModel;
 
-  factory StatsModel.fromJson(Map<String, dynamic> json) =>
-      _$StatsModelFromJson(json);
+  factory AnalyticsPeriodModel.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsPeriodModelFromJson(json);
+}
+
+@freezed
+abstract class AnalyticsSummaryModel with _$AnalyticsSummaryModel {
+  const factory AnalyticsSummaryModel({
+    @JsonKey(name: 'total_bookings') required int totalBookings,
+    @JsonKey(name: 'confirmed_bookings') required int confirmedBookings,
+    @JsonKey(name: 'pending_bookings') required int pendingBookings,
+    @JsonKey(name: 'total_guests') required int totalGuests,
+    @JsonKey(name: 'total_tables') required int totalTables,
+    @JsonKey(name: 'occupancy_rate') required double occupancyRate,
+  }) = _AnalyticsSummaryModel;
+
+  factory AnalyticsSummaryModel.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsSummaryModelFromJson(json);
+}
+
+@freezed
+abstract class AnalyticsReportModel with _$AnalyticsReportModel {
+  const factory AnalyticsReportModel({
+    required AnalyticsPeriodModel period,
+    @JsonKey(name: 'total_bookings') required int totalBookings,
+    required int completed,
+    required int cancelled,
+    @JsonKey(name: 'total_guests') required int totalGuests,
+    @Default([]) List<dynamic> bookings,
+  }) = _AnalyticsReportModel;
+
+  factory AnalyticsReportModel.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsReportModelFromJson(json);
 }

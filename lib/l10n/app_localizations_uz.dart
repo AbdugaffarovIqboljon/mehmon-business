@@ -413,6 +413,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get statsRevenue => 'Tushum';
 
   @override
+  String get statsConfirmedBookings => 'Tasdiqlangan bronlar';
+
+  @override
   String get statsTitle => 'Statistika';
 
   @override

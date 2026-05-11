@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:mehmon/core/constants/api_constants.dart';
 import 'package:mehmon/core/errors/api_exception.dart';
+import 'package:mehmon/features/floor/data/models/activity_log_model.dart';
 import 'package:mehmon/features/floor/data/models/floor_model.dart';
+import 'package:mehmon/features/floor/data/models/shift_model.dart';
 
 abstract class FloorRemoteDataSource {
   Future<List<FloorModel>> getTables();
@@ -20,6 +22,20 @@ abstract class FloorRemoteDataSource {
   });
 
   Future<String> deleteTable({required String id});
+
+  Future<List<ActivityLogModel>> getActivityLog();
+
+  Future<List<ShiftModel>> getShifts();
+
+  Future<ShiftModel> createShift({
+    required String staffName,
+    required String startTime,
+    required String endTime,
+    required String date,
+    String? notes,
+  });
+
+  Future<String> deleteShift(String id);
 }
 
 class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
@@ -88,6 +104,65 @@ class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
       final response = await _dio.delete<dynamic>(
         '${ApiConstants.tableById}$id',
       );
+      return (response.data as Map<String, dynamic>)['message'] as String;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<List<ActivityLogModel>> getActivityLog() async {
+    try {
+      final response = await _dio.get<dynamic>(ApiConstants.activityLog);
+      return (response.data as List)
+          .map((e) => ActivityLogModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<List<ShiftModel>> getShifts() async {
+    try {
+      final response = await _dio.get<dynamic>(ApiConstants.shifts);
+      return (response.data as List)
+          .map((e) => ShiftModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<ShiftModel> createShift({
+    required String staffName,
+    required String startTime,
+    required String endTime,
+    required String date,
+    String? notes,
+  }) async {
+    try {
+      final response = await _dio.post<dynamic>(
+        ApiConstants.shifts,
+        data: {
+          'staffName': staffName,
+          'startTime': startTime,
+          'endTime': endTime,
+          'date': date,
+          if (notes != null && notes.isNotEmpty) 'notes': notes,
+        },
+      );
+      return ShiftModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<String> deleteShift(String id) async {
+    try {
+      final response = await _dio.delete<dynamic>(ApiConstants.shiftId(id));
       return (response.data as Map<String, dynamic>)['message'] as String;
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);

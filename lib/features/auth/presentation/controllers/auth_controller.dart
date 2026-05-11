@@ -64,12 +64,11 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
   }
 
   Future<void> loginByPhone({
-    required String name,
     required String phone,
+    required String password,
   }) async {
     state = const AsyncLoading();
-    // name field doubles as password in the simplified phone-only login UX
-    final result = await _repo.login(phone: phone, password: name);
+    final result = await _repo.login(phone: phone, password: password);
     state = result.when(
       success: AsyncData.new,
       error: (f) => AsyncError(f, StackTrace.current),
@@ -77,17 +76,17 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
   }
 
   Future<void> registerByPhone({
-    required String restaurantName,
     required String name,
     required String phone,
+    required String cafeName,
+    required String password,
   }) async {
     state = const AsyncLoading();
-    // name field doubles as password in the simplified phone-only register UX
     final result = await _repo.register(
       name: name,
       phone: phone,
-      cafeName: restaurantName,
-      password: name,
+      cafeName: cafeName,
+      password: password,
     );
     state = result.when(
       success: AsyncData.new,

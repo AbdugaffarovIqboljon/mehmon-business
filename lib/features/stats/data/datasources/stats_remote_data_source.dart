@@ -1,21 +1,48 @@
+import 'package:dio/dio.dart';
+import 'package:mehmon/core/constants/api_constants.dart';
+import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/features/stats/data/models/stats_model.dart';
 
-/// Remote data source contract for statistics.
 abstract class StatsRemoteDataSource {
-  Future<StatsModel> getStats({String period = 'daily'});
+  Future<AnalyticsSummaryModel> getSummary();
+
+  Future<AnalyticsReportModel> getReports({
+    String? startDate,
+    String? endDate,
+  });
 }
 
-/// Dummy implementation returning mock data.
-class DummyStatsRemoteDataSource implements StatsRemoteDataSource {
+class StatsRemoteDataSourceImpl implements StatsRemoteDataSource {
+  const StatsRemoteDataSourceImpl({required Dio dio}) : _dio = dio;
+
+  final Dio _dio;
+
   @override
-  Future<StatsModel> getStats({String period = 'daily'}) async {
-    await Future<void>.delayed(const Duration(milliseconds: 300));
-    return StatsModel(
-      totalBookings: 47,
-      totalGuests: 128,
-      occupancyRate: 0.73,
-      revenue: 4250.50,
-      period: period,
-    );
+  Future<AnalyticsSummaryModel> getSummary() async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(ApiConstants.analyticsSummary);
+      return AnalyticsSummaryModel.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<AnalyticsReportModel> getReports({
+    String? startDate,
+    String? endDate,
+  }) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        ApiConstants.analyticsReports,
+        queryParameters: {
+          if (startDate != null) 'startDate': startDate,
+          if (endDate != null) 'endDate': endDate,
+        },
+      );
+      return AnalyticsReportModel.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
   }
 }

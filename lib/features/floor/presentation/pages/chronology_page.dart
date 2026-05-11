@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
+import 'package:mehmon/features/floor/domain/entities/activity_log_entity.dart';
+import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_event_card.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_event_icon.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_filter_tabs.dart';
@@ -19,36 +22,41 @@ extension ChronologyFilterTypeX on ChronologyFilterType {
   };
 }
 
-class ChronologyPage extends StatefulWidget {
+ChronologyEventType _typeFromAction(String action) {
+  final lower = action.toLowerCase();
+  if (lower.contains('bekor') || lower.contains('cancel')) {
+    return ChronologyEventType.reservationCancelled;
+  }
+  if (lower.contains('yangila') || lower.contains('update')) {
+    return ChronologyEventType.reservationUpdated;
+  }
+  if (lower.contains('keldi') ||
+      lower.contains('arriv') ||
+      lower.contains('check-in') ||
+      lower.contains('checkin')) {
+    return ChronologyEventType.guestArrived;
+  }
+  return ChronologyEventType.reservationCreated;
+}
+
+class ChronologyPage extends ConsumerStatefulWidget {
   const ChronologyPage({super.key});
 
   @override
-  State<ChronologyPage> createState() => _ChronologyPageState();
+  ConsumerState<ChronologyPage> createState() => _ChronologyPageState();
 }
 
-class _ChronologyPageState extends State<ChronologyPage> {
+class _ChronologyPageState extends ConsumerState<ChronologyPage> {
   static const _scrollPhysics = BouncingScrollPhysics(
     parent: AlwaysScrollableScrollPhysics(),
   );
 
   late final ValueNotifier<ChronologyFilterType> _selectedFilter;
-  late final List<_ChronologyEvent> _events;
-  late Map<ChronologyFilterType, List<_ChronologyListItem>> _itemsByFilter;
 
   @override
   void initState() {
     super.initState();
     _selectedFilter = ValueNotifier(ChronologyFilterType.all);
-    _events = _buildMockEvents()..sort(_compareEvents);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _itemsByFilter = {
-      for (final filter in ChronologyFilterType.values)
-        filter: _buildItems(filter, context),
-    };
   }
 
   @override
@@ -62,6 +70,7 @@ class _ChronologyPageState extends State<ChronologyPage> {
     final labels = ChronologyFilterType.values
         .map((item) => item.label)
         .toList();
+    final asyncLogs = ref.watch(activityLogControllerProvider);
 
     return AppScaffold(
       title: AppLocalizations.of(context)!.chronologyTitle,
@@ -75,11 +84,10 @@ class _ChronologyPageState extends State<ChronologyPage> {
                 tabs: labels,
                 selectedTab: selectedFilter.label,
                 onSelected: (label) {
-                  final matchedFilter = ChronologyFilterType.values
-                      .firstWhere(
-                        (item) => item.label == label,
-                        orElse: () => ChronologyFilterType.all,
-                      );
+                  final matchedFilter = ChronologyFilterType.values.firstWhere(
+                    (item) => item.label == label,
+                    orElse: () => ChronologyFilterType.all,
+                  );
                   if (matchedFilter == selectedFilter) {
                     return;
                   }
@@ -90,225 +98,206 @@ class _ChronologyPageState extends State<ChronologyPage> {
           ),
           const SizedBox(height: AppSpacing.md),
           Expanded(
-            child: ValueListenableBuilder<ChronologyFilterType>(
-              valueListenable: _selectedFilter,
-              builder: (context, selectedFilter, _) {
-                final items = _itemsByFilter[selectedFilter] ?? const [];
-                if (items.isEmpty) {
-                  return Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.noActivityYet,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  );
-                }
-      
-                return ListView.builder(
-                  physics: _scrollPhysics,
-                  itemCount: items.length,
-                  cacheExtent: 720,
-                  padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-                    if (item.header != null) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          top: index == 0 ? AppSpacing.sm : AppSpacing.lg,
-                          bottom: AppSpacing.xs,
-                        ),
-                        child: ChronologySectionHeader(title: item.header!),
-                      );
-                    }
-      
-                    final event = item.event!;
-                    return Padding(
-                      padding: const EdgeInsets.only(top: AppSpacing.sm + 2),
-                      child: ChronologyEventCard(
-                        type: event.type,
-                        title: event.type.title,
-                        guestName: event.guestName,
-                        table: event.table,
-                        guestCount: event.guestCount,
-                        reservationNumber: event.reservationNumber,
-                        time: event.time,
-                      ),
-                    );
-                  },
-                );
-              },
+            child: asyncLogs.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => _ChronologyError(
+                message: error.toString(),
+                onRetry: () =>
+                    ref.read(activityLogControllerProvider.notifier).fetchActivityLog(),
+              ),
+              data: (logs) => _ChronologyList(
+                logs: logs,
+                selectedFilter: _selectedFilter,
+                scrollPhysics: _scrollPhysics,
+                onRefresh: () =>
+                    ref.read(activityLogControllerProvider.notifier).fetchActivityLog(),
+              ),
             ),
           ),
         ],
       ),
     );
   }
+}
 
-  int _compareEvents(_ChronologyEvent a, _ChronologyEvent b) {
-    final dateCompare = b.date.compareTo(a.date);
-    if (dateCompare != 0) {
-      return dateCompare;
-    }
-    return _timeToMinutes(b.time).compareTo(_timeToMinutes(a.time));
+class _ChronologyList extends StatelessWidget {
+  const _ChronologyList({
+    required this.logs,
+    required this.selectedFilter,
+    required this.scrollPhysics,
+    required this.onRefresh,
+  });
+
+  final List<ActivityLogEntity> logs;
+  final ValueNotifier<ChronologyFilterType> selectedFilter;
+  final ScrollPhysics scrollPhysics;
+  final Future<void> Function() onRefresh;
+
+  @override
+  Widget build(BuildContext context) {
+    final sorted = [...logs]..sort((a, b) {
+      final aDate = a.createdAtDateTime ?? DateTime.fromMillisecondsSinceEpoch(0);
+      final bDate = b.createdAtDateTime ?? DateTime.fromMillisecondsSinceEpoch(0);
+      return bDate.compareTo(aDate);
+    });
+
+    return ValueListenableBuilder<ChronologyFilterType>(
+      valueListenable: selectedFilter,
+      builder: (context, filter, _) {
+        final items = _buildItems(filter, sorted, context);
+        if (items.isEmpty) {
+          return RefreshIndicator(
+            onRefresh: onRefresh,
+            child: ListView(
+              physics: scrollPhysics,
+              children: [
+                const SizedBox(height: 120),
+                Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.noActivityYet,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: onRefresh,
+          child: ListView.builder(
+            physics: scrollPhysics,
+            itemCount: items.length,
+            cacheExtent: 720,
+            padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+            itemBuilder: (context, index) {
+              final item = items[index];
+              if (item.header != null) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    top: index == 0 ? AppSpacing.sm : AppSpacing.lg,
+                    bottom: AppSpacing.xs,
+                  ),
+                  child: ChronologySectionHeader(title: item.header!),
+                );
+              }
+
+              final log = item.log!;
+              final type = _typeFromAction(log.action);
+              final date = log.createdAtDateTime ?? DateTime.now();
+              final time =
+                  '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+              return Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.sm + 2),
+                child: ChronologyEventCard(
+                  type: type,
+                  title: log.action,
+                  guestName: log.performedBy,
+                  table: 0,
+                  guestCount: 0,
+                  reservationNumber: 0,
+                  time: time,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 
   List<_ChronologyListItem> _buildItems(
     ChronologyFilterType filter,
+    List<ActivityLogEntity> sorted,
     BuildContext context,
   ) {
-    final filteredEvents = _events.where(
-      (event) => _matchesFilter(filter, event),
-    );
+    final filtered = sorted.where((log) => _matchesFilter(filter, log));
     final items = <_ChronologyListItem>[];
     String? currentDateTitle;
 
-    for (final event in filteredEvents) {
-      final dateTitle = _dateLabel(event.date, context);
+    for (final log in filtered) {
+      final date = log.createdAtDateTime ?? DateTime.now();
+      final dateTitle = _dateLabel(date, context);
       if (currentDateTitle != dateTitle) {
         currentDateTitle = dateTitle;
         items.add(_ChronologyListItem.header(dateTitle));
       }
-      items.add(_ChronologyListItem.event(event));
+      items.add(_ChronologyListItem.log(log));
     }
-
     return items;
   }
 
-  bool _matchesFilter(ChronologyFilterType filter, _ChronologyEvent event) {
+  bool _matchesFilter(ChronologyFilterType filter, ActivityLogEntity log) {
     if (filter == ChronologyFilterType.all) {
       return true;
     }
+    final type = _typeFromAction(log.action);
     if (filter == ChronologyFilterType.reservations) {
-      return event.type == ChronologyEventType.reservationCreated ||
-          event.type == ChronologyEventType.guestArrived;
+      return type == ChronologyEventType.reservationCreated ||
+          type == ChronologyEventType.guestArrived;
     }
     if (filter == ChronologyFilterType.updates) {
-      return event.type == ChronologyEventType.reservationUpdated;
+      return type == ChronologyEventType.reservationUpdated;
     }
-    return event.type == ChronologyEventType.reservationCancelled;
+    return type == ChronologyEventType.reservationCancelled;
   }
 
   String _dateLabel(DateTime date, BuildContext context) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    if (DateUtils.isSameDay(date, today)) {
+    final dayOnly = DateTime(date.year, date.month, date.day);
+    if (DateUtils.isSameDay(dayOnly, today)) {
       return AppLocalizations.of(context)!.todayLabel;
     }
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     return '$day.$month.${date.year}';
   }
-
-  int _timeToMinutes(String time) {
-    final parts = time.split(':');
-    if (parts.length != 2) {
-      return 0;
-    }
-    final hours = int.tryParse(parts[0]) ?? 0;
-    final minutes = int.tryParse(parts[1]) ?? 0;
-    return (hours * 60) + minutes;
-  }
-
-  List<_ChronologyEvent> _buildMockEvents() {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final previousDate = DateTime(2026, 2, 17);
-
-    return [
-      _ChronologyEvent(
-        type: ChronologyEventType.reservationCreated,
-        guestName: 'Mina Cooper',
-        table: 4,
-        guestCount: 2,
-        reservationNumber: 14,
-        time: '19:00',
-        date: today,
-      ),
-      _ChronologyEvent(
-        type: ChronologyEventType.guestArrived,
-        guestName: 'Mina Cooper',
-        table: 4,
-        guestCount: 2,
-        reservationNumber: 14,
-        time: '17:00',
-        date: today,
-      ),
-      _ChronologyEvent(
-        type: ChronologyEventType.reservationCancelled,
-        guestName: 'Mina Cooper',
-        table: 4,
-        guestCount: 2,
-        reservationNumber: 14,
-        time: '17:00',
-        date: previousDate,
-      ),
-      _ChronologyEvent(
-        type: ChronologyEventType.reservationUpdated,
-        guestName: 'Mina Cooper',
-        table: 4,
-        guestCount: 2,
-        reservationNumber: 14,
-        time: '16:00',
-        date: previousDate,
-      ),
-      _ChronologyEvent(
-        type: ChronologyEventType.reservationUpdated,
-        guestName: 'Mina Cooper',
-        table: 4,
-        guestCount: 2,
-        reservationNumber: 14,
-        time: '13:00',
-        date: previousDate,
-      ),
-      _ChronologyEvent(
-        type: ChronologyEventType.reservationUpdated,
-        guestName: 'Mina Cooper',
-        table: 4,
-        guestCount: 2,
-        reservationNumber: 14,
-        time: '12:00',
-        date: previousDate,
-      ),
-      _ChronologyEvent(
-        type: ChronologyEventType.reservationCreated,
-        guestName: 'Emma Johnson',
-        table: 7,
-        guestCount: 4,
-        reservationNumber: 19,
-        time: '11:20',
-        date: previousDate,
-      ),
-    ];
-  }
 }
 
-class _ChronologyEvent {
-  const _ChronologyEvent({
-    required this.type,
-    required this.guestName,
-    required this.table,
-    required this.guestCount,
-    required this.reservationNumber,
-    required this.time,
-    required this.date,
-  });
+class _ChronologyError extends StatelessWidget {
+  const _ChronologyError({required this.message, required this.onRetry});
 
-  final ChronologyEventType type;
-  final String guestName;
-  final int table;
-  final int guestCount;
-  final int reservationNumber;
-  final String time;
-  final DateTime date;
+  final String message;
+  final Future<void> Function() onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 48,
+              color: AppColors.textSecondary,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            FilledButton(onPressed: onRetry, child: const Text('Retry')),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _ChronologyListItem {
-  const _ChronologyListItem.header(this.header) : event = null;
-
-  const _ChronologyListItem.event(this.event) : header = null;
+  const _ChronologyListItem.header(this.header) : log = null;
+  const _ChronologyListItem.log(this.log) : header = null;
 
   final String? header;
-  final _ChronologyEvent? event;
+  final ActivityLogEntity? log;
 }

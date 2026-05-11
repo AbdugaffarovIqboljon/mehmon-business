@@ -14,6 +14,7 @@ import 'package:mehmon/features/floor/presentation/pages/chronology_page.dart';
 import 'package:mehmon/features/floor/presentation/pages/dashboard_page.dart';
 import 'package:mehmon/features/floor/presentation/pages/floor_page.dart';
 import 'package:mehmon/features/floor/presentation/pages/floor_placeholder_page.dart';
+import 'package:mehmon/features/floor/presentation/pages/shifts_page.dart';
 import 'package:mehmon/features/guests/domain/entities/guest_entity.dart';
 import 'package:mehmon/features/guests/presentation/pages/guest_detail_page.dart';
 import 'package:mehmon/features/guests/presentation/pages/guests_page.dart';
@@ -93,9 +94,7 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
       GoRoute(
         name: RouteNames.floorShifts,
         path: RoutePaths.floorShifts,
-        builder: (context, state) => FloorPlaceholderPage(
-          title: AppLocalizations.of(context)!.drawerShifts,
-        ),
+        builder: (context, state) => const ShiftsPage(),
       ),
       GoRoute(
         name: RouteNames.floorPosIntegration,
