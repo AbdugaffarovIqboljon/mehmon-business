@@ -5,7 +5,7 @@ import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/floor/domain/entities/activity_log_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
-import 'package:mehmon/features/floor/presentation/widgets/chronology_event_card.dart';
+import 'package:mehmon/features/floor/presentation/widgets/activity_event_card.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_event_icon.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_filter_tabs.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_section_header.dart';
@@ -186,21 +186,9 @@ class _ChronologyList extends StatelessWidget {
               }
 
               final log = item.log!;
-              final type = _typeFromAction(log.action);
-              final date = log.createdAtDateTime ?? DateTime.now();
-              final time =
-                  '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
               return Padding(
                 padding: const EdgeInsets.only(top: AppSpacing.sm + 2),
-                child: ChronologyEventCard(
-                  type: type,
-                  title: log.action,
-                  guestName: log.performedBy,
-                  table: 0,
-                  guestCount: 0,
-                  reservationNumber: 0,
-                  time: time,
-                ),
+                child: ActivityEventCard(entity: log),
               );
             },
           ),

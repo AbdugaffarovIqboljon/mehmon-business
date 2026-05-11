@@ -9,17 +9,25 @@ import 'package:mehmon/features/bookings/presentation/controllers/booking_contro
 
 class MockBookingRepository implements BookingRepository {
   List<BookingEntity> mockBookings = [
-    BookingEntity(
+    const BookingEntity(
       id: 'bk_test_01',
       guestName: 'Test Guest',
-      dateTime: DateTime(2026, 3, 1, 19),
-      partySize: 4,
+      phone: '+998901234567',
+      date: '2026-03-01',
+      timeSlot: '19:00',
+      numberOfGuests: 4,
       status: 'confirmed',
+      createdAt: '2026-03-01T00:00:00Z',
     ),
-    BookingEntity(
+    const BookingEntity(
       id: 'bk_test_02',
       guestName: 'Another Guest',
-      dateTime: DateTime(2026, 3, 1, 20),
+      phone: '+998901234568',
+      date: '2026-03-01',
+      timeSlot: '20:00',
+      numberOfGuests: 2,
+      status: 'confirmed',
+      createdAt: '2026-03-01T00:00:00Z',
     ),
   ];
 
@@ -29,18 +37,62 @@ class MockBookingRepository implements BookingRepository {
   }
 
   @override
-  Future<Result<BookingEntity>> getBookingById(String id) async {
-    return Success(mockBookings.first);
+  Future<Result<BookingEntity>> createBooking({
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    String? endTime,
+    String? bookingType,
+    String? notes,
+  }) async {
+    return Success(
+      BookingEntity(
+        id: 'bk_new',
+        guestName: guestName,
+        phone: phone,
+        date: date,
+        timeSlot: timeSlot,
+        numberOfGuests: numberOfGuests,
+        status: 'confirmed',
+        createdAt: '2026-03-01T00:00:00Z',
+      ),
+    );
   }
 
   @override
-  Future<Result<BookingEntity>> createBooking(BookingEntity booking) async {
-    return Success(booking);
+  Future<Result<BookingEntity>> updateBooking({
+    required String id,
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    required String status,
+    String? endTime,
+    String? bookingType,
+    String? notes,
+  }) async {
+    return Success(
+      BookingEntity(
+        id: id,
+        guestName: guestName,
+        phone: phone,
+        date: date,
+        timeSlot: timeSlot,
+        numberOfGuests: numberOfGuests,
+        status: status,
+        createdAt: '2026-03-01T00:00:00Z',
+      ),
+    );
   }
 
   @override
-  Future<Result<void>> cancelBooking(String id) async {
-    return const Success(null);
+  Future<Result<String>> deleteBooking({required String id}) async {
+    return Success(id);
   }
 }
 

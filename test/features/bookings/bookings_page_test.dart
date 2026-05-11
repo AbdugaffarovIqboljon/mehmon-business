@@ -17,23 +17,67 @@ class _FakeBookingRepository implements BookingRepository {
   final List<BookingEntity> bookings;
 
   @override
-  Future<Result<void>> cancelBooking(String id) async {
-    return const Success(null);
-  }
-
-  @override
-  Future<Result<BookingEntity>> createBooking(BookingEntity booking) async {
-    return Success(booking);
-  }
-
-  @override
-  Future<Result<BookingEntity>> getBookingById(String id) async {
-    return Success(bookings.first);
-  }
-
-  @override
   Future<Result<List<BookingEntity>>> getBookings() async {
     return Success(bookings);
+  }
+
+  @override
+  Future<Result<BookingEntity>> createBooking({
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    String? endTime,
+    String? bookingType,
+    String? notes,
+  }) async {
+    return Success(
+      BookingEntity(
+        id: 'bk_new',
+        guestName: guestName,
+        phone: phone,
+        date: date,
+        timeSlot: timeSlot,
+        numberOfGuests: numberOfGuests,
+        status: 'confirmed',
+        createdAt: '2026-01-01T00:00:00Z',
+      ),
+    );
+  }
+
+  @override
+  Future<Result<BookingEntity>> updateBooking({
+    required String id,
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    required String status,
+    String? endTime,
+    String? bookingType,
+    String? notes,
+  }) async {
+    return Success(
+      BookingEntity(
+        id: id,
+        guestName: guestName,
+        phone: phone,
+        date: date,
+        timeSlot: timeSlot,
+        numberOfGuests: numberOfGuests,
+        status: status,
+        createdAt: '2026-01-01T00:00:00Z',
+      ),
+    );
+  }
+
+  @override
+  Future<Result<String>> deleteBooking({required String id}) async {
+    return Success(id);
   }
 }
 
@@ -177,17 +221,28 @@ Future<ProviderContainer> _pumpBookingsPage(
 List<BookingEntity> _sampleBookings() {
   final now = DateTime.now();
   final day = DateTime(now.year, now.month, now.day);
+  final dateStr =
+      '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
   return [
     BookingEntity(
       id: 'b_1',
       guestName: 'Guest 1',
-      dateTime: day.add(const Duration(hours: 10)),
+      phone: '+998901234567',
+      date: dateStr,
+      timeSlot: '10:00',
+      numberOfGuests: 2,
       status: 'confirmed',
+      createdAt: '2026-01-01T00:00:00Z',
     ),
     BookingEntity(
       id: 'b_2',
       guestName: 'Guest 2',
-      dateTime: day.add(const Duration(hours: 14)),
+      phone: '+998901234568',
+      date: dateStr,
+      timeSlot: '14:00',
+      numberOfGuests: 2,
+      status: 'confirmed',
+      createdAt: '2026-01-01T00:00:00Z',
     ),
   ];
 }
