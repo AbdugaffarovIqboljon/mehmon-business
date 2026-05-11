@@ -22,6 +22,7 @@ abstract class GuestRemoteDataSource {
     required String phone,
     String? email,
     String? notes,
+    String? avatarUrl,
   });
 
   Future<String> deleteGuest({required String id});
@@ -87,6 +88,7 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
     required String phone,
     String? email,
     String? notes,
+    String? avatarUrl,
   }) async {
     try {
       final response = await _dio.put<dynamic>(
@@ -96,6 +98,7 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
           'phone': phone,
           if (email != null) 'email': email,
           if (notes != null) 'notes': notes,
+          if (avatarUrl != null && avatarUrl.isNotEmpty) 'avatarUrl': avatarUrl,
         },
       );
       return GuestModel.fromJson(response.data as Map<String, dynamic>);

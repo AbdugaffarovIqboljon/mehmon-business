@@ -7,6 +7,7 @@ import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/guests/presentation/controllers/guest_controller.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_card.dart';
+import 'package:mehmon/features/guests/presentation/widgets/guest_form_sheet.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guests_segmented_control.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
@@ -15,10 +16,21 @@ class GuestsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const AppScaffold(
+    return AppScaffold(
       showAppBar: false,
       usePadding: false,
-      body: _GuestsBody(),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'add_guest',
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        onPressed: () => showModalBottomSheet<void>(
+          context: context,
+          isScrollControlled: true,
+          builder: (_) => const GuestFormSheet(),
+        ),
+        child: const Icon(Icons.person_add_outlined),
+      ),
+      body: const _GuestsBody(),
     );
   }
 }

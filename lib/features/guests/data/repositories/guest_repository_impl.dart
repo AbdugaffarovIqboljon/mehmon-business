@@ -89,6 +89,7 @@ class GuestRepositoryImpl implements GuestRepository {
     required String phone,
     String? email,
     String? notes,
+    String? avatarUrl,
   }) async {
     try {
       final model = await _dataSource.updateGuest(
@@ -97,6 +98,7 @@ class GuestRepositoryImpl implements GuestRepository {
         phone: phone,
         email: email,
         notes: notes,
+        avatarUrl: avatarUrl,
       );
       return Success(_toEntity(model));
     } on ApiException catch (e) {

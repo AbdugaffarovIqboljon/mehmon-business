@@ -6,6 +6,7 @@ import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/models/floor_table_config.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_table_widget.dart';
+import 'package:mehmon/features/floor/presentation/widgets/table_options_sheet.dart';
 
 /// The floor map area that positions table widgets using [Stack] + [Positioned].
 ///
@@ -40,9 +41,22 @@ class _FloorMapCanvasState extends State<FloorMapCanvas> {
     super.dispose();
   }
 
-  void _onTableTap(String tableId) {
-    if (_selectedTableNotifier.value == tableId) return;
+  void _onTableTap(BuildContext context, String tableId) {
     _selectedTableNotifier.value = tableId;
+
+    FloorEntity? entity;
+    for (final e in widget.tables ?? const <FloorEntity>[]) {
+      if (e.id == tableId) {
+        entity = e;
+        break;
+      }
+    }
+    if (entity == null) return;
+
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => TableOptionsSheet(table: entity!),
+    );
   }
 
   List<FloorTableConfig> get _configs {
@@ -109,7 +123,7 @@ class _FloorMapCanvasState extends State<FloorMapCanvas> {
                     child: FloorTableWidget(
                       config: table,
                       selectedNotifier: _selectedTableNotifier,
-                      onTap: () => _onTableTap(table.id),
+                      onTap: () => _onTableTap(context, table.id),
                     ),
                   ),
               ],

@@ -8,6 +8,7 @@ import 'package:mehmon/features/floor/presentation/models/floor_drawer_destinati
 import 'package:mehmon/features/floor/presentation/widgets/floor_drawer.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_map_canvas.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_timeline_header.dart';
+import 'package:mehmon/features/floor/presentation/widgets/table_form_sheet.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 /// Main floor page showing the restaurant hall layout with an
@@ -134,6 +135,15 @@ class _FloorPageState extends ConsumerState<FloorPage>
         onLogoutTap: () => _showNotReadyMessage(
           AppLocalizations.of(context)!.logOutImplNextStep,
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'add_table',
+        onPressed: () => showModalBottomSheet<void>(
+          context: context,
+          isScrollControlled: true,
+          builder: (_) => const TableFormSheet(),
+        ),
+        child: const Icon(Icons.add),
       ),
       body: Column(
         children: [

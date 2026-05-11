@@ -8,6 +8,7 @@ import 'package:mehmon/features/guests/domain/entities/guest_entity.dart';
 import 'package:mehmon/features/guests/presentation/controllers/guest_controller.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_avatar.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_contact_row.dart';
+import 'package:mehmon/features/guests/presentation/widgets/guest_form_sheet.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_notes_card.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_visit_history_card.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
@@ -20,19 +21,49 @@ class GuestDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final guestsAsync = ref.watch(guestControllerProvider);
-    final guest = initialGuest ?? ref.watch(guestByIdProvider(guestId));
+    final detailAsync = ref.watch(guestDetailProvider(guestId));
+    final guest = detailAsync.asData?.value
+        ?? initialGuest
+        ?? ref.watch(guestByIdProvider(guestId));
 
     if (guest == null) {
       return AppScaffold(
         showAppBar: false,
         usePadding: false,
-        body: guestsAsync.when(
+        body: detailAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (_, __) => _GuestNotFoundState(onBack: context.pop),
           data: (_) => _GuestNotFoundState(onBack: context.pop),
         ),
       );
+    }
+
+    Future<void> confirmDelete() async {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Mehmonni o'chirish"),
+          content: Text("${guest.name} o'chirilsinmi?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Bekor qilish'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: TextButton.styleFrom(foregroundColor: AppColors.error),
+              child: const Text("O'chirish"),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed ?? false) {
+        await ref
+            .read(guestControllerProvider.notifier)
+            .deleteGuest(id: guest.id);
+        if (context.mounted) context.pop();
+      }
     }
 
     final contacts = <Widget>[];
@@ -53,6 +84,21 @@ class GuestDetailPage extends ConsumerWidget {
     return AppScaffold(
       usePadding: false,
       title: AppLocalizations.of(context)!.guestInfoTitle,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.edit_outlined),
+          onPressed: () => showModalBottomSheet<void>(
+            context: context,
+            isScrollControlled: true,
+            builder: (_) => GuestFormSheet(existingGuest: guest),
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.delete_outline),
+          color: AppColors.error,
+          onPressed: confirmDelete,
+        ),
+      ],
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
