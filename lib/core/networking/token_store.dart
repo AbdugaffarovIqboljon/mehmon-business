@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mehmon/core/local/shared_prefs_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Abstraction for token persistence.
 ///
@@ -50,37 +49,38 @@ class InMemoryTokenStore implements TokenStore {
   Future<bool> get hasToken async => (await getAccessToken()) != null;
 }
 
-/// SharedPreferences-backed implementation for production use.
-class SharedPrefsTokenStore implements TokenStore {
-  SharedPrefsTokenStore(this._prefs);
-
-  final SharedPreferences _prefs;
+/// Secure storage–backed implementation for production use.
+/// Uses Keychain on iOS and EncryptedSharedPreferences on Android.
+class SecureTokenStore implements TokenStore {
+  final FlutterSecureStorage _storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
 
   static const String _accessTokenKey = 'access_token';
   static const String _refreshTokenKey = 'refresh_token';
 
   @override
-  Future<String?> getAccessToken() async => _prefs.getString(_accessTokenKey);
+  Future<String?> getAccessToken() => _storage.read(key: _accessTokenKey);
 
   @override
-  Future<String?> getRefreshToken() async => _prefs.getString(_refreshTokenKey);
+  Future<String?> getRefreshToken() => _storage.read(key: _refreshTokenKey);
 
   @override
   Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,
   }) async {
-    await Future.wait([
-      _prefs.setString(_accessTokenKey, accessToken),
-      _prefs.setString(_refreshTokenKey, refreshToken),
+    await Future.wait<void>([
+      _storage.write(key: _accessTokenKey, value: accessToken),
+      _storage.write(key: _refreshTokenKey, value: refreshToken),
     ]);
   }
 
   @override
   Future<void> clearTokens() async {
-    await Future.wait([
-      _prefs.remove(_accessTokenKey),
-      _prefs.remove(_refreshTokenKey),
+    await Future.wait<void>([
+      _storage.delete(key: _accessTokenKey),
+      _storage.delete(key: _refreshTokenKey),
     ]);
   }
 
@@ -88,7 +88,4 @@ class SharedPrefsTokenStore implements TokenStore {
   Future<bool> get hasToken async => (await getAccessToken()) != null;
 }
 
-final tokenStoreProvider = Provider<TokenStore>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return SharedPrefsTokenStore(prefs);
-});
+final tokenStoreProvider = Provider<TokenStore>((ref) => SecureTokenStore());

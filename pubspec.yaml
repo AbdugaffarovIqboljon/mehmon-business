@@ -22,6 +22,7 @@ dependencies:
   json_annotation: ^4.9.0
   riverpod_annotation: ^2.6.1
   sentry_flutter: ^8.13.0
+  flutter_secure_storage: ^9.2.2
   shared_preferences: ^2.5.4
   syncfusion_flutter_calendar: ^28.2.5
 
