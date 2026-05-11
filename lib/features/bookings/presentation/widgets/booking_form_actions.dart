@@ -9,11 +9,13 @@ class BookingFormActions extends StatelessWidget {
     required this.onConfirm,
     super.key,
     this.isConfirmEnabled = true,
+    this.confirmLabel = 'Confirm',
   });
 
   final VoidCallback onCancel;
   final VoidCallback onConfirm;
   final bool isConfirmEnabled;
+  final String confirmLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,7 @@ class BookingFormActions extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            child: const Text('Confirm'),
+            child: Text(confirmLabel),
           ),
         ),
       ],

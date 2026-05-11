@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 
 class StatisticsChart extends StatelessWidget {
-  const StatisticsChart({required this.dataPoints, super.key});
+  const StatisticsChart({
+    required this.dataPoints,
+    this.dateLabels,
+    super.key,
+  });
 
   final List<FlSpot> dataPoints;
+  final List<String>? dateLabels;
 
   static const _axisLabelByX = <int, String>{
     0: '10:00',
@@ -20,8 +25,19 @@ class StatisticsChart extends StatelessWidget {
     return (value - value.roundToDouble()).abs() < epsilon;
   }
 
+  double get _maxX =>
+      dataPoints.isEmpty ? 4 : (dataPoints.length - 1).toDouble();
+
+  double get _maxY {
+    if (dataPoints.isEmpty) return 4.05;
+    final maxVal = dataPoints.fold<double>(0, (m, s) => s.y > m ? s.y : m);
+    return maxVal <= 0 ? 4.05 : (maxVal.ceil() + 0.5);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final maxX = _maxX;
+    final maxY = _maxY;
     final selectedSpot = dataPoints.isNotEmpty ? dataPoints.last : null;
     final axisStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
       color: AppColors.textPrimary,
@@ -36,9 +52,9 @@ class StatisticsChart extends StatelessWidget {
           child: LineChart(
             LineChartData(
               minX: 0,
-              maxX: 4,
+              maxX: maxX,
               minY: 0,
-              maxY: 4.05,
+              maxY: maxY,
               lineTouchData: const LineTouchData(
                 enabled: false,
                 handleBuiltInTouches: false,
@@ -46,9 +62,11 @@ class StatisticsChart extends StatelessWidget {
               gridData: FlGridData(
                 drawHorizontalLine: false,
                 verticalInterval: 1,
-                checkToShowVerticalLine: (value) =>
-                    _isWholeTick(value) &&
-                    _axisLabelByX.containsKey(value.round()),
+                checkToShowVerticalLine: (value) {
+                  if (!_isWholeTick(value)) return false;
+                  final idx = value.round();
+                  return idx >= 0 && idx < dataPoints.length;
+                },
                 getDrawingVerticalLine: (_) => FlLine(
                   color: AppColors.primary.withValues(alpha: 0.2),
                   strokeWidth: 1,
@@ -67,7 +85,15 @@ class StatisticsChart extends StatelessWidget {
                       if (!_isWholeTick(value)) {
                         return const SizedBox.shrink();
                       }
-                      final label = _axisLabelByX[value.round()];
+                      final idx = value.round();
+                      final String? label;
+                      if (dateLabels != null &&
+                          idx >= 0 &&
+                          idx < dateLabels!.length) {
+                        label = dateLabels![idx];
+                      } else {
+                        label = _axisLabelByX[idx];
+                      }
                       if (label == null) return const SizedBox.shrink();
                       return SideTitleWidget(
                         meta: meta,

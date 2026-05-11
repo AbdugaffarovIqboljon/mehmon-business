@@ -38,9 +38,13 @@ Future<BookATableFormPayload?> showBookATableSheet(
   BuildContext context, {
   DateTime? initialDate,
   List<String> timeSlots = defaultBookingTimes,
+  BookingEntity? existingBooking,
 }) {
   final normalizedInitialDate = DateUtils.dateOnly(
-    initialDate ?? DateTime.now(),
+    initialDate ??
+        (existingBooking != null
+            ? DateTime.tryParse(existingBooking.date) ?? DateTime.now()
+            : DateTime.now()),
   );
 
   return showModalBottomSheet<BookATableFormPayload>(
@@ -67,7 +71,10 @@ Future<BookATableFormPayload?> showBookATableSheet(
                 normalizedInitialDate,
               ),
             ],
-            child: BookATableSheet(timeSlots: timeSlots),
+            child: BookATableSheet(
+              timeSlots: timeSlots,
+              existingBooking: existingBooking,
+            ),
           ),
         ),
       );
@@ -102,9 +109,14 @@ class BookATableFormPayload {
 }
 
 class BookATableSheet extends ConsumerStatefulWidget {
-  const BookATableSheet({required this.timeSlots, super.key});
+  const BookATableSheet({
+    required this.timeSlots,
+    super.key,
+    this.existingBooking,
+  });
 
   final List<String> timeSlots;
+  final BookingEntity? existingBooking;
 
   @override
   ConsumerState<BookATableSheet> createState() => _BookATableSheetState();
@@ -126,16 +138,50 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   String? _selectedEndTime;
   BookingType _selectedBookingType = BookingType.standard;
   FloorEntity? _selectedTable;
+  bool _tablePreFilled = false;
 
   @override
   void initState() {
     super.initState();
-    _guestCount = _initialGuests;
-    _selectedTime = widget.timeSlots.contains('18:00')
-        ? '18:00'
-        : widget.timeSlots.first;
-    UzbekPhoneInput.seedController(_phoneController);
+    final existing = widget.existingBooking;
+    if (existing == null) {
+      _guestCount = _initialGuests;
+      _selectedTime = widget.timeSlots.contains('18:00')
+          ? '18:00'
+          : widget.timeSlots.first;
+      UzbekPhoneInput.seedController(_phoneController);
+    } else {
+      _guestNameController.text = existing.guestName;
+      final localDigits = UzbekPhoneInput.extractLocalDigits(existing.phone);
+      _phoneController.text = UzbekPhoneInput.formatLocalDigits(localDigits);
+      _selectedBookingType = existing.bookingType ?? BookingType.standard;
+      _guestCount = existing.numberOfGuests;
+      _selectedTime = widget.timeSlots.contains(existing.timeSlot)
+          ? existing.timeSlot
+          : (widget.timeSlots.isNotEmpty ? widget.timeSlots.first : '18:00');
+      _selectedEndTime = existing.endTime;
+      _notesController.text = existing.notes ?? '';
+      if (existing.tableInfo != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _tryPreFillTable());
+      }
+    }
     _lastPhoneValue = _phoneController.text;
+  }
+
+  void _tryPreFillTable() {
+    if (!mounted || _tablePreFilled) return;
+    final tableId = widget.existingBooking?.tableInfo?.id;
+    if (tableId == null) return;
+    final floors = ref.read(floorControllerProvider).valueOrNull ?? [];
+    for (final floor in floors) {
+      if (floor.id == tableId) {
+        setState(() {
+          _selectedTable = floor;
+          _tablePreFilled = true;
+        });
+        return;
+      }
+    }
   }
 
   @override
@@ -199,31 +245,56 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
 
     final dateState = ref.read(bookATableDateControllerProvider);
     final dateStr = DateFormat('yyyy-MM-dd').format(dateState.selectedDate);
+    final endTime =
+        _selectedBookingType == BookingType.banket ? _selectedEndTime : null;
+    final notes = _notesController.text.trim().isEmpty
+        ? null
+        : _notesController.text.trim();
+    final existing = widget.existingBooking;
 
-    final success = await ref
-        .read(bookingControllerProvider.notifier)
-        .createBooking(
-          guestName: guestName,
-          phone: UzbekPhoneInput.toE164(phone),
-          tableId: _selectedTable!.id,
-          date: dateStr,
-          timeSlot: _selectedTime,
-          numberOfGuests: _guestCount,
-          endTime: _selectedBookingType == BookingType.banket
-              ? _selectedEndTime
-              : null,
-          bookingType: _selectedBookingType.apiValue,
-          notes: _notesController.text.trim().isEmpty
-              ? null
-              : _notesController.text.trim(),
-        );
+    final bool success;
+    if (existing != null) {
+      success = await ref
+          .read(bookingControllerProvider.notifier)
+          .updateBooking(
+            id: existing.id,
+            guestName: guestName,
+            phone: UzbekPhoneInput.toE164(phone),
+            tableId: _selectedTable!.id,
+            date: dateStr,
+            timeSlot: _selectedTime,
+            numberOfGuests: _guestCount,
+            status: existing.status,
+            endTime: endTime,
+            bookingType: _selectedBookingType.apiValue,
+            notes: notes,
+          );
+    } else {
+      success = await ref
+          .read(bookingControllerProvider.notifier)
+          .createBooking(
+            guestName: guestName,
+            phone: UzbekPhoneInput.toE164(phone),
+            tableId: _selectedTable!.id,
+            date: dateStr,
+            timeSlot: _selectedTime,
+            numberOfGuests: _guestCount,
+            endTime: endTime,
+            bookingType: _selectedBookingType.apiValue,
+            notes: notes,
+          );
+    }
 
     if (!mounted) return;
 
     if (success) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Bron qo'shildi")),
+        SnackBar(
+          content: Text(
+            existing != null ? 'Bron yangilandi' : "Bron qo'shildi",
+          ),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -238,6 +309,9 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     final textTheme = Theme.of(context).textTheme;
     final dateState = ref.watch(bookATableDateControllerProvider);
     final dateController = ref.read(bookATableDateControllerProvider.notifier);
+    final isEditMode = widget.existingBooking != null;
+
+    ref.listen(floorControllerProvider, (_, __) => _tryPreFillTable());
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -267,7 +341,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                   ),
                   Center(
                     child: Text(
-                      loc.bookATable,
+                      isEditMode ? 'Bronni tahrirlash' : loc.bookATable,
                       style: textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -419,6 +493,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
             BookingFormActions(
               onCancel: () => Navigator.of(context).pop(),
               onConfirm: _confirm,
+              confirmLabel: isEditMode ? 'Yangilash' : 'Saqlash',
             ),
           ],
         ),

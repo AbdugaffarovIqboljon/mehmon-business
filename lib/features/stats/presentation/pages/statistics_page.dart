@@ -1,11 +1,14 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
+import 'package:mehmon/features/stats/domain/entities/stats_entity.dart';
 import 'package:mehmon/features/stats/presentation/controllers/stats_controller.dart';
 import 'package:mehmon/features/stats/presentation/widgets/stat_summary_card.dart';
+import 'package:mehmon/features/stats/presentation/widgets/statistics_chart.dart';
 import 'package:mehmon/features/stats/presentation/widgets/statistics_date_selector.dart';
 import 'package:mehmon/features/stats/presentation/widgets/statistics_period_selector.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
@@ -100,6 +103,31 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
 
   String _toApiDate(DateTime d) =>
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  static List<FlSpot> _buildSpots(List<ReportBookingEntity> bookings) {
+    final grouped = <String, int>{};
+    for (final b in bookings) {
+      final day = b.date.length >= 10 ? b.date.substring(0, 10) : b.date;
+      grouped[day] = (grouped[day] ?? 0) + 1;
+    }
+    final sortedDates = grouped.keys.toList()..sort();
+    return [
+      for (int i = 0; i < sortedDates.length; i++)
+        FlSpot(i.toDouble(), grouped[sortedDates[i]]!.toDouble()),
+    ];
+  }
+
+  static List<String> _buildDateLabels(List<ReportBookingEntity> bookings) {
+    final uniqueDates = <String>{};
+    for (final b in bookings) {
+      uniqueDates.add(b.date.length >= 10 ? b.date.substring(0, 10) : b.date);
+    }
+    final sortedDates = uniqueDates.toList()..sort();
+    return sortedDates.map((d) {
+      if (d.length >= 10) return '${int.parse(d.substring(8, 10))}';
+      return d;
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,10 +234,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
           const SizedBox(height: AppSpacing.sm),
           if ((reportsAsync.isLoading || summaryAsync.isLoading) &&
               report == null)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
-              child: Center(child: CircularProgressIndicator()),
-            )
+            const _ChartSkeleton()
           else if (reportsAsync.hasError)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
@@ -219,9 +244,47 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                 ),
               ),
             )
+          else if (report == null || report.bookings.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.lg,
+              ),
+              child: Center(
+                child: Text(
+                  "Bu davr uchun ma'lumot yo'q",
+                  style: AppTextStyles.bodyMedium,
+                ),
+              ),
+            )
           else
-            const SizedBox.shrink(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              child: StatisticsChart(
+                dataPoints: _buildSpots(report.bookings),
+                dateLabels: _buildDateLabels(report.bookings),
+              ),
+            ),
         ],
+      ),
+    );
+  }
+}
+
+class _ChartSkeleton extends StatelessWidget {
+  const _ChartSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 204,
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }

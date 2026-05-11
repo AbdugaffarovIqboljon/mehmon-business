@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
+import 'package:mehmon/features/bookings/presentation/widgets/booking_options_sheet.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 class BookingCard extends StatelessWidget {
@@ -41,14 +42,38 @@ class BookingCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                Text(
-                  timeLabel,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF7F8BAA),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                        letterSpacing: 0.1,
+                Expanded(
+                  child: Text(
+                    timeLabel,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: const Color(0xFF7F8BAA),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          letterSpacing: 0.1,
+                        ),
+                  ),
+                ),
+                SizedBox(
+                  width: 32,
+                  height: 32,
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 20,
+                    icon: const Icon(
+                      Icons.more_vert,
+                      color: Color(0xFF7F8BAA),
+                    ),
+                    onPressed: () => showModalBottomSheet<void>(
+                      context: context,
+                      backgroundColor: AppColors.card,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
                       ),
+                      builder: (_) => BookingOptionsSheet(booking: booking),
+                    ),
+                  ),
                 ),
               ],
             ),
