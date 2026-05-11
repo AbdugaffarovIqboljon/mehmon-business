@@ -56,7 +56,11 @@ class BookingCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              booking.bookingType ?? '',
+              switch (booking.bookingType) {
+                BookingType.standard => 'Standard',
+                BookingType.banket => 'Banket',
+                null => '',
+              },
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: const Color(0xFF27304A),
                     fontWeight: FontWeight.w600,

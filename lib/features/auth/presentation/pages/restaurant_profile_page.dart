@@ -74,22 +74,11 @@ class _RestaurantProfilePageState
       return;
     }
 
-    final profile = ref.read(profileControllerProvider).valueOrNull;
-    if (profile == null) {
-      messenger.showSnackBar(
-        const SnackBar(content: Text('Profile not loaded')),
-      );
-      return;
-    }
-
     final imageUrl = _imageUrlController.text.trim();
 
     _isLoading.value = true;
     final success =
         await ref.read(profileControllerProvider.notifier).updateProfile(
-              name: profile.name,
-              phone: profile.phone,
-              cafeName: profile.cafeName,
               institutionType: type,
               address: address,
               openingTime: _formatTime(opening),

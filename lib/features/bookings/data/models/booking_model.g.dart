@@ -34,7 +34,7 @@ _$BookingModelImpl _$$BookingModelImplFromJson(Map<String, dynamic> json) =>
           ? null
           : TableInfoModel.fromJson(json['tableId'] as Map<String, dynamic>),
       endTime: json['endTime'] as String?,
-      bookingType: json['bookingType'] as String?,
+      bookingType: _bookingTypeFromJson(json['bookingType']),
       status: json['status'] as String? ?? 'pending',
       notes: json['notes'] as String?,
     );
@@ -50,7 +50,7 @@ Map<String, dynamic> _$$BookingModelImplToJson(_$BookingModelImpl instance) =>
       'createdAt': instance.createdAt,
       'tableId': instance.tableId,
       'endTime': instance.endTime,
-      'bookingType': instance.bookingType,
+      'bookingType': _bookingTypeToJson(instance.bookingType),
       'status': instance.status,
       'notes': instance.notes,
     };

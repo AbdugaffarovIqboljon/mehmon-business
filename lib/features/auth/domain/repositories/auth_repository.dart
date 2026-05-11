@@ -14,4 +14,6 @@ abstract class AuthRepository {
     required String cafeName,
     required String password,
   });
+
+  Future<void> logout();
 }

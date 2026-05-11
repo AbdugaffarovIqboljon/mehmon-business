@@ -95,4 +95,13 @@ class AuthRepositoryImpl implements AuthRepository {
       return Err(UnknownFailure(message: e.toString(), stackTrace: st));
     }
   }
+
+  @override
+  Future<void> logout() async {
+    try {
+      await _remoteDataSource.logout();
+    } on Object {
+      // Swallow — local logout must always succeed.
+    }
+  }
 }

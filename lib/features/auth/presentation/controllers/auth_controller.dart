@@ -95,7 +95,13 @@ class AuthController extends AsyncNotifier<AuthEntity?> {
   }
 
   Future<void> logout() async {
-    await _tokenStore.clearTokens();
-    state = const AsyncData(null);
+    try {
+      await _repo.logout(); // POST /api/auth/logout
+    } on Object {
+      // Backend call failed — still proceed with local logout.
+    } finally {
+      await _tokenStore.clearTokens();
+      state = const AsyncData(null);
+    }
   }
 }

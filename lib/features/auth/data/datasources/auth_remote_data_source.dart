@@ -12,6 +12,8 @@ abstract class AuthRemoteDataSource {
     required String cafeName,
     required String password,
   });
+
+  Future<void> logout();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -53,6 +55,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
       );
       return AuthModel.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    try {
+      await _dio.post<void>(ApiConstants.logout);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

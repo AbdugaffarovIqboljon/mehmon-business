@@ -2,6 +2,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'booking_entity.freezed.dart';
 
+enum BookingType { standard, banket }
+
 extension BookingEntityX on BookingEntity {
   /// Parsed from `date` ("YYYY-MM-DD") + `timeSlot` ("HH:mm").
   DateTime get dateTime {
@@ -37,7 +39,7 @@ abstract class BookingEntity with _$BookingEntity {
     required String createdAt,
     TableInfoEntity? tableInfo,
     String? endTime,
-    String? bookingType,
+    BookingType? bookingType,
     String? notes,
   }) = _BookingEntity;
 }

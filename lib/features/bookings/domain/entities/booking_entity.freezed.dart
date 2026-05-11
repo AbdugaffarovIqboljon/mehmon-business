@@ -207,7 +207,7 @@ mixin _$BookingEntity {
   String get createdAt => throw _privateConstructorUsedError;
   TableInfoEntity? get tableInfo => throw _privateConstructorUsedError;
   String? get endTime => throw _privateConstructorUsedError;
-  String? get bookingType => throw _privateConstructorUsedError;
+  BookingType? get bookingType => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
 
   /// Create a copy of BookingEntity
@@ -235,7 +235,7 @@ abstract class $BookingEntityCopyWith<$Res> {
     String createdAt,
     TableInfoEntity? tableInfo,
     String? endTime,
-    String? bookingType,
+    BookingType? bookingType,
     String? notes,
   });
 
@@ -315,7 +315,7 @@ class _$BookingEntityCopyWithImpl<$Res, $Val extends BookingEntity>
             bookingType: freezed == bookingType
                 ? _value.bookingType
                 : bookingType // ignore: cast_nullable_to_non_nullable
-                      as String?,
+                      as BookingType?,
             notes: freezed == notes
                 ? _value.notes
                 : notes // ignore: cast_nullable_to_non_nullable
@@ -360,7 +360,7 @@ abstract class _$$BookingEntityImplCopyWith<$Res>
     String createdAt,
     TableInfoEntity? tableInfo,
     String? endTime,
-    String? bookingType,
+    BookingType? bookingType,
     String? notes,
   });
 
@@ -440,7 +440,7 @@ class __$$BookingEntityImplCopyWithImpl<$Res>
         bookingType: freezed == bookingType
             ? _value.bookingType
             : bookingType // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                  as BookingType?,
         notes: freezed == notes
             ? _value.notes
             : notes // ignore: cast_nullable_to_non_nullable
@@ -489,7 +489,7 @@ class _$BookingEntityImpl implements _BookingEntity {
   @override
   final String? endTime;
   @override
-  final String? bookingType;
+  final BookingType? bookingType;
   @override
   final String? notes;
 
@@ -561,7 +561,7 @@ abstract class _BookingEntity implements BookingEntity {
     required final String createdAt,
     final TableInfoEntity? tableInfo,
     final String? endTime,
-    final String? bookingType,
+    final BookingType? bookingType,
     final String? notes,
   }) = _$BookingEntityImpl;
 
@@ -586,7 +586,7 @@ abstract class _BookingEntity implements BookingEntity {
   @override
   String? get endTime;
   @override
-  String? get bookingType;
+  BookingType? get bookingType;
   @override
   String? get notes;
 

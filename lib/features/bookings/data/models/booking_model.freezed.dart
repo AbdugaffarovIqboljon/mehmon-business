@@ -233,7 +233,8 @@ mixin _$BookingModel {
   String get createdAt => throw _privateConstructorUsedError;
   TableInfoModel? get tableId => throw _privateConstructorUsedError;
   String? get endTime => throw _privateConstructorUsedError;
-  String? get bookingType => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
+  BookingType? get bookingType => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
 
@@ -264,7 +265,8 @@ abstract class $BookingModelCopyWith<$Res> {
     String createdAt,
     TableInfoModel? tableId,
     String? endTime,
-    String? bookingType,
+    @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
+    BookingType? bookingType,
     String status,
     String? notes,
   });
@@ -341,7 +343,7 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
             bookingType: freezed == bookingType
                 ? _value.bookingType
                 : bookingType // ignore: cast_nullable_to_non_nullable
-                      as String?,
+                      as BookingType?,
             status: null == status
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
@@ -389,7 +391,8 @@ abstract class _$$BookingModelImplCopyWith<$Res>
     String createdAt,
     TableInfoModel? tableId,
     String? endTime,
-    String? bookingType,
+    @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
+    BookingType? bookingType,
     String status,
     String? notes,
   });
@@ -466,7 +469,7 @@ class __$$BookingModelImplCopyWithImpl<$Res>
         bookingType: freezed == bookingType
             ? _value.bookingType
             : bookingType // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                  as BookingType?,
         status: null == status
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
@@ -493,6 +496,7 @@ class _$BookingModelImpl implements _BookingModel {
     required this.createdAt,
     this.tableId,
     this.endTime,
+    @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
     this.bookingType,
     this.status = 'pending',
     this.notes,
@@ -521,7 +525,8 @@ class _$BookingModelImpl implements _BookingModel {
   @override
   final String? endTime;
   @override
-  final String? bookingType;
+  @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
+  final BookingType? bookingType;
   @override
   @JsonKey()
   final String status;
@@ -600,7 +605,8 @@ abstract class _BookingModel implements BookingModel {
     required final String createdAt,
     final TableInfoModel? tableId,
     final String? endTime,
-    final String? bookingType,
+    @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
+    final BookingType? bookingType,
     final String status,
     final String? notes,
   }) = _$BookingModelImpl;
@@ -628,7 +634,8 @@ abstract class _BookingModel implements BookingModel {
   @override
   String? get endTime;
   @override
-  String? get bookingType;
+  @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
+  BookingType? get bookingType;
   @override
   String get status;
   @override

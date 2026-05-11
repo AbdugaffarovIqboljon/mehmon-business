@@ -7,9 +7,9 @@ abstract class ProfileRemoteDataSource {
   Future<ProfileModel> getProfile();
 
   Future<ProfileModel> updateProfile({
-    required String name,
-    required String phone,
-    required String cafeName,
+    String? name,
+    String? phone,
+    String? cafeName,
     String? imageUrl,
     String? institutionType,
     String? address,
@@ -37,9 +37,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<ProfileModel> updateProfile({
-    required String name,
-    required String phone,
-    required String cafeName,
+    String? name,
+    String? phone,
+    String? cafeName,
     String? imageUrl,
     String? institutionType,
     String? address,
@@ -50,9 +50,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final response = await _dio.put<dynamic>(
         ApiConstants.profile,
         data: {
-          'name': name,
-          'phone': phone,
-          'cafeName': cafeName,
+          if (name != null) 'name': name,
+          if (phone != null) 'phone': phone,
+          if (cafeName != null) 'cafeName': cafeName,
           if (imageUrl != null) 'imageUrl': imageUrl,
           if (institutionType != null) 'institutionType': institutionType,
           if (address != null) 'address': address,

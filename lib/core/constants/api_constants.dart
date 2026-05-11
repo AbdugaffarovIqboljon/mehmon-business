@@ -21,12 +21,6 @@ abstract final class ApiConstants {
   static const String tables = '/api/tables';
   static const String tableById = '/api/tables/';
 
-  // ── Floor ─────────────────────────────────────────────────────────
-  static const String floors = '/floors';
-
-  // ── Stats ─────────────────────────────────────────────────────────
-  static const String stats = '/stats';
-
   // ── Analytics ─────────────────────────────────────────────────────
   static const String analyticsSummary = '/api/analytics/summary';
   static const String analyticsReports = '/api/analytics/reports';

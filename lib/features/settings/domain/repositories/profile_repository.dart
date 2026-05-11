@@ -5,9 +5,9 @@ abstract class ProfileRepository {
   Future<Result<ProfileEntity>> getProfile();
 
   Future<Result<ProfileEntity>> updateProfile({
-    required String name,
-    required String phone,
-    required String cafeName,
+    String? name,
+    String? phone,
+    String? cafeName,
     String? imageUrl,
     String? institutionType,
     String? address,

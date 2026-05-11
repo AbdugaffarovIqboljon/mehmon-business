@@ -5,6 +5,7 @@ import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/formatters/uzbek_phone_input_formatter.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/widgets/app_text_field.dart';
+import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/book_a_table_date_controller.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_date_selector.dart';
@@ -14,6 +15,13 @@ import 'package:mehmon/features/bookings/presentation/widgets/guest_count_picker
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
+
+extension BookingTypeApi on BookingType {
+  String get apiValue => switch (this) {
+    BookingType.standard => 'Standard',
+    BookingType.banket => 'Banket',
+  };
+}
 
 const List<String> defaultBookingTimes = [
   '17:00',
@@ -110,12 +118,12 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   final _phoneController = TextEditingController();
   String _lastPhoneValue = UzbekPhoneInput.countryCode;
 
-  static const List<String> _bookingTypes = ['Standard', 'Banket'];
+  static const List<BookingType> _bookingTypes = BookingType.values;
 
   late int _guestCount;
   late String _selectedTime;
   String? _selectedEndTime;
-  String _selectedBookingType = 'Standard';
+  BookingType _selectedBookingType = BookingType.standard;
   FloorEntity? _selectedTable;
 
   @override
@@ -190,8 +198,10 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
           date: dateStr,
           timeSlot: _selectedTime,
           numberOfGuests: _guestCount,
-          endTime: _selectedBookingType == 'Banket' ? _selectedEndTime : null,
-          bookingType: _selectedBookingType,
+          endTime: _selectedBookingType == BookingType.banket
+              ? _selectedEndTime
+              : null,
+          bookingType: _selectedBookingType.apiValue,
         );
 
     if (!mounted) return;
@@ -302,10 +312,12 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                     _BookingTypeSelector(
                       types: _bookingTypes,
                       selectedType: _selectedBookingType,
-                      onTypeSelected: (String type) {
+                      onTypeSelected: (BookingType type) {
                         setState(() {
                           _selectedBookingType = type;
-                          if (type != 'Banket') _selectedEndTime = null;
+                          if (type != BookingType.banket) {
+                            _selectedEndTime = null;
+                          }
                         });
                       },
                     ),
@@ -323,7 +335,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                         setState(() => _selectedTable = table);
                       },
                     ),
-                    if (_selectedBookingType == 'Banket') ...[
+                    if (_selectedBookingType == BookingType.banket) ...[
                       const SizedBox(height: AppSpacing.xxl),
                       Text(
                         'Tugash vaqti',
@@ -546,9 +558,9 @@ class _BookingTypeSelector extends StatelessWidget {
     required this.onTypeSelected,
   });
 
-  final List<String> types;
-  final String selectedType;
-  final ValueChanged<String> onTypeSelected;
+  final List<BookingType> types;
+  final BookingType selectedType;
+  final ValueChanged<BookingType> onTypeSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -575,7 +587,7 @@ class _BookingTypeSelector extends StatelessWidget {
                     vertical: AppSpacing.md,
                   ),
                   child: Text(
-                    type,
+                    type.apiValue,
                     style: textTheme.titleLarge?.copyWith(
                       color:
                           isSelected ? Colors.white : AppColors.primaryDark,

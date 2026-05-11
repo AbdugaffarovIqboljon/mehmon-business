@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/networking/dio_client.dart';
-import 'package:mehmon/core/networking/token_store.dart';
 import 'package:mehmon/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mehmon/features/settings/data/datasources/profile_remote_data_source.dart';
 import 'package:mehmon/features/settings/data/repositories/profile_repository_impl.dart';
@@ -50,9 +49,9 @@ class ProfileController extends AsyncNotifier<ProfileEntity?> {
   }
 
   Future<bool> updateProfile({
-    required String name,
-    required String phone,
-    required String cafeName,
+    String? name,
+    String? phone,
+    String? cafeName,
     String? imageUrl,
     String? institutionType,
     String? address,
@@ -79,8 +78,6 @@ class ProfileController extends AsyncNotifier<ProfileEntity?> {
   }
 
   Future<void> logout() async {
-    await ref.read(profileRepositoryProvider).logout();
-    await ref.read(tokenStoreProvider).clearTokens();
     await ref.read(authControllerProvider.notifier).logout();
     state = const AsyncData(null);
   }
