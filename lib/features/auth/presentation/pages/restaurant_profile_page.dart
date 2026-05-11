@@ -31,17 +31,6 @@ class _RestaurantProfilePageState
   TimeOfDay? _openingTime;
   TimeOfDay? _closingTime;
 
-  Map<String, String> _getRestaurantTypes(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    return {
-      'cafe': loc.restTypeCafe,
-      'restaurant': loc.restTypeRestaurant,
-      'bar': 'Bar',
-      'club': 'Club',
-      'other': 'Other',
-    };
-  }
-
   @override
   void dispose() {
     _addressController.dispose();
@@ -101,8 +90,6 @@ class _RestaurantProfilePageState
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
-    final restaurantTypes = _getRestaurantTypes(context);
-
     return AppScaffold(
       title: loc.profileSetupTitle,
       resizeToAvoidBottomInset: false,
@@ -127,9 +114,7 @@ class _RestaurantProfilePageState
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 RestaurantTypeDropdown(
-                  items: restaurantTypes,
-                  hintText: loc.restaurantTypeHint,
-                  value: _restaurantType,
+                  selectedValue: _restaurantType,
                   onChanged: (key) => setState(() => _restaurantType = key),
                 ),
                 const SizedBox(height: AppSpacing.lg),

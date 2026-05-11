@@ -9,14 +9,6 @@ import 'package:mehmon/features/auth/presentation/widgets/restaurant_type_dropdo
 import 'package:mehmon/features/settings/presentation/controllers/profile_controller.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
-const _kInstitutionTypes = <String, String>{
-  'cafe': 'Kafe',
-  'restaurant': 'Restoran',
-  'bar': 'Bar',
-  'fast_food': 'Fast food',
-  'bakery': 'Nonvoyxona',
-};
-
 class EditProfileInitialData {
   const EditProfileInitialData({
     this.name = '',
@@ -188,6 +180,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   hint: loc.phoneHint,
                   keyboardType: TextInputType.phone,
                   inputFormatters: UzbekPhoneInput.inputFormatters,
+                  validator: (v) =>
+                      (v == null || v.trim().isEmpty)
+                          ? 'Telefon raqamni kiriting'
+                          : null,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 AppTextField(
@@ -217,6 +213,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   child: AbsorbPointer(
                     child: AppTextField(
                       controller: _closingController,
+                      label: 'Yopilish vaqti',
                       hint: loc.closeTimeHint,
                       keyboardType: TextInputType.datetime,
                     ),
@@ -232,9 +229,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 RestaurantTypeDropdown(
-                  items: _kInstitutionTypes,
-                  hintText: 'Muassasa turini tanlang',
-                  value: _selectedInstitutionType,
+                  selectedValue: _selectedInstitutionType,
                   onChanged: (key) =>
                       setState(() => _selectedInstitutionType = key),
                 ),

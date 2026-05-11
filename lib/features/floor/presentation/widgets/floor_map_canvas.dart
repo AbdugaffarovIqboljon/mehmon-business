@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/models/floor_table_config.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_table_widget.dart';
@@ -46,7 +47,7 @@ class _FloorMapCanvasState extends State<FloorMapCanvas> {
 
   List<FloorTableConfig> get _configs {
     final entities = widget.tables;
-    if (entities == null || entities.isEmpty) return kFloorTables;
+    if (entities == null || entities.isEmpty) return const [];
 
     final useAutoLayout = entities.every((e) => e.x == 0.0 && e.y == 0.0);
     return [
@@ -62,6 +63,29 @@ class _FloorMapCanvasState extends State<FloorMapCanvas> {
   @override
   Widget build(BuildContext context) {
     final configs = _configs;
+
+    if (configs.isEmpty) {
+      return const ColoredBox(
+        color: AppColors.floorCanvasBg,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.table_restaurant_outlined,
+                size: 64,
+                color: AppColors.textHint,
+              ),
+              SizedBox(height: 12),
+              Text(
+                "Hali stollar qo'shilmagan",
+                style: AppTextStyles.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return ColoredBox(
       color: AppColors.floorCanvasBg,

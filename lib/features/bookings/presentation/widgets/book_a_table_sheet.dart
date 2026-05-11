@@ -116,6 +116,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
 
   final _guestNameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _notesController = TextEditingController();
   String _lastPhoneValue = UzbekPhoneInput.countryCode;
 
   static const List<BookingType> _bookingTypes = BookingType.values;
@@ -141,6 +142,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   void dispose() {
     _guestNameController.dispose();
     _phoneController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -185,6 +187,15 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       );
       return;
     }
+    if (_selectedBookingType == BookingType.banket &&
+        _selectedEndTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Banket uchun tugash vaqtini tanlang'),
+        ),
+      );
+      return;
+    }
 
     final dateState = ref.read(bookATableDateControllerProvider);
     final dateStr = DateFormat('yyyy-MM-dd').format(dateState.selectedDate);
@@ -202,6 +213,9 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
               ? _selectedEndTime
               : null,
           bookingType: _selectedBookingType.apiValue,
+          notes: _notesController.text.trim().isEmpty
+              ? null
+              : _notesController.text.trim(),
         );
 
     if (!mounted) return;
@@ -388,6 +402,13 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       keyboardType: TextInputType.phone,
                       inputFormatters: UzbekPhoneInput.inputFormatters,
                       onChanged: _onPhoneChanged,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    AppTextField(
+                      controller: _notesController,
+                      label: 'Izoh',
+                      hint: "Qo'shimcha ma'lumot (ixtiyoriy)",
+                      maxLines: 2,
                     ),
                     const SizedBox(height: AppSpacing.xl),
                   ],

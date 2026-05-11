@@ -31,7 +31,7 @@ class SummaryController extends AsyncNotifier<AnalyticsSummaryEntity?> {
     final result = await ref.read(statsRepositoryProvider).getSummary();
     return result.when(
       success: (e) => e,
-      error: (_) => null,
+      error: (failure) => throw Exception(failure.message),
     );
   }
 
@@ -41,7 +41,7 @@ class SummaryController extends AsyncNotifier<AnalyticsSummaryEntity?> {
       final result = await ref.read(statsRepositoryProvider).getSummary();
       return result.when(
         success: (e) => e,
-        error: (_) => null,
+        error: (failure) => throw Exception(failure.message),
       );
     });
   }
@@ -68,7 +68,7 @@ class ReportsController
         );
     return result.when(
       success: (e) => e,
-      error: (_) => null,
+      error: (failure) => throw Exception(failure.message),
     );
   }
 }

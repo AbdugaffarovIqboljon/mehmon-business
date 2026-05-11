@@ -6,20 +6,30 @@ import 'package:mehmon/features/auth/presentation/widgets/auth_selection_field.d
 
 class RestaurantTypeDropdown extends StatelessWidget {
   const RestaurantTypeDropdown({
-    required this.items,
-    required this.hintText,
     required this.onChanged,
     super.key,
-    this.value,
+    this.items = canonicalItems,
+    this.hintText = 'Muassasa turini tanlang',
+    this.selectedValue,
     this.sheetTitle = 'Тип заведения',
   });
 
-  /// Map of stable English key (e.g. `cafe`) → localized display label.
+  static const Map<String, String> canonicalItems = {
+    'cafe': 'Kafe',
+    'restaurant': 'Restoran',
+    'bar': 'Bar',
+    'fast_food': 'Fast food',
+    'bakery': 'Nonvoyxona',
+    'club': 'Club',
+    'other': 'Other',
+  };
+
+  /// Map of stable English key (e.g. `cafe`) → display label.
   final Map<String, String> items;
   final String hintText;
 
   /// Stable English key of the currently selected item, or `null`.
-  final String? value;
+  final String? selectedValue;
 
   /// Emits the stable English key of the chosen item.
   final ValueChanged<String> onChanged;
@@ -67,7 +77,7 @@ class RestaurantTypeDropdown extends StatelessWidget {
                         const Divider(color: AppColors.divider),
                     itemBuilder: (context, index) {
                       final entry = entries[index];
-                      final isSelected = value == entry.key;
+                      final isSelected = selectedValue == entry.key;
 
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(
@@ -99,7 +109,8 @@ class RestaurantTypeDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedLabel = value == null ? null : items[value];
+    final selectedLabel =
+        selectedValue == null ? null : items[selectedValue!];
     return AuthSelectionField(
       text: selectedLabel ?? hintText,
       isPlaceholder: selectedLabel == null,

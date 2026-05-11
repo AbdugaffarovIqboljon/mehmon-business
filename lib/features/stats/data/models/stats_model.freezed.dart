@@ -21,9 +21,7 @@ AnalyticsPeriodModel _$AnalyticsPeriodModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AnalyticsPeriodModel {
-  @JsonKey(name: 'start_date')
   String get startDate => throw _privateConstructorUsedError;
-  @JsonKey(name: 'end_date')
   String get endDate => throw _privateConstructorUsedError;
 
   /// Serializes this AnalyticsPeriodModel to a JSON map.
@@ -43,10 +41,7 @@ abstract class $AnalyticsPeriodModelCopyWith<$Res> {
     $Res Function(AnalyticsPeriodModel) then,
   ) = _$AnalyticsPeriodModelCopyWithImpl<$Res, AnalyticsPeriodModel>;
   @useResult
-  $Res call({
-    @JsonKey(name: 'start_date') String startDate,
-    @JsonKey(name: 'end_date') String endDate,
-  });
+  $Res call({String startDate, String endDate});
 }
 
 /// @nodoc
@@ -92,10 +87,7 @@ abstract class _$$AnalyticsPeriodModelImplCopyWith<$Res>
   ) = __$$AnalyticsPeriodModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    @JsonKey(name: 'start_date') String startDate,
-    @JsonKey(name: 'end_date') String endDate,
-  });
+  $Res call({String startDate, String endDate});
 }
 
 /// @nodoc
@@ -131,18 +123,16 @@ class __$$AnalyticsPeriodModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AnalyticsPeriodModelImpl implements _AnalyticsPeriodModel {
   const _$AnalyticsPeriodModelImpl({
-    @JsonKey(name: 'start_date') required this.startDate,
-    @JsonKey(name: 'end_date') required this.endDate,
+    required this.startDate,
+    required this.endDate,
   });
 
   factory _$AnalyticsPeriodModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AnalyticsPeriodModelImplFromJson(json);
 
   @override
-  @JsonKey(name: 'start_date')
   final String startDate;
   @override
-  @JsonKey(name: 'end_date')
   final String endDate;
 
   @override
@@ -184,18 +174,16 @@ class _$AnalyticsPeriodModelImpl implements _AnalyticsPeriodModel {
 
 abstract class _AnalyticsPeriodModel implements AnalyticsPeriodModel {
   const factory _AnalyticsPeriodModel({
-    @JsonKey(name: 'start_date') required final String startDate,
-    @JsonKey(name: 'end_date') required final String endDate,
+    required final String startDate,
+    required final String endDate,
   }) = _$AnalyticsPeriodModelImpl;
 
   factory _AnalyticsPeriodModel.fromJson(Map<String, dynamic> json) =
       _$AnalyticsPeriodModelImpl.fromJson;
 
   @override
-  @JsonKey(name: 'start_date')
   String get startDate;
   @override
-  @JsonKey(name: 'end_date')
   String get endDate;
 
   /// Create a copy of AnalyticsPeriodModel

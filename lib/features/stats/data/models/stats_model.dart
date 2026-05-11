@@ -7,8 +7,8 @@ part 'stats_model.g.dart';
 @freezed
 abstract class AnalyticsPeriodModel with _$AnalyticsPeriodModel {
   const factory AnalyticsPeriodModel({
-    @JsonKey(name: 'start_date') required String startDate,
-    @JsonKey(name: 'end_date') required String endDate,
+    required String startDate,
+    required String endDate,
   }) = _AnalyticsPeriodModel;
 
   factory AnalyticsPeriodModel.fromJson(Map<String, dynamic> json) =>

@@ -50,8 +50,6 @@ class BookingCard extends StatelessWidget {
                         letterSpacing: 0.1,
                       ),
                 ),
-                const Spacer(),
-                const Icon(Icons.more_horiz_rounded, color: Color(0xFF8E99B4)),
               ],
             ),
             const SizedBox(height: AppSpacing.md),

@@ -9,15 +9,15 @@ part of 'stats_model.dart';
 _$AnalyticsPeriodModelImpl _$$AnalyticsPeriodModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$AnalyticsPeriodModelImpl(
-  startDate: json['start_date'] as String,
-  endDate: json['end_date'] as String,
+  startDate: json['startDate'] as String,
+  endDate: json['endDate'] as String,
 );
 
 Map<String, dynamic> _$$AnalyticsPeriodModelImplToJson(
   _$AnalyticsPeriodModelImpl instance,
 ) => <String, dynamic>{
-  'start_date': instance.startDate,
-  'end_date': instance.endDate,
+  'startDate': instance.startDate,
+  'endDate': instance.endDate,
 };
 
 _$AnalyticsSummaryModelImpl _$$AnalyticsSummaryModelImplFromJson(

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/config/env.dart';
 import 'package:mehmon/core/local/locale_provider.dart';
 import 'package:mehmon/core/local/shared_prefs_provider.dart';
+import 'package:mehmon/core/networking/dio_client.dart';
 import 'package:mehmon/core/routing/app_router.dart';
 import 'package:mehmon/core/theme/app_theme.dart';
 import 'package:mehmon/features/auth/presentation/controllers/auth_controller.dart';
@@ -36,7 +37,16 @@ Future<void> main() async {
 
       runApp(
         ProviderScope(
-          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+          overrides: [
+            sharedPreferencesProvider.overrideWithValue(prefs),
+            onLogoutProvider.overrideWith((ref) {
+              return () {
+                unawaited(
+                  ref.read(authControllerProvider.notifier).logout(),
+                );
+              };
+            }),
+          ],
           child: const MehmonApp(),
         ),
       );
