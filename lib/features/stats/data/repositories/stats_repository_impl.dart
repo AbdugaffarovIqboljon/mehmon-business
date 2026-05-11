@@ -52,6 +52,7 @@ class StatsRepositoryImpl implements StatsRepository {
           completed: model.completed,
           cancelled: model.cancelled,
           totalGuests: model.totalGuests,
+          bookings: model.bookings.map((b) => b.toEntity()).toList(),
         ),
       );
     } on ApiException catch (e) {

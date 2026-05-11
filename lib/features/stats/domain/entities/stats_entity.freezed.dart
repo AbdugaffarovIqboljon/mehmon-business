@@ -443,12 +443,399 @@ abstract class _AnalyticsSummaryEntity implements AnalyticsSummaryEntity {
 }
 
 /// @nodoc
+mixin _$ReportBookingEntity {
+  String get id => throw _privateConstructorUsedError;
+  String get bookingType => throw _privateConstructorUsedError;
+  String get guestName => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  String get tableId => throw _privateConstructorUsedError;
+  String get date => throw _privateConstructorUsedError;
+  String get timeSlot => throw _privateConstructorUsedError;
+  int get numberOfGuests => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  String get createdAt => throw _privateConstructorUsedError;
+  String? get endTime => throw _privateConstructorUsedError;
+  String? get notes => throw _privateConstructorUsedError;
+
+  /// Create a copy of ReportBookingEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ReportBookingEntityCopyWith<ReportBookingEntity> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ReportBookingEntityCopyWith<$Res> {
+  factory $ReportBookingEntityCopyWith(
+    ReportBookingEntity value,
+    $Res Function(ReportBookingEntity) then,
+  ) = _$ReportBookingEntityCopyWithImpl<$Res, ReportBookingEntity>;
+  @useResult
+  $Res call({
+    String id,
+    String bookingType,
+    String guestName,
+    String phone,
+    String tableId,
+    String date,
+    String timeSlot,
+    int numberOfGuests,
+    String status,
+    String createdAt,
+    String? endTime,
+    String? notes,
+  });
+}
+
+/// @nodoc
+class _$ReportBookingEntityCopyWithImpl<$Res, $Val extends ReportBookingEntity>
+    implements $ReportBookingEntityCopyWith<$Res> {
+  _$ReportBookingEntityCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ReportBookingEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? bookingType = null,
+    Object? guestName = null,
+    Object? phone = null,
+    Object? tableId = null,
+    Object? date = null,
+    Object? timeSlot = null,
+    Object? numberOfGuests = null,
+    Object? status = null,
+    Object? createdAt = null,
+    Object? endTime = freezed,
+    Object? notes = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            bookingType: null == bookingType
+                ? _value.bookingType
+                : bookingType // ignore: cast_nullable_to_non_nullable
+                      as String,
+            guestName: null == guestName
+                ? _value.guestName
+                : guestName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            tableId: null == tableId
+                ? _value.tableId
+                : tableId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            date: null == date
+                ? _value.date
+                : date // ignore: cast_nullable_to_non_nullable
+                      as String,
+            timeSlot: null == timeSlot
+                ? _value.timeSlot
+                : timeSlot // ignore: cast_nullable_to_non_nullable
+                      as String,
+            numberOfGuests: null == numberOfGuests
+                ? _value.numberOfGuests
+                : numberOfGuests // ignore: cast_nullable_to_non_nullable
+                      as int,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as String,
+            endTime: freezed == endTime
+                ? _value.endTime
+                : endTime // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$ReportBookingEntityImplCopyWith<$Res>
+    implements $ReportBookingEntityCopyWith<$Res> {
+  factory _$$ReportBookingEntityImplCopyWith(
+    _$ReportBookingEntityImpl value,
+    $Res Function(_$ReportBookingEntityImpl) then,
+  ) = __$$ReportBookingEntityImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    String id,
+    String bookingType,
+    String guestName,
+    String phone,
+    String tableId,
+    String date,
+    String timeSlot,
+    int numberOfGuests,
+    String status,
+    String createdAt,
+    String? endTime,
+    String? notes,
+  });
+}
+
+/// @nodoc
+class __$$ReportBookingEntityImplCopyWithImpl<$Res>
+    extends _$ReportBookingEntityCopyWithImpl<$Res, _$ReportBookingEntityImpl>
+    implements _$$ReportBookingEntityImplCopyWith<$Res> {
+  __$$ReportBookingEntityImplCopyWithImpl(
+    _$ReportBookingEntityImpl _value,
+    $Res Function(_$ReportBookingEntityImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of ReportBookingEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? bookingType = null,
+    Object? guestName = null,
+    Object? phone = null,
+    Object? tableId = null,
+    Object? date = null,
+    Object? timeSlot = null,
+    Object? numberOfGuests = null,
+    Object? status = null,
+    Object? createdAt = null,
+    Object? endTime = freezed,
+    Object? notes = freezed,
+  }) {
+    return _then(
+      _$ReportBookingEntityImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        bookingType: null == bookingType
+            ? _value.bookingType
+            : bookingType // ignore: cast_nullable_to_non_nullable
+                  as String,
+        guestName: null == guestName
+            ? _value.guestName
+            : guestName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        tableId: null == tableId
+            ? _value.tableId
+            : tableId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        date: null == date
+            ? _value.date
+            : date // ignore: cast_nullable_to_non_nullable
+                  as String,
+        timeSlot: null == timeSlot
+            ? _value.timeSlot
+            : timeSlot // ignore: cast_nullable_to_non_nullable
+                  as String,
+        numberOfGuests: null == numberOfGuests
+            ? _value.numberOfGuests
+            : numberOfGuests // ignore: cast_nullable_to_non_nullable
+                  as int,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as String,
+        endTime: freezed == endTime
+            ? _value.endTime
+            : endTime // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$ReportBookingEntityImpl implements _ReportBookingEntity {
+  const _$ReportBookingEntityImpl({
+    required this.id,
+    required this.bookingType,
+    required this.guestName,
+    required this.phone,
+    required this.tableId,
+    required this.date,
+    required this.timeSlot,
+    required this.numberOfGuests,
+    required this.status,
+    required this.createdAt,
+    this.endTime,
+    this.notes,
+  });
+
+  @override
+  final String id;
+  @override
+  final String bookingType;
+  @override
+  final String guestName;
+  @override
+  final String phone;
+  @override
+  final String tableId;
+  @override
+  final String date;
+  @override
+  final String timeSlot;
+  @override
+  final int numberOfGuests;
+  @override
+  final String status;
+  @override
+  final String createdAt;
+  @override
+  final String? endTime;
+  @override
+  final String? notes;
+
+  @override
+  String toString() {
+    return 'ReportBookingEntity(id: $id, bookingType: $bookingType, guestName: $guestName, phone: $phone, tableId: $tableId, date: $date, timeSlot: $timeSlot, numberOfGuests: $numberOfGuests, status: $status, createdAt: $createdAt, endTime: $endTime, notes: $notes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ReportBookingEntityImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.bookingType, bookingType) ||
+                other.bookingType == bookingType) &&
+            (identical(other.guestName, guestName) ||
+                other.guestName == guestName) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.tableId, tableId) || other.tableId == tableId) &&
+            (identical(other.date, date) || other.date == date) &&
+            (identical(other.timeSlot, timeSlot) ||
+                other.timeSlot == timeSlot) &&
+            (identical(other.numberOfGuests, numberOfGuests) ||
+                other.numberOfGuests == numberOfGuests) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.notes, notes) || other.notes == notes));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    bookingType,
+    guestName,
+    phone,
+    tableId,
+    date,
+    timeSlot,
+    numberOfGuests,
+    status,
+    createdAt,
+    endTime,
+    notes,
+  );
+
+  /// Create a copy of ReportBookingEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ReportBookingEntityImplCopyWith<_$ReportBookingEntityImpl> get copyWith =>
+      __$$ReportBookingEntityImplCopyWithImpl<_$ReportBookingEntityImpl>(
+        this,
+        _$identity,
+      );
+}
+
+abstract class _ReportBookingEntity implements ReportBookingEntity {
+  const factory _ReportBookingEntity({
+    required final String id,
+    required final String bookingType,
+    required final String guestName,
+    required final String phone,
+    required final String tableId,
+    required final String date,
+    required final String timeSlot,
+    required final int numberOfGuests,
+    required final String status,
+    required final String createdAt,
+    final String? endTime,
+    final String? notes,
+  }) = _$ReportBookingEntityImpl;
+
+  @override
+  String get id;
+  @override
+  String get bookingType;
+  @override
+  String get guestName;
+  @override
+  String get phone;
+  @override
+  String get tableId;
+  @override
+  String get date;
+  @override
+  String get timeSlot;
+  @override
+  int get numberOfGuests;
+  @override
+  String get status;
+  @override
+  String get createdAt;
+  @override
+  String? get endTime;
+  @override
+  String? get notes;
+
+  /// Create a copy of ReportBookingEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ReportBookingEntityImplCopyWith<_$ReportBookingEntityImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$AnalyticsReportEntity {
   AnalyticsPeriodEntity get period => throw _privateConstructorUsedError;
   int get totalBookings => throw _privateConstructorUsedError;
   int get completed => throw _privateConstructorUsedError;
   int get cancelled => throw _privateConstructorUsedError;
   int get totalGuests => throw _privateConstructorUsedError;
+  List<ReportBookingEntity> get bookings => throw _privateConstructorUsedError;
 
   /// Create a copy of AnalyticsReportEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -470,6 +857,7 @@ abstract class $AnalyticsReportEntityCopyWith<$Res> {
     int completed,
     int cancelled,
     int totalGuests,
+    List<ReportBookingEntity> bookings,
   });
 
   $AnalyticsPeriodEntityCopyWith<$Res> get period;
@@ -498,6 +886,7 @@ class _$AnalyticsReportEntityCopyWithImpl<
     Object? completed = null,
     Object? cancelled = null,
     Object? totalGuests = null,
+    Object? bookings = null,
   }) {
     return _then(
       _value.copyWith(
@@ -521,6 +910,10 @@ class _$AnalyticsReportEntityCopyWithImpl<
                 ? _value.totalGuests
                 : totalGuests // ignore: cast_nullable_to_non_nullable
                       as int,
+            bookings: null == bookings
+                ? _value.bookings
+                : bookings // ignore: cast_nullable_to_non_nullable
+                      as List<ReportBookingEntity>,
           )
           as $Val,
     );
@@ -552,6 +945,7 @@ abstract class _$$AnalyticsReportEntityImplCopyWith<$Res>
     int completed,
     int cancelled,
     int totalGuests,
+    List<ReportBookingEntity> bookings,
   });
 
   @override
@@ -578,6 +972,7 @@ class __$$AnalyticsReportEntityImplCopyWithImpl<$Res>
     Object? completed = null,
     Object? cancelled = null,
     Object? totalGuests = null,
+    Object? bookings = null,
   }) {
     return _then(
       _$AnalyticsReportEntityImpl(
@@ -601,6 +996,10 @@ class __$$AnalyticsReportEntityImplCopyWithImpl<$Res>
             ? _value.totalGuests
             : totalGuests // ignore: cast_nullable_to_non_nullable
                   as int,
+        bookings: null == bookings
+            ? _value._bookings
+            : bookings // ignore: cast_nullable_to_non_nullable
+                  as List<ReportBookingEntity>,
       ),
     );
   }
@@ -615,7 +1014,8 @@ class _$AnalyticsReportEntityImpl implements _AnalyticsReportEntity {
     required this.completed,
     required this.cancelled,
     required this.totalGuests,
-  });
+    final List<ReportBookingEntity> bookings = const [],
+  }) : _bookings = bookings;
 
   @override
   final AnalyticsPeriodEntity period;
@@ -627,10 +1027,18 @@ class _$AnalyticsReportEntityImpl implements _AnalyticsReportEntity {
   final int cancelled;
   @override
   final int totalGuests;
+  final List<ReportBookingEntity> _bookings;
+  @override
+  @JsonKey()
+  List<ReportBookingEntity> get bookings {
+    if (_bookings is EqualUnmodifiableListView) return _bookings;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_bookings);
+  }
 
   @override
   String toString() {
-    return 'AnalyticsReportEntity(period: $period, totalBookings: $totalBookings, completed: $completed, cancelled: $cancelled, totalGuests: $totalGuests)';
+    return 'AnalyticsReportEntity(period: $period, totalBookings: $totalBookings, completed: $completed, cancelled: $cancelled, totalGuests: $totalGuests, bookings: $bookings)';
   }
 
   @override
@@ -646,7 +1054,8 @@ class _$AnalyticsReportEntityImpl implements _AnalyticsReportEntity {
             (identical(other.cancelled, cancelled) ||
                 other.cancelled == cancelled) &&
             (identical(other.totalGuests, totalGuests) ||
-                other.totalGuests == totalGuests));
+                other.totalGuests == totalGuests) &&
+            const DeepCollectionEquality().equals(other._bookings, _bookings));
   }
 
   @override
@@ -657,6 +1066,7 @@ class _$AnalyticsReportEntityImpl implements _AnalyticsReportEntity {
     completed,
     cancelled,
     totalGuests,
+    const DeepCollectionEquality().hash(_bookings),
   );
 
   /// Create a copy of AnalyticsReportEntity
@@ -679,6 +1089,7 @@ abstract class _AnalyticsReportEntity implements AnalyticsReportEntity {
     required final int completed,
     required final int cancelled,
     required final int totalGuests,
+    final List<ReportBookingEntity> bookings,
   }) = _$AnalyticsReportEntityImpl;
 
   @override
@@ -691,6 +1102,8 @@ abstract class _AnalyticsReportEntity implements AnalyticsReportEntity {
   int get cancelled;
   @override
   int get totalGuests;
+  @override
+  List<ReportBookingEntity> get bookings;
 
   /// Create a copy of AnalyticsReportEntity
   /// with the given fields replaced by the non-null parameter values.

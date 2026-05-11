@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 
 class StatisticsChart extends StatelessWidget {
-  const StatisticsChart({super.key});
+  const StatisticsChart({required this.dataPoints, super.key});
+
+  final List<FlSpot> dataPoints;
 
   static const _axisLabelByX = <int, String>{
     0: '10:00',
@@ -13,24 +15,6 @@ class StatisticsChart extends StatelessWidget {
     4: '18:00',
   };
 
-  static const _spots = <FlSpot>[
-    FlSpot(0, 2),
-    FlSpot(0.35, 2.35),
-    FlSpot(0.7, 2.25),
-    FlSpot(1, 1.85),
-    FlSpot(1.35, 2.25),
-    FlSpot(1.75, 3.55),
-    FlSpot(2, 3.35),
-    FlSpot(2.35, 3.45),
-    FlSpot(2.7, 2.15),
-    FlSpot(3, 2.6),
-    FlSpot(3.35, 1.95),
-    FlSpot(3.7, 3.25),
-    FlSpot(4, 3.35),
-  ];
-
-  static const _selectedSpotIndex = 12;
-
   static bool _isWholeTick(double value) {
     const epsilon = 1e-6;
     return (value - value.roundToDouble()).abs() < epsilon;
@@ -38,7 +22,7 @@ class StatisticsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedSpot = _spots[_selectedSpotIndex];
+    final selectedSpot = dataPoints.isNotEmpty ? dataPoints.last : null;
     final axisStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
       color: AppColors.textPrimary,
       fontWeight: FontWeight.w600,
@@ -110,7 +94,7 @@ class StatisticsChart extends StatelessWidget {
               ),
               lineBarsData: [
                 LineChartBarData(
-                  spots: _spots,
+                  spots: dataPoints,
                   isCurved: true,
                   preventCurveOverShooting: true,
                   curveSmoothness: 0.3,
@@ -118,7 +102,8 @@ class StatisticsChart extends StatelessWidget {
                   barWidth: 1.8,
                   isStrokeCapRound: true,
                   dotData: FlDotData(
-                    checkToShowDot: (spot, _) => spot == selectedSpot,
+                    checkToShowDot: (spot, _) =>
+                        selectedSpot != null && spot == selectedSpot,
                     getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
                       radius: 6.8,
                       color: Colors.white,
@@ -140,13 +125,15 @@ class StatisticsChart extends StatelessWidget {
                 ),
               ],
               extraLinesData: ExtraLinesData(
-                verticalLines: [
-                  VerticalLine(
-                    x: selectedSpot.x,
-                    color: AppColors.primary.withValues(alpha: 0.34),
-                    strokeWidth: 1,
-                  ),
-                ],
+                verticalLines: selectedSpot == null
+                    ? const []
+                    : [
+                        VerticalLine(
+                          x: selectedSpot.x,
+                          color: AppColors.primary.withValues(alpha: 0.34),
+                          strokeWidth: 1,
+                        ),
+                      ],
               ),
             ),
             duration: const Duration(milliseconds: 280),

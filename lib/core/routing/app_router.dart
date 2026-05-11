@@ -2,6 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/routing/route_names.dart';
 import 'package:mehmon/features/auth/presentation/pages/intro_page.dart';
@@ -18,6 +19,7 @@ import 'package:mehmon/features/floor/presentation/pages/shifts_page.dart';
 import 'package:mehmon/features/guests/domain/entities/guest_entity.dart';
 import 'package:mehmon/features/guests/presentation/pages/guest_detail_page.dart';
 import 'package:mehmon/features/guests/presentation/pages/guests_page.dart';
+import 'package:mehmon/features/settings/presentation/controllers/profile_controller.dart';
 import 'package:mehmon/features/settings/presentation/pages/about_us_page.dart';
 import 'package:mehmon/features/settings/presentation/pages/edit_profile_page.dart';
 import 'package:mehmon/features/settings/presentation/pages/settings_page.dart';
@@ -25,13 +27,41 @@ import 'package:mehmon/features/shell/presentation/pages/main_shell_page.dart';
 import 'package:mehmon/features/stats/presentation/pages/statistics_page.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
+// Listens to profileControllerProvider and notifies GoRouter to re-run redirect
+// whenever profile state changes (e.g. after the async fetch completes post-login).
+class _ProfileRefreshNotifier extends ChangeNotifier {
+  bool _attached = false;
+  ProviderSubscription<dynamic>? _subscription;
+
+  void attachIfNeeded(BuildContext context) {
+    if (_attached) return;
+    _attached = true;
+    final container = ProviderScope.containerOf(context, listen: false);
+    _subscription = container.listen(
+      profileControllerProvider,
+      (_, __) => notifyListeners(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _subscription?.close();
+    super.dispose();
+  }
+}
+
 GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
+  final profileRefresh = _ProfileRefreshNotifier();
+
   return GoRouter(
     initialLocation: RoutePaths.languageSelect,
     debugLogDiagnostics: true,
-    refreshListenable: authStateListenable,
+    refreshListenable: Listenable.merge([authStateListenable, profileRefresh]),
 
     redirect: (BuildContext context, GoRouterState state) {
+      // Attach the profile notifier once we have a valid context.
+      profileRefresh.attachIfNeeded(context);
+
       final isAuthenticated = authStateListenable.value;
       final guestOnlyRoute =
           state.matchedLocation == RoutePaths.login ||
@@ -44,6 +74,21 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
 
       if (!isAuthenticated && !authFlowRoute) return RoutePaths.login;
       if (isAuthenticated && guestOnlyRoute) return RoutePaths.floor;
+
+      // Profile completeness guard — only for authenticated users outside the
+      // registration flow (avoids redirect loops on /register and /profile-setup).
+      if (isAuthenticated && !registrationFlowRoute) {
+        final container = ProviderScope.containerOf(context, listen: false);
+        final profile =
+            container.read(profileControllerProvider).valueOrNull;
+        if (profile != null &&
+            (profile.institutionType == null ||
+                profile.address == null ||
+                profile.address!.trim().isEmpty)) {
+          return RoutePaths.profileSetup;
+        }
+      }
+
       return null;
     },
 

@@ -11,6 +11,8 @@ import 'package:mehmon/features/bookings/presentation/widgets/booking_date_selec
 import 'package:mehmon/features/bookings/presentation/widgets/booking_form_actions.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_time_selector.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/guest_count_picker.dart';
+import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
+import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 const List<String> defaultBookingTimes = [
@@ -114,6 +116,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   late String _selectedTime;
   String? _selectedEndTime;
   String _selectedBookingType = 'Standard';
+  FloorEntity? _selectedTable;
 
   @override
   void initState() {
@@ -168,22 +171,26 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       );
       return;
     }
+    if (_selectedTable == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Stol tanlang')),
+      );
+      return;
+    }
 
     final dateState = ref.read(bookATableDateControllerProvider);
     final dateStr = DateFormat('yyyy-MM-dd').format(dateState.selectedDate);
-    // TODO: wire table selection UI when available — backend will reject empty tableId
-    const tableId = '';
 
     final success = await ref
         .read(bookingControllerProvider.notifier)
         .createBooking(
           guestName: guestName,
           phone: UzbekPhoneInput.toE164(phone),
-          tableId: tableId,
+          tableId: _selectedTable!.id,
           date: dateStr,
           timeSlot: _selectedTime,
           numberOfGuests: _guestCount,
-          endTime: _selectedEndTime,
+          endTime: _selectedBookingType == 'Banket' ? _selectedEndTime : null,
           bookingType: _selectedBookingType,
         );
 
@@ -286,22 +293,6 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                     ),
                     const SizedBox(height: AppSpacing.xxl),
                     Text(
-                      'Tugash vaqti',
-                      style: textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _EndTimeSelector(
-                      times: widget.timeSlots,
-                      selectedTime: _selectedEndTime,
-                      onTimeSelected: (String time) {
-                        setState(() => _selectedEndTime =
-                            _selectedEndTime == time ? null : time);
-                      },
-                    ),
-                    const SizedBox(height: AppSpacing.xxl),
-                    Text(
                       'Bron turi',
                       style: textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w700,
@@ -312,9 +303,44 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       types: _bookingTypes,
                       selectedType: _selectedBookingType,
                       onTypeSelected: (String type) {
-                        setState(() => _selectedBookingType = type);
+                        setState(() {
+                          _selectedBookingType = type;
+                          if (type != 'Banket') _selectedEndTime = null;
+                        });
                       },
                     ),
+                    const SizedBox(height: AppSpacing.xxl),
+                    Text(
+                      'Stol',
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _TableSelector(
+                      selectedTable: _selectedTable,
+                      onTableSelected: (table) {
+                        setState(() => _selectedTable = table);
+                      },
+                    ),
+                    if (_selectedBookingType == 'Banket') ...[
+                      const SizedBox(height: AppSpacing.xxl),
+                      Text(
+                        'Tugash vaqti',
+                        style: textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      _EndTimeSelector(
+                        times: widget.timeSlots,
+                        selectedTime: _selectedEndTime,
+                        onTimeSelected: (String time) {
+                          setState(() => _selectedEndTime =
+                              _selectedEndTime == time ? null : time);
+                        },
+                      ),
+                    ],
                     const SizedBox(height: AppSpacing.xxl),
                     BookingDateSelector(
                       selectedMonth: dateState.selectedMonth,
@@ -362,6 +388,85 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
               onConfirm: _confirm,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TableSelector extends ConsumerWidget {
+  const _TableSelector({
+    required this.selectedTable,
+    required this.onTableSelected,
+  });
+
+  final FloorEntity? selectedTable;
+  final ValueChanged<FloorEntity?> onTableSelected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final floorsAsync = ref.watch(floorControllerProvider);
+
+    return floorsAsync.when(
+      loading: () => IgnorePointer(
+        child: DropdownButtonFormField<FloorEntity>(
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: AppColors.surfaceVariant,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
+          ),
+          hint: const Text('Stollar yuklanmoqda...'),
+          items: const [],
+          onChanged: null,
+        ),
+      ),
+      error: (_, __) => DropdownButtonFormField<FloorEntity>(
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: AppColors.surfaceVariant,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
+          ),
+        ),
+        hint: const Text('Stollarni yuklashda xatolik'),
+        items: const [],
+        onChanged: null,
+      ),
+      data: (tables) => DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          border: Border.all(color: AppColors.divider),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          child: DropdownButton<FloorEntity>(
+            value: selectedTable,
+            isExpanded: true,
+            underline: const SizedBox.shrink(),
+            hint: const Text('Stol tanlang'),
+            items: tables
+                .map(
+                  (t) => DropdownMenuItem<FloorEntity>(
+                    value: t,
+                    child: Text('${t.number} (${t.capacity} kishi)'),
+                  ),
+                )
+                .toList(),
+            onChanged: onTableSelected,
+          ),
         ),
       ),
     );

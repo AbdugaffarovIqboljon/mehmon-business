@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
+import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/stats/presentation/controllers/stats_controller.dart';
+import 'package:mehmon/features/stats/presentation/widgets/stat_summary_card.dart';
 import 'package:mehmon/features/stats/presentation/widgets/statistics_chart.dart';
 import 'package:mehmon/features/stats/presentation/widgets/statistics_date_selector.dart';
 import 'package:mehmon/features/stats/presentation/widgets/statistics_period_selector.dart';
@@ -106,6 +109,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
       startDate: _toApiDate(_startDate),
       endDate: _toApiDate(_endDate),
     );
+    final summaryAsync = ref.watch(summaryControllerProvider);
     final reportsAsync = ref.watch(reportsControllerProvider(reportsArg));
     final report = reportsAsync.valueOrNull;
 
@@ -116,6 +120,76 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
           parent: AlwaysScrollableScrollPhysics(),
         ),
         children: [
+          summaryAsync.when(
+            loading: () => GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              childAspectRatio: 2.2,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: AppSpacing.sm,
+              ),
+              children: List.generate(
+                6,
+                (_) => Container(
+                  margin: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceVariant,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+            error: (e, _) => Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Text(
+                e.toString(),
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: AppColors.error,
+                ),
+              ),
+            ),
+            data: (summary) {
+              if (summary == null) return const SizedBox.shrink();
+              return GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                childAspectRatio: 2.2,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.sm,
+                ),
+                children: [
+                  StatSummaryCard(
+                    label: 'Jami bronlar',
+                    value: '${summary.totalBookings}',
+                  ),
+                  StatSummaryCard(
+                    label: 'Tasdiqlangan',
+                    value: '${summary.confirmedBookings}',
+                  ),
+                  StatSummaryCard(
+                    label: 'Kutilmoqda',
+                    value: '${summary.pendingBookings}',
+                  ),
+                  StatSummaryCard(
+                    label: 'Mehmonlar',
+                    value: '${summary.totalGuests}',
+                  ),
+                  StatSummaryCard(
+                    label: 'Stollar',
+                    value: '${summary.totalTables}',
+                  ),
+                  StatSummaryCard(
+                    label: 'Bandlik',
+                    value: '${summary.occupancyRate.toStringAsFixed(1)}%',
+                  ),
+                ],
+              );
+            },
+          ),
           StatisticsDateSelector(
             label: _formatDateLabel(),
             onTap: _pickDateRange,
@@ -131,7 +205,8 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
             },
           ),
           const SizedBox(height: AppSpacing.sm),
-          if (reportsAsync.isLoading && report == null)
+          if ((reportsAsync.isLoading || summaryAsync.isLoading) &&
+              report == null)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
               child: Center(child: CircularProgressIndicator()),
@@ -146,9 +221,8 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
               ),
             )
           else
-            // TODO: Backend bookings[] array pending — replace StatisticsChart with
-            // real time-series data once the API returns per-slot booking counts.
-            const StatisticsChart(),
+            // TODO: replace with real time-series FlSpots once the API returns per-slot counts.
+            const StatisticsChart(dataPoints: []),
         ],
       ),
     );

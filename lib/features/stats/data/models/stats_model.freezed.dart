@@ -214,17 +214,11 @@ AnalyticsSummaryModel _$AnalyticsSummaryModelFromJson(
 
 /// @nodoc
 mixin _$AnalyticsSummaryModel {
-  @JsonKey(name: 'total_bookings')
   int get totalBookings => throw _privateConstructorUsedError;
-  @JsonKey(name: 'confirmed_bookings')
   int get confirmedBookings => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pending_bookings')
   int get pendingBookings => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_guests')
   int get totalGuests => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_tables')
   int get totalTables => throw _privateConstructorUsedError;
-  @JsonKey(name: 'occupancy_rate')
   double get occupancyRate => throw _privateConstructorUsedError;
 
   /// Serializes this AnalyticsSummaryModel to a JSON map.
@@ -245,12 +239,12 @@ abstract class $AnalyticsSummaryModelCopyWith<$Res> {
   ) = _$AnalyticsSummaryModelCopyWithImpl<$Res, AnalyticsSummaryModel>;
   @useResult
   $Res call({
-    @JsonKey(name: 'total_bookings') int totalBookings,
-    @JsonKey(name: 'confirmed_bookings') int confirmedBookings,
-    @JsonKey(name: 'pending_bookings') int pendingBookings,
-    @JsonKey(name: 'total_guests') int totalGuests,
-    @JsonKey(name: 'total_tables') int totalTables,
-    @JsonKey(name: 'occupancy_rate') double occupancyRate,
+    int totalBookings,
+    int confirmedBookings,
+    int pendingBookings,
+    int totalGuests,
+    int totalTables,
+    double occupancyRate,
   });
 }
 
@@ -321,12 +315,12 @@ abstract class _$$AnalyticsSummaryModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    @JsonKey(name: 'total_bookings') int totalBookings,
-    @JsonKey(name: 'confirmed_bookings') int confirmedBookings,
-    @JsonKey(name: 'pending_bookings') int pendingBookings,
-    @JsonKey(name: 'total_guests') int totalGuests,
-    @JsonKey(name: 'total_tables') int totalTables,
-    @JsonKey(name: 'occupancy_rate') double occupancyRate,
+    int totalBookings,
+    int confirmedBookings,
+    int pendingBookings,
+    int totalGuests,
+    int totalTables,
+    double occupancyRate,
   });
 }
 
@@ -387,34 +381,28 @@ class __$$AnalyticsSummaryModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AnalyticsSummaryModelImpl implements _AnalyticsSummaryModel {
   const _$AnalyticsSummaryModelImpl({
-    @JsonKey(name: 'total_bookings') required this.totalBookings,
-    @JsonKey(name: 'confirmed_bookings') required this.confirmedBookings,
-    @JsonKey(name: 'pending_bookings') required this.pendingBookings,
-    @JsonKey(name: 'total_guests') required this.totalGuests,
-    @JsonKey(name: 'total_tables') required this.totalTables,
-    @JsonKey(name: 'occupancy_rate') required this.occupancyRate,
+    required this.totalBookings,
+    required this.confirmedBookings,
+    required this.pendingBookings,
+    required this.totalGuests,
+    required this.totalTables,
+    required this.occupancyRate,
   });
 
   factory _$AnalyticsSummaryModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AnalyticsSummaryModelImplFromJson(json);
 
   @override
-  @JsonKey(name: 'total_bookings')
   final int totalBookings;
   @override
-  @JsonKey(name: 'confirmed_bookings')
   final int confirmedBookings;
   @override
-  @JsonKey(name: 'pending_bookings')
   final int pendingBookings;
   @override
-  @JsonKey(name: 'total_guests')
   final int totalGuests;
   @override
-  @JsonKey(name: 'total_tables')
   final int totalTables;
   @override
-  @JsonKey(name: 'occupancy_rate')
   final double occupancyRate;
 
   @override
@@ -473,34 +461,28 @@ class _$AnalyticsSummaryModelImpl implements _AnalyticsSummaryModel {
 
 abstract class _AnalyticsSummaryModel implements AnalyticsSummaryModel {
   const factory _AnalyticsSummaryModel({
-    @JsonKey(name: 'total_bookings') required final int totalBookings,
-    @JsonKey(name: 'confirmed_bookings') required final int confirmedBookings,
-    @JsonKey(name: 'pending_bookings') required final int pendingBookings,
-    @JsonKey(name: 'total_guests') required final int totalGuests,
-    @JsonKey(name: 'total_tables') required final int totalTables,
-    @JsonKey(name: 'occupancy_rate') required final double occupancyRate,
+    required final int totalBookings,
+    required final int confirmedBookings,
+    required final int pendingBookings,
+    required final int totalGuests,
+    required final int totalTables,
+    required final double occupancyRate,
   }) = _$AnalyticsSummaryModelImpl;
 
   factory _AnalyticsSummaryModel.fromJson(Map<String, dynamic> json) =
       _$AnalyticsSummaryModelImpl.fromJson;
 
   @override
-  @JsonKey(name: 'total_bookings')
   int get totalBookings;
   @override
-  @JsonKey(name: 'confirmed_bookings')
   int get confirmedBookings;
   @override
-  @JsonKey(name: 'pending_bookings')
   int get pendingBookings;
   @override
-  @JsonKey(name: 'total_guests')
   int get totalGuests;
   @override
-  @JsonKey(name: 'total_tables')
   int get totalTables;
   @override
-  @JsonKey(name: 'occupancy_rate')
   double get occupancyRate;
 
   /// Create a copy of AnalyticsSummaryModel
@@ -518,13 +500,11 @@ AnalyticsReportModel _$AnalyticsReportModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AnalyticsReportModel {
   AnalyticsPeriodModel get period => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_bookings')
   int get totalBookings => throw _privateConstructorUsedError;
   int get completed => throw _privateConstructorUsedError;
   int get cancelled => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_guests')
   int get totalGuests => throw _privateConstructorUsedError;
-  List<dynamic> get bookings => throw _privateConstructorUsedError;
+  List<ReportBookingModel> get bookings => throw _privateConstructorUsedError;
 
   /// Serializes this AnalyticsReportModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -545,11 +525,11 @@ abstract class $AnalyticsReportModelCopyWith<$Res> {
   @useResult
   $Res call({
     AnalyticsPeriodModel period,
-    @JsonKey(name: 'total_bookings') int totalBookings,
+    int totalBookings,
     int completed,
     int cancelled,
-    @JsonKey(name: 'total_guests') int totalGuests,
-    List<dynamic> bookings,
+    int totalGuests,
+    List<ReportBookingModel> bookings,
   });
 
   $AnalyticsPeriodModelCopyWith<$Res> get period;
@@ -605,7 +585,7 @@ class _$AnalyticsReportModelCopyWithImpl<
             bookings: null == bookings
                 ? _value.bookings
                 : bookings // ignore: cast_nullable_to_non_nullable
-                      as List<dynamic>,
+                      as List<ReportBookingModel>,
           )
           as $Val,
     );
@@ -633,11 +613,11 @@ abstract class _$$AnalyticsReportModelImplCopyWith<$Res>
   @useResult
   $Res call({
     AnalyticsPeriodModel period,
-    @JsonKey(name: 'total_bookings') int totalBookings,
+    int totalBookings,
     int completed,
     int cancelled,
-    @JsonKey(name: 'total_guests') int totalGuests,
-    List<dynamic> bookings,
+    int totalGuests,
+    List<ReportBookingModel> bookings,
   });
 
   @override
@@ -690,7 +670,7 @@ class __$$AnalyticsReportModelImplCopyWithImpl<$Res>
         bookings: null == bookings
             ? _value._bookings
             : bookings // ignore: cast_nullable_to_non_nullable
-                  as List<dynamic>,
+                  as List<ReportBookingModel>,
       ),
     );
   }
@@ -701,11 +681,11 @@ class __$$AnalyticsReportModelImplCopyWithImpl<$Res>
 class _$AnalyticsReportModelImpl implements _AnalyticsReportModel {
   const _$AnalyticsReportModelImpl({
     required this.period,
-    @JsonKey(name: 'total_bookings') required this.totalBookings,
+    required this.totalBookings,
     required this.completed,
     required this.cancelled,
-    @JsonKey(name: 'total_guests') required this.totalGuests,
-    final List<dynamic> bookings = const [],
+    required this.totalGuests,
+    final List<ReportBookingModel> bookings = const [],
   }) : _bookings = bookings;
 
   factory _$AnalyticsReportModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -714,19 +694,17 @@ class _$AnalyticsReportModelImpl implements _AnalyticsReportModel {
   @override
   final AnalyticsPeriodModel period;
   @override
-  @JsonKey(name: 'total_bookings')
   final int totalBookings;
   @override
   final int completed;
   @override
   final int cancelled;
   @override
-  @JsonKey(name: 'total_guests')
   final int totalGuests;
-  final List<dynamic> _bookings;
+  final List<ReportBookingModel> _bookings;
   @override
   @JsonKey()
-  List<dynamic> get bookings {
+  List<ReportBookingModel> get bookings {
     if (_bookings is EqualUnmodifiableListView) return _bookings;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_bookings);
@@ -787,11 +765,11 @@ class _$AnalyticsReportModelImpl implements _AnalyticsReportModel {
 abstract class _AnalyticsReportModel implements AnalyticsReportModel {
   const factory _AnalyticsReportModel({
     required final AnalyticsPeriodModel period,
-    @JsonKey(name: 'total_bookings') required final int totalBookings,
+    required final int totalBookings,
     required final int completed,
     required final int cancelled,
-    @JsonKey(name: 'total_guests') required final int totalGuests,
-    final List<dynamic> bookings,
+    required final int totalGuests,
+    final List<ReportBookingModel> bookings,
   }) = _$AnalyticsReportModelImpl;
 
   factory _AnalyticsReportModel.fromJson(Map<String, dynamic> json) =
@@ -800,17 +778,15 @@ abstract class _AnalyticsReportModel implements AnalyticsReportModel {
   @override
   AnalyticsPeriodModel get period;
   @override
-  @JsonKey(name: 'total_bookings')
   int get totalBookings;
   @override
   int get completed;
   @override
   int get cancelled;
   @override
-  @JsonKey(name: 'total_guests')
   int get totalGuests;
   @override
-  List<dynamic> get bookings;
+  List<ReportBookingModel> get bookings;
 
   /// Create a copy of AnalyticsReportModel
   /// with the given fields replaced by the non-null parameter values.
@@ -818,4 +794,413 @@ abstract class _AnalyticsReportModel implements AnalyticsReportModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AnalyticsReportModelImplCopyWith<_$AnalyticsReportModelImpl>
   get copyWith => throw _privateConstructorUsedError;
+}
+
+ReportBookingModel _$ReportBookingModelFromJson(Map<String, dynamic> json) {
+  return _ReportBookingModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ReportBookingModel {
+  @JsonKey(name: '_id')
+  String get id => throw _privateConstructorUsedError;
+  String get bookingType => throw _privateConstructorUsedError;
+  String get guestName => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  String get tableId => throw _privateConstructorUsedError;
+  String get date => throw _privateConstructorUsedError;
+  String get timeSlot => throw _privateConstructorUsedError;
+  int get numberOfGuests => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  String get createdAt => throw _privateConstructorUsedError;
+  String? get endTime => throw _privateConstructorUsedError;
+  String? get notes => throw _privateConstructorUsedError;
+
+  /// Serializes this ReportBookingModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ReportBookingModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ReportBookingModelCopyWith<ReportBookingModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ReportBookingModelCopyWith<$Res> {
+  factory $ReportBookingModelCopyWith(
+    ReportBookingModel value,
+    $Res Function(ReportBookingModel) then,
+  ) = _$ReportBookingModelCopyWithImpl<$Res, ReportBookingModel>;
+  @useResult
+  $Res call({
+    @JsonKey(name: '_id') String id,
+    String bookingType,
+    String guestName,
+    String phone,
+    String tableId,
+    String date,
+    String timeSlot,
+    int numberOfGuests,
+    String status,
+    String createdAt,
+    String? endTime,
+    String? notes,
+  });
+}
+
+/// @nodoc
+class _$ReportBookingModelCopyWithImpl<$Res, $Val extends ReportBookingModel>
+    implements $ReportBookingModelCopyWith<$Res> {
+  _$ReportBookingModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ReportBookingModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? bookingType = null,
+    Object? guestName = null,
+    Object? phone = null,
+    Object? tableId = null,
+    Object? date = null,
+    Object? timeSlot = null,
+    Object? numberOfGuests = null,
+    Object? status = null,
+    Object? createdAt = null,
+    Object? endTime = freezed,
+    Object? notes = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            bookingType: null == bookingType
+                ? _value.bookingType
+                : bookingType // ignore: cast_nullable_to_non_nullable
+                      as String,
+            guestName: null == guestName
+                ? _value.guestName
+                : guestName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            tableId: null == tableId
+                ? _value.tableId
+                : tableId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            date: null == date
+                ? _value.date
+                : date // ignore: cast_nullable_to_non_nullable
+                      as String,
+            timeSlot: null == timeSlot
+                ? _value.timeSlot
+                : timeSlot // ignore: cast_nullable_to_non_nullable
+                      as String,
+            numberOfGuests: null == numberOfGuests
+                ? _value.numberOfGuests
+                : numberOfGuests // ignore: cast_nullable_to_non_nullable
+                      as int,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as String,
+            endTime: freezed == endTime
+                ? _value.endTime
+                : endTime // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$ReportBookingModelImplCopyWith<$Res>
+    implements $ReportBookingModelCopyWith<$Res> {
+  factory _$$ReportBookingModelImplCopyWith(
+    _$ReportBookingModelImpl value,
+    $Res Function(_$ReportBookingModelImpl) then,
+  ) = __$$ReportBookingModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    @JsonKey(name: '_id') String id,
+    String bookingType,
+    String guestName,
+    String phone,
+    String tableId,
+    String date,
+    String timeSlot,
+    int numberOfGuests,
+    String status,
+    String createdAt,
+    String? endTime,
+    String? notes,
+  });
+}
+
+/// @nodoc
+class __$$ReportBookingModelImplCopyWithImpl<$Res>
+    extends _$ReportBookingModelCopyWithImpl<$Res, _$ReportBookingModelImpl>
+    implements _$$ReportBookingModelImplCopyWith<$Res> {
+  __$$ReportBookingModelImplCopyWithImpl(
+    _$ReportBookingModelImpl _value,
+    $Res Function(_$ReportBookingModelImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of ReportBookingModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? bookingType = null,
+    Object? guestName = null,
+    Object? phone = null,
+    Object? tableId = null,
+    Object? date = null,
+    Object? timeSlot = null,
+    Object? numberOfGuests = null,
+    Object? status = null,
+    Object? createdAt = null,
+    Object? endTime = freezed,
+    Object? notes = freezed,
+  }) {
+    return _then(
+      _$ReportBookingModelImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        bookingType: null == bookingType
+            ? _value.bookingType
+            : bookingType // ignore: cast_nullable_to_non_nullable
+                  as String,
+        guestName: null == guestName
+            ? _value.guestName
+            : guestName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        tableId: null == tableId
+            ? _value.tableId
+            : tableId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        date: null == date
+            ? _value.date
+            : date // ignore: cast_nullable_to_non_nullable
+                  as String,
+        timeSlot: null == timeSlot
+            ? _value.timeSlot
+            : timeSlot // ignore: cast_nullable_to_non_nullable
+                  as String,
+        numberOfGuests: null == numberOfGuests
+            ? _value.numberOfGuests
+            : numberOfGuests // ignore: cast_nullable_to_non_nullable
+                  as int,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as String,
+        endTime: freezed == endTime
+            ? _value.endTime
+            : endTime // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ReportBookingModelImpl extends _ReportBookingModel {
+  const _$ReportBookingModelImpl({
+    @JsonKey(name: '_id') required this.id,
+    required this.bookingType,
+    required this.guestName,
+    required this.phone,
+    required this.tableId,
+    required this.date,
+    required this.timeSlot,
+    required this.numberOfGuests,
+    required this.status,
+    required this.createdAt,
+    this.endTime,
+    this.notes,
+  }) : super._();
+
+  factory _$ReportBookingModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ReportBookingModelImplFromJson(json);
+
+  @override
+  @JsonKey(name: '_id')
+  final String id;
+  @override
+  final String bookingType;
+  @override
+  final String guestName;
+  @override
+  final String phone;
+  @override
+  final String tableId;
+  @override
+  final String date;
+  @override
+  final String timeSlot;
+  @override
+  final int numberOfGuests;
+  @override
+  final String status;
+  @override
+  final String createdAt;
+  @override
+  final String? endTime;
+  @override
+  final String? notes;
+
+  @override
+  String toString() {
+    return 'ReportBookingModel(id: $id, bookingType: $bookingType, guestName: $guestName, phone: $phone, tableId: $tableId, date: $date, timeSlot: $timeSlot, numberOfGuests: $numberOfGuests, status: $status, createdAt: $createdAt, endTime: $endTime, notes: $notes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ReportBookingModelImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.bookingType, bookingType) ||
+                other.bookingType == bookingType) &&
+            (identical(other.guestName, guestName) ||
+                other.guestName == guestName) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.tableId, tableId) || other.tableId == tableId) &&
+            (identical(other.date, date) || other.date == date) &&
+            (identical(other.timeSlot, timeSlot) ||
+                other.timeSlot == timeSlot) &&
+            (identical(other.numberOfGuests, numberOfGuests) ||
+                other.numberOfGuests == numberOfGuests) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.notes, notes) || other.notes == notes));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    bookingType,
+    guestName,
+    phone,
+    tableId,
+    date,
+    timeSlot,
+    numberOfGuests,
+    status,
+    createdAt,
+    endTime,
+    notes,
+  );
+
+  /// Create a copy of ReportBookingModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ReportBookingModelImplCopyWith<_$ReportBookingModelImpl> get copyWith =>
+      __$$ReportBookingModelImplCopyWithImpl<_$ReportBookingModelImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ReportBookingModelImplToJson(this);
+  }
+}
+
+abstract class _ReportBookingModel extends ReportBookingModel {
+  const factory _ReportBookingModel({
+    @JsonKey(name: '_id') required final String id,
+    required final String bookingType,
+    required final String guestName,
+    required final String phone,
+    required final String tableId,
+    required final String date,
+    required final String timeSlot,
+    required final int numberOfGuests,
+    required final String status,
+    required final String createdAt,
+    final String? endTime,
+    final String? notes,
+  }) = _$ReportBookingModelImpl;
+  const _ReportBookingModel._() : super._();
+
+  factory _ReportBookingModel.fromJson(Map<String, dynamic> json) =
+      _$ReportBookingModelImpl.fromJson;
+
+  @override
+  @JsonKey(name: '_id')
+  String get id;
+  @override
+  String get bookingType;
+  @override
+  String get guestName;
+  @override
+  String get phone;
+  @override
+  String get tableId;
+  @override
+  String get date;
+  @override
+  String get timeSlot;
+  @override
+  int get numberOfGuests;
+  @override
+  String get status;
+  @override
+  String get createdAt;
+  @override
+  String? get endTime;
+  @override
+  String? get notes;
+
+  /// Create a copy of ReportBookingModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ReportBookingModelImplCopyWith<_$ReportBookingModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

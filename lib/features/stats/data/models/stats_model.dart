@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mehmon/features/stats/domain/entities/stats_entity.dart';
 
 part 'stats_model.freezed.dart';
 part 'stats_model.g.dart';
@@ -17,12 +18,12 @@ abstract class AnalyticsPeriodModel with _$AnalyticsPeriodModel {
 @freezed
 abstract class AnalyticsSummaryModel with _$AnalyticsSummaryModel {
   const factory AnalyticsSummaryModel({
-    @JsonKey(name: 'total_bookings') required int totalBookings,
-    @JsonKey(name: 'confirmed_bookings') required int confirmedBookings,
-    @JsonKey(name: 'pending_bookings') required int pendingBookings,
-    @JsonKey(name: 'total_guests') required int totalGuests,
-    @JsonKey(name: 'total_tables') required int totalTables,
-    @JsonKey(name: 'occupancy_rate') required double occupancyRate,
+    required int totalBookings,
+    required int confirmedBookings,
+    required int pendingBookings,
+    required int totalGuests,
+    required int totalTables,
+    required double occupancyRate,
   }) = _AnalyticsSummaryModel;
 
   factory AnalyticsSummaryModel.fromJson(Map<String, dynamic> json) =>
@@ -33,13 +34,54 @@ abstract class AnalyticsSummaryModel with _$AnalyticsSummaryModel {
 abstract class AnalyticsReportModel with _$AnalyticsReportModel {
   const factory AnalyticsReportModel({
     required AnalyticsPeriodModel period,
-    @JsonKey(name: 'total_bookings') required int totalBookings,
+    required int totalBookings,
     required int completed,
     required int cancelled,
-    @JsonKey(name: 'total_guests') required int totalGuests,
-    @Default([]) List<dynamic> bookings,
+    required int totalGuests,
+    @Default([]) List<ReportBookingModel> bookings,
   }) = _AnalyticsReportModel;
 
   factory AnalyticsReportModel.fromJson(Map<String, dynamic> json) =>
       _$AnalyticsReportModelFromJson(json);
+}
+
+@freezed
+abstract class ReportBookingModel with _$ReportBookingModel {
+  const ReportBookingModel._();
+
+  // Freezed requires the private `._()` constructor before the unnamed factory
+  // to enable custom methods (toEntity). This conflicts with sort_unnamed_constructors_first.
+  // ignore: sort_unnamed_constructors_first
+  const factory ReportBookingModel({
+    @JsonKey(name: '_id') required String id,
+    required String bookingType,
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    required String status,
+    required String createdAt,
+    String? endTime,
+    String? notes,
+  }) = _ReportBookingModel;
+
+  factory ReportBookingModel.fromJson(Map<String, dynamic> json) =>
+      _$ReportBookingModelFromJson(json);
+
+  ReportBookingEntity toEntity() => ReportBookingEntity(
+    id: id,
+    bookingType: bookingType,
+    guestName: guestName,
+    phone: phone,
+    tableId: tableId,
+    date: date,
+    timeSlot: timeSlot,
+    numberOfGuests: numberOfGuests,
+    status: status,
+    createdAt: createdAt,
+    endTime: endTime,
+    notes: notes,
+  );
 }

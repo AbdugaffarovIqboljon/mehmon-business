@@ -23,6 +23,24 @@ abstract class AnalyticsSummaryEntity with _$AnalyticsSummaryEntity {
 }
 
 @freezed
+abstract class ReportBookingEntity with _$ReportBookingEntity {
+  const factory ReportBookingEntity({
+    required String id,
+    required String bookingType,
+    required String guestName,
+    required String phone,
+    required String tableId,
+    required String date,
+    required String timeSlot,
+    required int numberOfGuests,
+    required String status,
+    required String createdAt,
+    String? endTime,
+    String? notes,
+  }) = _ReportBookingEntity;
+}
+
+@freezed
 abstract class AnalyticsReportEntity with _$AnalyticsReportEntity {
   const factory AnalyticsReportEntity({
     required AnalyticsPeriodEntity period,
@@ -30,5 +48,6 @@ abstract class AnalyticsReportEntity with _$AnalyticsReportEntity {
     required int completed,
     required int cancelled,
     required int totalGuests,
+    @Default([]) List<ReportBookingEntity> bookings,
   }) = _AnalyticsReportEntity;
 }
