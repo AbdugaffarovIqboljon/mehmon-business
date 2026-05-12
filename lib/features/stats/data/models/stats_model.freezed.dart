@@ -795,12 +795,13 @@ mixin _$ReportBookingModel {
   String get bookingType => throw _privateConstructorUsedError;
   String get guestName => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
-  String get tableId => throw _privateConstructorUsedError;
   String get date => throw _privateConstructorUsedError;
   String get timeSlot => throw _privateConstructorUsedError;
   int get numberOfGuests => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'tableId')
+  TableInfoModel? get tableId => throw _privateConstructorUsedError;
   String? get endTime => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
 
@@ -826,15 +827,17 @@ abstract class $ReportBookingModelCopyWith<$Res> {
     String bookingType,
     String guestName,
     String phone,
-    String tableId,
     String date,
     String timeSlot,
     int numberOfGuests,
     String status,
     String createdAt,
+    @JsonKey(name: 'tableId') TableInfoModel? tableId,
     String? endTime,
     String? notes,
   });
+
+  $TableInfoModelCopyWith<$Res>? get tableId;
 }
 
 /// @nodoc
@@ -856,12 +859,12 @@ class _$ReportBookingModelCopyWithImpl<$Res, $Val extends ReportBookingModel>
     Object? bookingType = null,
     Object? guestName = null,
     Object? phone = null,
-    Object? tableId = null,
     Object? date = null,
     Object? timeSlot = null,
     Object? numberOfGuests = null,
     Object? status = null,
     Object? createdAt = null,
+    Object? tableId = freezed,
     Object? endTime = freezed,
     Object? notes = freezed,
   }) {
@@ -883,10 +886,6 @@ class _$ReportBookingModelCopyWithImpl<$Res, $Val extends ReportBookingModel>
                 ? _value.phone
                 : phone // ignore: cast_nullable_to_non_nullable
                       as String,
-            tableId: null == tableId
-                ? _value.tableId
-                : tableId // ignore: cast_nullable_to_non_nullable
-                      as String,
             date: null == date
                 ? _value.date
                 : date // ignore: cast_nullable_to_non_nullable
@@ -907,6 +906,10 @@ class _$ReportBookingModelCopyWithImpl<$Res, $Val extends ReportBookingModel>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as String,
+            tableId: freezed == tableId
+                ? _value.tableId
+                : tableId // ignore: cast_nullable_to_non_nullable
+                      as TableInfoModel?,
             endTime: freezed == endTime
                 ? _value.endTime
                 : endTime // ignore: cast_nullable_to_non_nullable
@@ -918,6 +921,20 @@ class _$ReportBookingModelCopyWithImpl<$Res, $Val extends ReportBookingModel>
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of ReportBookingModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $TableInfoModelCopyWith<$Res>? get tableId {
+    if (_value.tableId == null) {
+      return null;
+    }
+
+    return $TableInfoModelCopyWith<$Res>(_value.tableId!, (value) {
+      return _then(_value.copyWith(tableId: value) as $Val);
+    });
   }
 }
 
@@ -935,15 +952,18 @@ abstract class _$$ReportBookingModelImplCopyWith<$Res>
     String bookingType,
     String guestName,
     String phone,
-    String tableId,
     String date,
     String timeSlot,
     int numberOfGuests,
     String status,
     String createdAt,
+    @JsonKey(name: 'tableId') TableInfoModel? tableId,
     String? endTime,
     String? notes,
   });
+
+  @override
+  $TableInfoModelCopyWith<$Res>? get tableId;
 }
 
 /// @nodoc
@@ -964,12 +984,12 @@ class __$$ReportBookingModelImplCopyWithImpl<$Res>
     Object? bookingType = null,
     Object? guestName = null,
     Object? phone = null,
-    Object? tableId = null,
     Object? date = null,
     Object? timeSlot = null,
     Object? numberOfGuests = null,
     Object? status = null,
     Object? createdAt = null,
+    Object? tableId = freezed,
     Object? endTime = freezed,
     Object? notes = freezed,
   }) {
@@ -991,10 +1011,6 @@ class __$$ReportBookingModelImplCopyWithImpl<$Res>
             ? _value.phone
             : phone // ignore: cast_nullable_to_non_nullable
                   as String,
-        tableId: null == tableId
-            ? _value.tableId
-            : tableId // ignore: cast_nullable_to_non_nullable
-                  as String,
         date: null == date
             ? _value.date
             : date // ignore: cast_nullable_to_non_nullable
@@ -1015,6 +1031,10 @@ class __$$ReportBookingModelImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as String,
+        tableId: freezed == tableId
+            ? _value.tableId
+            : tableId // ignore: cast_nullable_to_non_nullable
+                  as TableInfoModel?,
         endTime: freezed == endTime
             ? _value.endTime
             : endTime // ignore: cast_nullable_to_non_nullable
@@ -1036,12 +1056,12 @@ class _$ReportBookingModelImpl extends _ReportBookingModel {
     required this.bookingType,
     required this.guestName,
     required this.phone,
-    required this.tableId,
     required this.date,
     required this.timeSlot,
     required this.numberOfGuests,
     required this.status,
     required this.createdAt,
+    @JsonKey(name: 'tableId') this.tableId,
     this.endTime,
     this.notes,
   }) : super._();
@@ -1059,8 +1079,6 @@ class _$ReportBookingModelImpl extends _ReportBookingModel {
   @override
   final String phone;
   @override
-  final String tableId;
-  @override
   final String date;
   @override
   final String timeSlot;
@@ -1071,13 +1089,16 @@ class _$ReportBookingModelImpl extends _ReportBookingModel {
   @override
   final String createdAt;
   @override
+  @JsonKey(name: 'tableId')
+  final TableInfoModel? tableId;
+  @override
   final String? endTime;
   @override
   final String? notes;
 
   @override
   String toString() {
-    return 'ReportBookingModel(id: $id, bookingType: $bookingType, guestName: $guestName, phone: $phone, tableId: $tableId, date: $date, timeSlot: $timeSlot, numberOfGuests: $numberOfGuests, status: $status, createdAt: $createdAt, endTime: $endTime, notes: $notes)';
+    return 'ReportBookingModel(id: $id, bookingType: $bookingType, guestName: $guestName, phone: $phone, date: $date, timeSlot: $timeSlot, numberOfGuests: $numberOfGuests, status: $status, createdAt: $createdAt, tableId: $tableId, endTime: $endTime, notes: $notes)';
   }
 
   @override
@@ -1091,7 +1112,6 @@ class _$ReportBookingModelImpl extends _ReportBookingModel {
             (identical(other.guestName, guestName) ||
                 other.guestName == guestName) &&
             (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.tableId, tableId) || other.tableId == tableId) &&
             (identical(other.date, date) || other.date == date) &&
             (identical(other.timeSlot, timeSlot) ||
                 other.timeSlot == timeSlot) &&
@@ -1100,6 +1120,7 @@ class _$ReportBookingModelImpl extends _ReportBookingModel {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
+            (identical(other.tableId, tableId) || other.tableId == tableId) &&
             (identical(other.endTime, endTime) || other.endTime == endTime) &&
             (identical(other.notes, notes) || other.notes == notes));
   }
@@ -1112,12 +1133,12 @@ class _$ReportBookingModelImpl extends _ReportBookingModel {
     bookingType,
     guestName,
     phone,
-    tableId,
     date,
     timeSlot,
     numberOfGuests,
     status,
     createdAt,
+    tableId,
     endTime,
     notes,
   );
@@ -1145,12 +1166,12 @@ abstract class _ReportBookingModel extends ReportBookingModel {
     required final String bookingType,
     required final String guestName,
     required final String phone,
-    required final String tableId,
     required final String date,
     required final String timeSlot,
     required final int numberOfGuests,
     required final String status,
     required final String createdAt,
+    @JsonKey(name: 'tableId') final TableInfoModel? tableId,
     final String? endTime,
     final String? notes,
   }) = _$ReportBookingModelImpl;
@@ -1169,8 +1190,6 @@ abstract class _ReportBookingModel extends ReportBookingModel {
   @override
   String get phone;
   @override
-  String get tableId;
-  @override
   String get date;
   @override
   String get timeSlot;
@@ -1180,6 +1199,9 @@ abstract class _ReportBookingModel extends ReportBookingModel {
   String get status;
   @override
   String get createdAt;
+  @override
+  @JsonKey(name: 'tableId')
+  TableInfoModel? get tableId;
   @override
   String? get endTime;
   @override

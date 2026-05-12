@@ -15,6 +15,8 @@ class BookingOptionsSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
+    final status = booking.status;
+    final isTerminal = status == 'completed' || status == 'cancelled';
 
     return SafeArea(
       child: Padding(
@@ -41,30 +43,48 @@ class BookingOptionsSheet extends ConsumerWidget {
             ),
             const Divider(height: 1, color: AppColors.divider),
             const SizedBox(height: AppSpacing.sm),
-            _OptionTile(
-              icon: Icons.edit_outlined,
-              label: 'Tahrirlash',
-              onTap: () {
-                Navigator.pop(context);
-                showBookATableSheet(
-                  context,
-                  existingBooking: booking,
-                );
-              },
-            ),
-            if (booking.status != 'confirmed')
+            if (isTerminal)
               _OptionTile(
-                icon: Icons.check_circle_outline,
-                label: 'Tasdiqlash',
-                color: AppColors.success,
-                onTap: () => _confirmStatusChange(
-                  context,
-                  ref,
-                  title: 'Bron tasdiqlansinmi?',
-                  newStatus: 'confirmed',
-                ),
+                icon: Icons.close,
+                label: 'Yopish',
+                onTap: () => Navigator.pop(context),
+              )
+            else ...[
+              _OptionTile(
+                icon: Icons.edit_outlined,
+                label: 'Tahrirlash',
+                onTap: () {
+                  Navigator.pop(context);
+                  showBookATableSheet(
+                    context,
+                    existingBooking: booking,
+                  );
+                },
               ),
-            if (booking.status != 'cancelled')
+              if (status == 'pending')
+                _OptionTile(
+                  icon: Icons.check_circle_outline,
+                  label: 'Tasdiqlash',
+                  color: AppColors.success,
+                  onTap: () => _confirmStatusChange(
+                    context,
+                    ref,
+                    title: 'Bron tasdiqlansinmi?',
+                    newStatus: 'confirmed',
+                  ),
+                ),
+              if (status == 'confirmed')
+                _OptionTile(
+                  icon: Icons.task_alt,
+                  label: 'Yakunlash',
+                  color: AppColors.info,
+                  onTap: () => _confirmStatusChange(
+                    context,
+                    ref,
+                    title: 'Bron yakunlansinmi?',
+                    newStatus: 'completed',
+                  ),
+                ),
               _OptionTile(
                 icon: Icons.cancel_outlined,
                 label: 'Bekor qilish',
@@ -76,6 +96,7 @@ class BookingOptionsSheet extends ConsumerWidget {
                   newStatus: 'cancelled',
                 ),
               ),
+            ],
             const SizedBox(height: AppSpacing.sm),
           ],
         ),

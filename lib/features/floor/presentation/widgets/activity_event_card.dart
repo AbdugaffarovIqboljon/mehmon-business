@@ -10,21 +10,13 @@ class ActivityEventCard extends StatelessWidget {
 
   final ActivityLogEntity entity;
 
-  static ChronologyEventType _typeFromAction(String action) {
-    final lower = action.toLowerCase();
-    if (lower.contains('bekor') || lower.contains('cancel')) {
-      return ChronologyEventType.reservationCancelled;
-    }
-    if (lower.contains('yangila') || lower.contains('update')) {
-      return ChronologyEventType.reservationUpdated;
-    }
-    if (lower.contains('keldi') ||
-        lower.contains('arriv') ||
-        lower.contains('check-in') ||
-        lower.contains('checkin')) {
-      return ChronologyEventType.guestArrived;
-    }
-    return ChronologyEventType.reservationCreated;
+  static ChronologyEventType _typeFromType(String type) {
+    return switch (type) {
+      'booking_cancelled' => ChronologyEventType.reservationCancelled,
+      'booking_updated' => ChronologyEventType.reservationUpdated,
+      'check_in' => ChronologyEventType.guestArrived,
+      _ => ChronologyEventType.reservationCreated,
+    };
   }
 
   static String _formatTime(String createdAt) {
@@ -39,7 +31,7 @@ class ActivityEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final type = _typeFromAction(entity.action);
+    final type = _typeFromType(entity.type);
     final time = _formatTime(entity.createdAt);
 
     return DecoratedBox(

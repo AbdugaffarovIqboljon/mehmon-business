@@ -1,4 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
+
+export 'package:mehmon/features/bookings/domain/entities/booking_entity.dart'
+    show TableInfoEntity;
 
 part 'stats_entity.freezed.dart';
 
@@ -29,12 +33,12 @@ abstract class ReportBookingEntity with _$ReportBookingEntity {
     required String bookingType,
     required String guestName,
     required String phone,
-    required String tableId,
     required String date,
     required String timeSlot,
     required int numberOfGuests,
     required String status,
     required String createdAt,
+    TableInfoEntity? tableId,
     String? endTime,
     String? notes,
   }) = _ReportBookingEntity;

@@ -23,6 +23,7 @@ mixin _$ActivityLogEntity {
   String get details => throw _privateConstructorUsedError;
   String get performedBy => throw _privateConstructorUsedError;
   String get createdAt => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
 
   /// Create a copy of ActivityLogEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -45,6 +46,7 @@ abstract class $ActivityLogEntityCopyWith<$Res> {
     String details,
     String performedBy,
     String createdAt,
+    String type,
   });
 }
 
@@ -69,6 +71,7 @@ class _$ActivityLogEntityCopyWithImpl<$Res, $Val extends ActivityLogEntity>
     Object? details = null,
     Object? performedBy = null,
     Object? createdAt = null,
+    Object? type = null,
   }) {
     return _then(
       _value.copyWith(
@@ -96,6 +99,10 @@ class _$ActivityLogEntityCopyWithImpl<$Res, $Val extends ActivityLogEntity>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as String,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -118,6 +125,7 @@ abstract class _$$ActivityLogEntityImplCopyWith<$Res>
     String details,
     String performedBy,
     String createdAt,
+    String type,
   });
 }
 
@@ -141,6 +149,7 @@ class __$$ActivityLogEntityImplCopyWithImpl<$Res>
     Object? details = null,
     Object? performedBy = null,
     Object? createdAt = null,
+    Object? type = null,
   }) {
     return _then(
       _$ActivityLogEntityImpl(
@@ -168,6 +177,10 @@ class __$$ActivityLogEntityImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as String,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -183,6 +196,7 @@ class _$ActivityLogEntityImpl implements _ActivityLogEntity {
     required this.details,
     required this.performedBy,
     required this.createdAt,
+    this.type = 'other',
   });
 
   @override
@@ -197,10 +211,13 @@ class _$ActivityLogEntityImpl implements _ActivityLogEntity {
   final String performedBy;
   @override
   final String createdAt;
+  @override
+  @JsonKey()
+  final String type;
 
   @override
   String toString() {
-    return 'ActivityLogEntity(id: $id, restaurantId: $restaurantId, action: $action, details: $details, performedBy: $performedBy, createdAt: $createdAt)';
+    return 'ActivityLogEntity(id: $id, restaurantId: $restaurantId, action: $action, details: $details, performedBy: $performedBy, createdAt: $createdAt, type: $type)';
   }
 
   @override
@@ -216,7 +233,8 @@ class _$ActivityLogEntityImpl implements _ActivityLogEntity {
             (identical(other.performedBy, performedBy) ||
                 other.performedBy == performedBy) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.type, type) || other.type == type));
   }
 
   @override
@@ -228,6 +246,7 @@ class _$ActivityLogEntityImpl implements _ActivityLogEntity {
     details,
     performedBy,
     createdAt,
+    type,
   );
 
   /// Create a copy of ActivityLogEntity
@@ -250,6 +269,7 @@ abstract class _ActivityLogEntity implements ActivityLogEntity {
     required final String details,
     required final String performedBy,
     required final String createdAt,
+    final String type,
   }) = _$ActivityLogEntityImpl;
 
   @override
@@ -264,6 +284,8 @@ abstract class _ActivityLogEntity implements ActivityLogEntity {
   String get performedBy;
   @override
   String get createdAt;
+  @override
+  String get type;
 
   /// Create a copy of ActivityLogEntity
   /// with the given fields replaced by the non-null parameter values.

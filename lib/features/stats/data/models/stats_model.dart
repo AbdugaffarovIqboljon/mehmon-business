@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mehmon/features/bookings/data/models/booking_model.dart';
 import 'package:mehmon/features/stats/domain/entities/stats_entity.dart';
 
 part 'stats_model.freezed.dart';
@@ -57,12 +58,12 @@ abstract class ReportBookingModel with _$ReportBookingModel {
     required String bookingType,
     required String guestName,
     required String phone,
-    required String tableId,
     required String date,
     required String timeSlot,
     required int numberOfGuests,
     required String status,
     required String createdAt,
+    @JsonKey(name: 'tableId') TableInfoModel? tableId,
     String? endTime,
     String? notes,
   }) = _ReportBookingModel;
@@ -75,7 +76,13 @@ abstract class ReportBookingModel with _$ReportBookingModel {
     bookingType: bookingType,
     guestName: guestName,
     phone: phone,
-    tableId: tableId,
+    tableId: tableId == null
+        ? null
+        : TableInfoEntity(
+            id: tableId!.id,
+            number: tableId!.number,
+            capacity: tableId!.capacity,
+          ),
     date: date,
     timeSlot: timeSlot,
     numberOfGuests: numberOfGuests,

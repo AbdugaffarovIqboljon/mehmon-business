@@ -33,6 +33,8 @@ mixin _$ActivityLogModel {
   String get performedBy => throw _privateConstructorUsedError;
   @JsonKey(name: 'createdAt')
   String get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'type')
+  String get type => throw _privateConstructorUsedError;
 
   /// Serializes this ActivityLogModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -58,6 +60,7 @@ abstract class $ActivityLogModelCopyWith<$Res> {
     @JsonKey(name: 'details') String details,
     @JsonKey(name: 'performedBy') String performedBy,
     @JsonKey(name: 'createdAt') String createdAt,
+    @JsonKey(name: 'type') String type,
   });
 }
 
@@ -82,6 +85,7 @@ class _$ActivityLogModelCopyWithImpl<$Res, $Val extends ActivityLogModel>
     Object? details = null,
     Object? performedBy = null,
     Object? createdAt = null,
+    Object? type = null,
   }) {
     return _then(
       _value.copyWith(
@@ -109,6 +113,10 @@ class _$ActivityLogModelCopyWithImpl<$Res, $Val extends ActivityLogModel>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as String,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -131,6 +139,7 @@ abstract class _$$ActivityLogModelImplCopyWith<$Res>
     @JsonKey(name: 'details') String details,
     @JsonKey(name: 'performedBy') String performedBy,
     @JsonKey(name: 'createdAt') String createdAt,
+    @JsonKey(name: 'type') String type,
   });
 }
 
@@ -154,6 +163,7 @@ class __$$ActivityLogModelImplCopyWithImpl<$Res>
     Object? details = null,
     Object? performedBy = null,
     Object? createdAt = null,
+    Object? type = null,
   }) {
     return _then(
       _$ActivityLogModelImpl(
@@ -181,6 +191,10 @@ class __$$ActivityLogModelImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as String,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -196,6 +210,7 @@ class _$ActivityLogModelImpl implements _ActivityLogModel {
     @JsonKey(name: 'details') required this.details,
     @JsonKey(name: 'performedBy') required this.performedBy,
     @JsonKey(name: 'createdAt') required this.createdAt,
+    @JsonKey(name: 'type') this.type = 'other',
   });
 
   factory _$ActivityLogModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -219,10 +234,13 @@ class _$ActivityLogModelImpl implements _ActivityLogModel {
   @override
   @JsonKey(name: 'createdAt')
   final String createdAt;
+  @override
+  @JsonKey(name: 'type')
+  final String type;
 
   @override
   String toString() {
-    return 'ActivityLogModel(id: $id, restaurantId: $restaurantId, action: $action, details: $details, performedBy: $performedBy, createdAt: $createdAt)';
+    return 'ActivityLogModel(id: $id, restaurantId: $restaurantId, action: $action, details: $details, performedBy: $performedBy, createdAt: $createdAt, type: $type)';
   }
 
   @override
@@ -238,7 +256,8 @@ class _$ActivityLogModelImpl implements _ActivityLogModel {
             (identical(other.performedBy, performedBy) ||
                 other.performedBy == performedBy) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.type, type) || other.type == type));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -251,6 +270,7 @@ class _$ActivityLogModelImpl implements _ActivityLogModel {
     details,
     performedBy,
     createdAt,
+    type,
   );
 
   /// Create a copy of ActivityLogModel
@@ -278,6 +298,7 @@ abstract class _ActivityLogModel implements ActivityLogModel {
     @JsonKey(name: 'details') required final String details,
     @JsonKey(name: 'performedBy') required final String performedBy,
     @JsonKey(name: 'createdAt') required final String createdAt,
+    @JsonKey(name: 'type') final String type,
   }) = _$ActivityLogModelImpl;
 
   factory _ActivityLogModel.fromJson(Map<String, dynamic> json) =
@@ -301,6 +322,9 @@ abstract class _ActivityLogModel implements ActivityLogModel {
   @override
   @JsonKey(name: 'createdAt')
   String get createdAt;
+  @override
+  @JsonKey(name: 'type')
+  String get type;
 
   /// Create a copy of ActivityLogModel
   /// with the given fields replaced by the non-null parameter values.

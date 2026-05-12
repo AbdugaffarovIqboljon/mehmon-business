@@ -33,6 +33,9 @@ abstract final class ApiConstants {
   static const String shiftById = '/api/shifts/{id}';
   static String shiftId(String id) => '/api/shifts/$id';
 
+  // ── Upload ────────────────────────────────────────────────────────
+  static const String upload = '/api/upload';
+
   // ── Timeouts ──────────────────────────────────────────────────────
   static const int connectTimeoutMs = 15000;
   static const int receiveTimeoutMs = 15000;

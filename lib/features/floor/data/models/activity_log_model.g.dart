@@ -15,6 +15,7 @@ _$ActivityLogModelImpl _$$ActivityLogModelImplFromJson(
   details: json['details'] as String,
   performedBy: json['performedBy'] as String,
   createdAt: json['createdAt'] as String,
+  type: json['type'] as String? ?? 'other',
 );
 
 Map<String, dynamic> _$$ActivityLogModelImplToJson(
@@ -26,4 +27,5 @@ Map<String, dynamic> _$$ActivityLogModelImplToJson(
   'details': instance.details,
   'performedBy': instance.performedBy,
   'createdAt': instance.createdAt,
+  'type': instance.type,
 };

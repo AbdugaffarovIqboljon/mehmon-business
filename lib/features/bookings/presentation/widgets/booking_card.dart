@@ -118,6 +118,8 @@ Color _statusColor(String status) {
       return const Color(0xFF6A56E4);
     case 'cancelled':
       return const Color(0xFFED5B5B);
+    case 'completed':
+      return AppColors.info;
     default:
       return const Color(0xFF198EEA);
   }

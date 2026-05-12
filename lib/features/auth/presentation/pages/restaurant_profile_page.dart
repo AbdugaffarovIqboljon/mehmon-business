@@ -5,6 +5,7 @@ import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/routing/route_names.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/core/widgets/app_text_field.dart';
+import 'package:mehmon/core/widgets/image_picker_button.dart';
 import 'package:mehmon/core/widgets/primary_button.dart';
 import 'package:mehmon/features/auth/presentation/widgets/auth_form_section.dart';
 import 'package:mehmon/features/auth/presentation/widgets/restaurant_type_dropdown.dart';
@@ -105,12 +106,22 @@ class _RestaurantProfilePageState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                ImagePickerButton(
+                  currentUrl: _imageUrlController.text.isEmpty
+                      ? null
+                      : _imageUrlController.text,
+                  onUrlUploaded: (url) {
+                    setState(() => _imageUrlController.text = url);
+                  },
+                ),
+                const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: _imageUrlController,
                   label: 'Rasm URL',
                   hint: 'https://...',
                   keyboardType: TextInputType.url,
                   textInputAction: TextInputAction.next,
+                  onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 RestaurantTypeDropdown(

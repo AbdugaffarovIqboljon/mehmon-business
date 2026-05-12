@@ -22,21 +22,13 @@ extension ChronologyFilterTypeX on ChronologyFilterType {
   };
 }
 
-ChronologyEventType _typeFromAction(String action) {
-  final lower = action.toLowerCase();
-  if (lower.contains('bekor') || lower.contains('cancel')) {
-    return ChronologyEventType.reservationCancelled;
-  }
-  if (lower.contains('yangila') || lower.contains('update')) {
-    return ChronologyEventType.reservationUpdated;
-  }
-  if (lower.contains('keldi') ||
-      lower.contains('arriv') ||
-      lower.contains('check-in') ||
-      lower.contains('checkin')) {
-    return ChronologyEventType.guestArrived;
-  }
-  return ChronologyEventType.reservationCreated;
+ChronologyEventType _typeFromType(String type) {
+  return switch (type) {
+    'booking_cancelled' => ChronologyEventType.reservationCancelled,
+    'booking_updated' => ChronologyEventType.reservationUpdated,
+    'check_in' => ChronologyEventType.guestArrived,
+    _ => ChronologyEventType.reservationCreated,
+  };
 }
 
 class ChronologyPage extends ConsumerStatefulWidget {
@@ -222,7 +214,7 @@ class _ChronologyList extends StatelessWidget {
     if (filter == ChronologyFilterType.all) {
       return true;
     }
-    final type = _typeFromAction(log.action);
+    final type = _typeFromType(log.type);
     if (filter == ChronologyFilterType.reservations) {
       return type == ChronologyEventType.reservationCreated ||
           type == ChronologyEventType.guestArrived;

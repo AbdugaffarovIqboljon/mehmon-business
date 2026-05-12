@@ -13,6 +13,7 @@ abstract class ActivityLogModel with _$ActivityLogModel {
     @JsonKey(name: 'details') required String details,
     @JsonKey(name: 'performedBy') required String performedBy,
     @JsonKey(name: 'createdAt') required String createdAt,
+    @JsonKey(name: 'type') @Default('other') String type,
   }) = _ActivityLogModel;
 
   factory ActivityLogModel.fromJson(Map<String, dynamic> json) =>
@@ -23,6 +24,7 @@ extension ActivityLogModelX on ActivityLogModel {
   ActivityLogEntity toEntity() => ActivityLogEntity(
         id: id,
         restaurantId: restaurantId,
+        type: type,
         action: action,
         details: details,
         performedBy: performedBy,

@@ -12,12 +12,14 @@ abstract class ActivityLogEntity with _$ActivityLogEntity {
     required String details,
     required String performedBy,
     required String createdAt,
+    @Default('other') String type,
   }) = _ActivityLogEntity;
 
   factory ActivityLogEntity.fromModel(ActivityLogModel model) =>
       ActivityLogEntity(
         id: model.id,
         restaurantId: model.restaurantId,
+        type: model.type,
         action: model.action,
         details: model.details,
         performedBy: model.performedBy,
