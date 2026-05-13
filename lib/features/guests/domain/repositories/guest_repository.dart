@@ -13,7 +13,6 @@ abstract class GuestRepository {
     required String phone,
     String? email,
     String? notes,
-    String? avatarUrl,
   });
 
   Future<Result<GuestEntity>> updateGuest({
@@ -22,7 +21,6 @@ abstract class GuestRepository {
     required String phone,
     String? email,
     String? notes,
-    String? avatarUrl,
   });
 
   Future<Result<String>> deleteGuest({required String id});

@@ -40,9 +40,15 @@ Future<void> main() async {
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
             onLogoutProvider.overrideWith((ref) {
+              var logoutInFlight = false;
               return () {
+                if (logoutInFlight) return;
+                logoutInFlight = true;
                 unawaited(
-                  ref.read(authControllerProvider.notifier).logout(),
+                  ref
+                      .read(authControllerProvider.notifier)
+                      .logout()
+                      .whenComplete(() => logoutInFlight = false),
                 );
               };
             }),

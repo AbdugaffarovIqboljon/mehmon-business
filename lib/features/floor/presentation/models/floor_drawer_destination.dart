@@ -40,16 +40,8 @@ enum FloorDrawerDestination {
     title: 'Смены',
     iconAsset: 'assets/icons/ic_people_group.png',
     section: FloorDrawerSection.staffAndIntegrations,
-  ),
-  posIntegration(
-    title: 'POS-интеграция',
-    section: FloorDrawerSection.staffAndIntegrations,
-  ),
-  settings(
-    title: 'Настройки',
-    iconAsset: 'assets/icons/ic_settings.png',
-    section: FloorDrawerSection.staffAndIntegrations,
   );
+ 
 
   const FloorDrawerDestination({
     required this.title,
@@ -71,10 +63,6 @@ enum FloorDrawerDestination {
         return AppLocalizations.of(context)!.drawerReports;
       case FloorDrawerDestination.shifts:
         return AppLocalizations.of(context)!.drawerShifts;
-      case FloorDrawerDestination.posIntegration:
-        return AppLocalizations.of(context)!.drawerPosIntegration;
-      case FloorDrawerDestination.settings:
-        return AppLocalizations.of(context)!.drawerSettings;
     }
   }
 }
@@ -102,8 +90,6 @@ const List<FloorDrawerSectionConfig> floorDrawerSections = [
     section: FloorDrawerSection.staffAndIntegrations,
     destinations: [
       FloorDrawerDestination.shifts,
-      FloorDrawerDestination.posIntegration,
-      FloorDrawerDestination.settings,
     ],
   ),
 ];
@@ -114,7 +100,5 @@ extension FloorDrawerDestinationRouting on FloorDrawerDestination {
     FloorDrawerDestination.chronology => RouteNames.floorChronology,
     FloorDrawerDestination.reports => RouteNames.floorReports,
     FloorDrawerDestination.shifts => RouteNames.floorShifts,
-    FloorDrawerDestination.posIntegration => RouteNames.floorPosIntegration,
-    FloorDrawerDestination.settings => RouteNames.floorMenuSettings,
   };
 }

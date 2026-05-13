@@ -6,9 +6,9 @@ import 'package:mehmon/core/services/image_upload_service.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
 
-/// Tappable row that lets the user pick an image (gallery or camera),
-/// uploads it via [ImageUploadService] and yields the resulting URL via
-/// [onUrlUploaded]. Renders a small preview when [currentUrl] is non-null.
+/// Circular avatar picker. Taps open a source sheet (gallery/camera),
+/// the chosen image is compressed by [ImagePicker] and uploaded via
+/// [ImageUploadService]; the resulting URL is reported via [onUrlUploaded].
 class ImagePickerButton extends ConsumerStatefulWidget {
   const ImagePickerButton({
     required this.onUrlUploaded,
@@ -24,6 +24,9 @@ class ImagePickerButton extends ConsumerStatefulWidget {
 }
 
 class _ImagePickerButtonState extends ConsumerState<ImagePickerButton> {
+  static const double _radius = 50;
+  static const double _diameter = _radius * 2;
+
   final ValueNotifier<bool> _uploading = ValueNotifier<bool>(false);
   final ImagePicker _picker = ImagePicker();
 
@@ -80,8 +83,9 @@ class _ImagePickerButtonState extends ConsumerState<ImagePickerButton> {
     try {
       file = await _picker.pickImage(
         source: source,
-        maxWidth: 2048,
-        imageQuality: 85,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 75,
       );
     } on Exception {
       messenger.showSnackBar(
@@ -113,70 +117,61 @@ class _ImagePickerButtonState extends ConsumerState<ImagePickerButton> {
     final currentUrl = widget.currentUrl;
     final hasPreview = currentUrl != null && currentUrl.isNotEmpty;
 
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        onTap: _handleTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
+    return SizedBox(
+      width: _diameter,
+      height: _diameter,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.bottomRight,
+        children: [
+          GestureDetector(
+            onTap: _handleTap,
+            behavior: HitTestBehavior.opaque,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: _uploading,
+              builder: (_, uploading, __) {
+                return CircleAvatar(
+                  radius: _radius,
+                  backgroundColor: AppColors.surfaceVariant,
+                  backgroundImage: !uploading && hasPreview
+                      ? NetworkImage(currentUrl)
+                      : null,
+                  child: uploading
+                      ? const SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: AppColors.primary,
+                          ),
+                        )
+                      : (hasPreview
+                          ? null
+                          : const Icon(
+                              Icons.person_outline,
+                              size: 40,
+                              color: AppColors.textHint,
+                            )),
+                );
+              },
+            ),
           ),
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColors.divider),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-          ),
-          child: Row(
-            children: [
-              ValueListenableBuilder<bool>(
-                valueListenable: _uploading,
-                builder: (_, uploading, __) {
-                  if (uploading) {
-                    return const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.primary,
-                      ),
-                    );
-                  }
-                  return const Icon(
-                    Icons.photo_camera_outlined,
-                    color: AppColors.primary,
-                  );
-                },
+          IgnorePointer(
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.surface, width: 2),
               ),
-              const SizedBox(width: AppSpacing.md),
-              const Expanded(
-                child: Text('Rasm yuklash', style: AppTextStyles.titleMedium),
+              child: const Icon(
+                Icons.camera_alt,
+                size: 16,
+                color: Colors.white,
               ),
-              if (hasPreview) ...[
-                const SizedBox(width: AppSpacing.md),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                  child: Image.network(
-                    currentUrl,
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      width: 60,
-                      height: 60,
-                      color: AppColors.surfaceVariant,
-                      child: const Icon(
-                        Icons.broken_image_outlined,
-                        color: AppColors.textHint,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

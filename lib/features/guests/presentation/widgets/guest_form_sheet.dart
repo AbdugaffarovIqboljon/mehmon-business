@@ -24,7 +24,6 @@ class _GuestFormSheetState extends ConsumerState<GuestFormSheet> {
   late final TextEditingController _phoneController;
   late final TextEditingController _emailController;
   late final TextEditingController _notesController;
-  late final TextEditingController _avatarUrlController;
   late final ValueNotifier<bool> _isLoading;
 
   bool get _isEditing => widget.existingGuest != null;
@@ -36,7 +35,6 @@ class _GuestFormSheetState extends ConsumerState<GuestFormSheet> {
     _nameController = TextEditingController(text: guest?.name ?? '');
     _emailController = TextEditingController(text: guest?.email ?? '');
     _notesController = TextEditingController(text: guest?.notes ?? '');
-    _avatarUrlController = TextEditingController(text: guest?.avatarUrl ?? '');
     _phoneController = TextEditingController();
     _isLoading = ValueNotifier(false);
 
@@ -54,7 +52,6 @@ class _GuestFormSheetState extends ConsumerState<GuestFormSheet> {
     _phoneController.dispose();
     _emailController.dispose();
     _notesController.dispose();
-    _avatarUrlController.dispose();
     _isLoading.dispose();
     super.dispose();
   }
@@ -66,7 +63,6 @@ class _GuestFormSheetState extends ConsumerState<GuestFormSheet> {
     final phone = UzbekPhoneInput.toE164(_phoneController.text);
     final email = _emailController.text.trim();
     final notes = _notesController.text.trim();
-    final avatarUrl = _avatarUrlController.text.trim();
 
     _isLoading.value = true;
 
@@ -78,7 +74,6 @@ class _GuestFormSheetState extends ConsumerState<GuestFormSheet> {
             phone: phone,
             email: email.isEmpty ? null : email,
             notes: notes.isEmpty ? null : notes,
-            avatarUrl: avatarUrl.isEmpty ? null : avatarUrl,
           );
     } else {
       ok = await ref.read(guestControllerProvider.notifier).createGuest(
@@ -86,7 +81,6 @@ class _GuestFormSheetState extends ConsumerState<GuestFormSheet> {
             phone: phone,
             email: email.isEmpty ? null : email,
             notes: notes.isEmpty ? null : notes,
-            avatarUrl: avatarUrl.isEmpty ? null : avatarUrl,
           );
     }
 
@@ -163,13 +157,6 @@ class _GuestFormSheetState extends ConsumerState<GuestFormSheet> {
                   label: 'Izoh',
                   maxLines: 2,
                   textInputAction: TextInputAction.next,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  controller: _avatarUrlController,
-                  label: 'Avatar URL',
-                  hint: 'https://...',
-                  keyboardType: TextInputType.url,
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 ValueListenableBuilder<bool>(

@@ -106,24 +106,17 @@ class _RestaurantProfilePageState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ImagePickerButton(
-                  currentUrl: _imageUrlController.text.isEmpty
-                      ? null
-                      : _imageUrlController.text,
-                  onUrlUploaded: (url) {
-                    setState(() => _imageUrlController.text = url);
-                  },
+                Center(
+                  child: ImagePickerButton(
+                    currentUrl: _imageUrlController.text.isEmpty
+                        ? null
+                        : _imageUrlController.text,
+                    onUrlUploaded: (url) {
+                      setState(() => _imageUrlController.text = url);
+                    },
+                  ),
                 ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  controller: _imageUrlController,
-                  label: 'Rasm URL',
-                  hint: 'https://...',
-                  keyboardType: TextInputType.url,
-                  textInputAction: TextInputAction.next,
-                  onChanged: (_) => setState(() {}),
-                ),
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.xl),
                 RestaurantTypeDropdown(
                   selectedValue: _restaurantType,
                   onChanged: (key) => setState(() => _restaurantType = key),

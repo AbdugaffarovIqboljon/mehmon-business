@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/routing/route_names.dart';
+import 'package:mehmon/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mehmon/features/auth/presentation/pages/intro_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/language_select_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/login_page.dart';
@@ -34,9 +35,15 @@ class _ProfileRefreshNotifier extends ChangeNotifier {
   ProviderSubscription<dynamic>? _subscription;
 
   void attachIfNeeded(BuildContext context) {
+    // Only subscribe to profile when authenticated. Prevents the cold-start
+    // profile fetch from firing with no token and triggering the 401 path.
+    final container = ProviderScope.containerOf(context);
+    final isAuthenticated =
+        container.read(authControllerProvider).valueOrNull != null;
+    if (!isAuthenticated) return;
+
     if (_attached) return;
     _attached = true;
-    final container = ProviderScope.containerOf(context, listen: false);
     _subscription = container.listen(
       profileControllerProvider,
       (_, __) => notifyListeners(),

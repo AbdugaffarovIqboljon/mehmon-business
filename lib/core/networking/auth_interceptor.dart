@@ -19,7 +19,17 @@ class AuthInterceptor extends Interceptor {
   final VoidCallback _onLogout;
 
   bool _isRefreshing = false;
+  bool _isLoggingOut = false;
   final List<Completer<void>> _refreshCompleter = <Completer<void>>[];
+
+  // Never handle 401 for auth-flow endpoints — these are expected to 401
+  // in various states (logged-out logout, invalid login, expired refresh).
+  static const Set<String> _authBypass = {
+    ApiConstants.login,
+    ApiConstants.register,
+    ApiConstants.logout,
+    ApiConstants.refreshToken,
+  };
 
   @override
   Future<void> onRequest(
@@ -36,8 +46,9 @@ class AuthInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final statusCode = err.response?.statusCode;
+    final path = err.requestOptions.path;
 
-    if (statusCode != 401) {
+    if (statusCode != 401 || _authBypass.contains(path)) {
       handler.next(err);
       return;
     }
@@ -121,8 +132,11 @@ class AuthInterceptor extends Interceptor {
       }
       _refreshCompleter.clear();
 
-      await _tokenStore.clearTokens();
-      _onLogout();
+      if (!_isLoggingOut) {
+        _isLoggingOut = true;
+        await _tokenStore.clearTokens();
+        _onLogout();
+      }
       handler.next(err);
     }
   }

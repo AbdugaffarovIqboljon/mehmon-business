@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/formatters/uzbek_phone_input_formatter.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
@@ -122,10 +123,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             institutionType: _selectedInstitutionType,
           );
       if (success && mounted) {
-        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profil yangilandi')),
         );
+        if (mounted) context.pop();
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -148,6 +149,17 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Center(
+                  child: ImagePickerButton(
+                    currentUrl: _imageUrlController.text.isEmpty
+                        ? null
+                        : _imageUrlController.text,
+                    onUrlUploaded: (url) {
+                      setState(() => _imageUrlController.text = url);
+                    },
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xl),
                 AppTextField(
                   controller: _nameController,
                   textInputAction: TextInputAction.next,
@@ -219,24 +231,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       keyboardType: TextInputType.datetime,
                     ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                ImagePickerButton(
-                  currentUrl: _imageUrlController.text.isEmpty
-                      ? null
-                      : _imageUrlController.text,
-                  onUrlUploaded: (url) {
-                    setState(() => _imageUrlController.text = url);
-                  },
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  controller: _imageUrlController,
-                  textInputAction: TextInputAction.next,
-                  label: 'Rasm URL',
-                  hint: 'https://...',
-                  keyboardType: TextInputType.url,
-                  onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 RestaurantTypeDropdown(

@@ -12,9 +12,7 @@ import 'package:mehmon/features/guests/domain/repositories/guest_repository.dart
 
 final guestRepositoryProvider = Provider<GuestRepository>((ref) {
   return GuestRepositoryImpl(
-    dataSource: GuestRemoteDataSourceImpl(
-      dio: ref.watch(dioClientProvider),
-    ),
+    dataSource: GuestRemoteDataSourceImpl(dio: ref.watch(dioClientProvider)),
   );
 });
 
@@ -24,9 +22,7 @@ final guestControllerProvider =
     );
 
 final guestDetailProvider = AsyncNotifierProvider.autoDispose
-    .family<GuestDetailNotifier, GuestEntity, String>(
-      GuestDetailNotifier.new,
-    );
+    .family<GuestDetailNotifier, GuestEntity, String>(GuestDetailNotifier.new);
 
 enum GuestFilterTab { allGuests, inHall }
 
@@ -78,11 +74,10 @@ class GuestController extends AsyncNotifier<List<GuestEntity>> {
     required String phone,
     String? email,
     String? notes,
-    String? avatarUrl,
   }) async {
     final result = await ref
         .read(guestRepositoryProvider)
-        .createGuest(name: name, phone: phone, email: email, notes: notes, avatarUrl: avatarUrl);
+        .createGuest(name: name, phone: phone, email: email, notes: notes);
     return result.when(
       success: (entity) {
         final current = state.valueOrNull ?? [];
@@ -99,11 +94,16 @@ class GuestController extends AsyncNotifier<List<GuestEntity>> {
     required String phone,
     String? email,
     String? notes,
-    String? avatarUrl,
   }) async {
     final result = await ref
         .read(guestRepositoryProvider)
-        .updateGuest(id: id, name: name, phone: phone, email: email, notes: notes, avatarUrl: avatarUrl);
+        .updateGuest(
+          id: id,
+          name: name,
+          phone: phone,
+          email: email,
+          notes: notes,
+        );
     return result.when(
       success: (entity) {
         final current = state.valueOrNull ?? [];
@@ -118,8 +118,7 @@ class GuestController extends AsyncNotifier<List<GuestEntity>> {
   }
 
   Future<bool> deleteGuest({required String id}) async {
-    final result =
-        await ref.read(guestRepositoryProvider).deleteGuest(id: id);
+    final result = await ref.read(guestRepositoryProvider).deleteGuest(id: id);
     return result.when(
       success: (_) {
         final current = state.valueOrNull ?? [];
@@ -137,8 +136,7 @@ class GuestDetailNotifier
     extends AutoDisposeFamilyAsyncNotifier<GuestEntity, String> {
   @override
   Future<GuestEntity> build(String id) async {
-    final result =
-        await ref.read(guestRepositoryProvider).getGuestById(id: id);
+    final result = await ref.read(guestRepositoryProvider).getGuestById(id: id);
     return result.when(
       success: (entity) => entity,
       error: (f) => throw Exception(f.message),
