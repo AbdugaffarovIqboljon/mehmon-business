@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
+import 'package:mehmon/core/local/shared_prefs_provider.dart';
 import 'package:mehmon/core/routing/route_names.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
@@ -16,11 +18,11 @@ const _kIntroPath = 'assets/images/img_app_intro.png';
 /// Onboarding / intro screen shown before login.
 ///
 /// Navigates to the Register page on CTA tap.
-class IntroPage extends StatelessWidget {
+class IntroPage extends ConsumerWidget {
   const IntroPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
     
     return AppScaffold(
@@ -109,7 +111,12 @@ class IntroPage extends StatelessWidget {
           // ── Bottom: CTA button ───────────────────────────────
           PrimaryButton(
             label: loc.continueBtn,
-            onPressed: () => context.goNamed(RouteNames.login),
+            onPressed: () {
+              ref
+                  .read(sharedPreferencesProvider)
+                  .setBool(kHasSeenOnboarding, true);
+              context.goNamed(RouteNames.login);
+            },
           ),
         ],
       ),

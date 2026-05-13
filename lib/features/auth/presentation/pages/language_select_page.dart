@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/local/locale_provider.dart';
+import 'package:mehmon/core/local/shared_prefs_provider.dart';
 import 'package:mehmon/core/routing/route_names.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
@@ -42,6 +43,9 @@ class _LanguageSelectPageState extends ConsumerState<LanguageSelectPage> {
   Future<void> _onContinue() async {
     if (_selectedLanguageCode != null) {
       await ref.read(localeProvider.notifier).setLocale(_selectedLanguageCode!);
+      await ref
+          .read(sharedPreferencesProvider)
+          .setBool(kHasSelectedLanguage, true);
       if (mounted) {
         context.goNamed(RouteNames.onboarding);
       }

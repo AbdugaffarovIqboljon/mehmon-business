@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mehmon/core/local/shared_prefs_provider.dart';
 import 'package:mehmon/core/routing/route_names.dart';
 import 'package:mehmon/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mehmon/features/auth/presentation/pages/intro_page.dart';
@@ -66,26 +67,49 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
     refreshListenable: Listenable.merge([authStateListenable, profileRefresh]),
 
     redirect: (BuildContext context, GoRouterState state) {
-      // Attach the profile notifier once we have a valid context.
       profileRefresh.attachIfNeeded(context);
 
-      final isAuthenticated = authStateListenable.value;
-      final guestOnlyRoute =
-          state.matchedLocation == RoutePaths.login ||
-          state.matchedLocation == RoutePaths.onboarding ||
-          state.matchedLocation == RoutePaths.languageSelect;
-      final registrationFlowRoute =
-          state.matchedLocation == RoutePaths.register ||
-          state.matchedLocation == RoutePaths.profileSetup;
-      final authFlowRoute = guestOnlyRoute || registrationFlowRoute;
+      final container = ProviderScope.containerOf(context, listen: false);
+      final authState = container.read(authControllerProvider);
 
-      if (!isAuthenticated && !authFlowRoute) return RoutePaths.login;
-      if (isAuthenticated && guestOnlyRoute) return RoutePaths.floor;
+      // While auth is restoring from disk — stay put, avoid flash redirects.
+      if (authState.isLoading) return null;
 
-      // Profile completeness guard — only for authenticated users outside the
-      // registration flow (avoids redirect loops on /register and /profile-setup).
-      if (isAuthenticated && !registrationFlowRoute) {
-        final container = ProviderScope.containerOf(context, listen: false);
+      final isAuthenticated = authState.valueOrNull != null;
+      final location = state.matchedLocation;
+
+      final prefs = container.read(sharedPreferencesProvider);
+      final hasLang = prefs.getBool(kHasSelectedLanguage) ?? false;
+      final hasOnboarding = prefs.getBool(kHasSeenOnboarding) ?? false;
+
+      // A. No language picked → go to language-select.
+      if (!hasLang) {
+        return location == RoutePaths.languageSelect
+            ? null
+            : RoutePaths.languageSelect;
+      }
+
+      // B. Language picked but onboarding not seen → go to onboarding.
+      if (!hasOnboarding) {
+        return location == RoutePaths.onboarding
+            ? null
+            : RoutePaths.onboarding;
+      }
+
+      // C. Onboarding done but not authenticated → restrict to auth flow.
+      if (!isAuthenticated) {
+        const authFlow = {
+          RoutePaths.login,
+          RoutePaths.register,
+          RoutePaths.profileSetup,
+        };
+        return authFlow.contains(location) ? null : RoutePaths.login;
+      }
+
+      // D. Authenticated but profile incomplete → /profile-setup.
+      final isProfileSetup = location == RoutePaths.profileSetup;
+      final isRegister = location == RoutePaths.register;
+      if (!isProfileSetup && !isRegister) {
         final profile =
             container.read(profileControllerProvider).valueOrNull;
         if (profile != null &&
@@ -95,6 +119,14 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
           return RoutePaths.profileSetup;
         }
       }
+
+      // E. Authenticated & complete — bounce away from guest-only routes.
+      const guestOnly = {
+        RoutePaths.languageSelect,
+        RoutePaths.onboarding,
+        RoutePaths.login,
+      };
+      if (guestOnly.contains(location)) return RoutePaths.floor;
 
       return null;
     },
