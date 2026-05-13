@@ -6,11 +6,13 @@ class ProfileHeaderCard extends StatelessWidget {
   const ProfileHeaderCard({
     required this.title,
     required this.subtitle,
+    this.imageUrl,
     super.key,
   });
 
   final String title;
   final String subtitle;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -30,18 +32,17 @@ class ProfileHeaderCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 58,
-            height: 58,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.75),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.storefront_rounded,
-              color: AppColors.primaryDark,
-              size: 30,
-            ),
+          CircleAvatar(
+            radius: 28,
+            backgroundColor: AppColors.surfaceVariant,
+            backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
+            child: imageUrl == null
+                ? const Icon(
+                    Icons.store_outlined,
+                    size: 28,
+                    color: AppColors.primaryDark,
+                  )
+                : null,
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(

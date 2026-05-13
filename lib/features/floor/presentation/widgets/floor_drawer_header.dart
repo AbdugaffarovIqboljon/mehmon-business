@@ -44,7 +44,7 @@ class _DrawerHeaderContent extends StatelessWidget {
           backgroundColor: AppColors.surfaceVariant,
           backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
           child: imageUrl == null
-              ? const Icon(Icons.store_outlined, size: 28, color: AppColors.textSecondary)
+              ? const Icon(Icons.store_outlined, size: 28, color: AppColors.primaryDark)
               : null,
         ),
         const SizedBox(width: AppSpacing.md),

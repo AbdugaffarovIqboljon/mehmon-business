@@ -98,6 +98,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   ? profile!.cafeName
                   : loc.appName,
               subtitle: loc.profileSubtitle,
+              imageUrl: profile?.imageUrl,
             ),
             const SizedBox(height: AppSpacing.xl),
             ProfileActionTile(

@@ -70,7 +70,22 @@ class ProfileController extends AsyncNotifier<ProfileEntity?> {
         );
     return result.when(
       success: (entity) {
-        state = AsyncData(entity);
+        // Merge with existing state: PUT responses may omit optional fields.
+        // Preserving them prevents the router redirect from seeing null values
+        // and bouncing the user to /profile-setup mid-save.
+        final existing = state.valueOrNull;
+        state = AsyncData(
+          existing == null
+              ? entity
+              : entity.copyWith(
+                  institutionType:
+                      entity.institutionType ?? existing.institutionType,
+                  address: entity.address ?? existing.address,
+                  imageUrl: entity.imageUrl ?? existing.imageUrl,
+                  openingTime: entity.openingTime ?? existing.openingTime,
+                  closingTime: entity.closingTime ?? existing.closingTime,
+                ),
+        );
         return true;
       },
       error: (_) => false,

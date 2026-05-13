@@ -23,6 +23,8 @@ lib
 │   ├── routing
 │   │   ├── app_router.dart
 │   │   └── route_names.dart
+│   ├── services
+│   │   └── image_upload_service.dart
 │   ├── theme
 │   │   ├── app_colors.dart
 │   │   ├── app_text_styles.dart
@@ -31,6 +33,7 @@ lib
 │       ├── app_scaffold.dart
 │       ├── app_text_field.dart
 │       ├── calendar_wrapper.dart
+│       ├── image_picker_button.dart
 │       └── primary_button.dart
 ├── features
 │   ├── auth
@@ -104,6 +107,7 @@ lib
 │   │           ├── booking_list_section.dart
 │   │           ├── booking_month_calendar.dart
 │   │           ├── booking_month_dropdown.dart
+│   │           ├── booking_options_sheet.dart
 │   │           ├── booking_time_selector.dart
 │   │           ├── bookings_fab.dart
 │   │           └── guest_count_picker.dart
@@ -112,15 +116,25 @@ lib
 │   │   │   ├── datasources
 │   │   │   │   └── floor_remote_data_source.dart
 │   │   │   ├── models
+│   │   │   │   ├── activity_log_model.dart
+│   │   │   │   ├── activity_log_model.freezed.dart
+│   │   │   │   ├── activity_log_model.g.dart
 │   │   │   │   ├── floor_model.dart
 │   │   │   │   ├── floor_model.freezed.dart
-│   │   │   │   └── floor_model.g.dart
+│   │   │   │   ├── floor_model.g.dart
+│   │   │   │   ├── shift_model.dart
+│   │   │   │   ├── shift_model.freezed.dart
+│   │   │   │   └── shift_model.g.dart
 │   │   │   └── repositories
 │   │   │       └── floor_repository_impl.dart
 │   │   ├── domain
 │   │   │   ├── entities
+│   │   │   │   ├── activity_log_entity.dart
+│   │   │   │   ├── activity_log_entity.freezed.dart
 │   │   │   │   ├── floor_entity.dart
-│   │   │   │   └── floor_entity.freezed.dart
+│   │   │   │   ├── floor_entity.freezed.dart
+│   │   │   │   ├── shift_entity.dart
+│   │   │   │   └── shift_entity.freezed.dart
 │   │   │   └── repositories
 │   │   │       └── floor_repository.dart
 │   │   └── presentation
@@ -133,8 +147,11 @@ lib
 │   │       │   ├── chronology_page.dart
 │   │       │   ├── dashboard_page.dart
 │   │       │   ├── floor_page.dart
-│   │       │   └── floor_placeholder_page.dart
+│   │       │   ├── floor_placeholder_page.dart
+│   │       │   └── shifts_page.dart
 │   │       └── widgets
+│   │           ├── activity_event_card.dart
+│   │           ├── add_shift_sheet.dart
 │   │           ├── chronology_event_card.dart
 │   │           ├── chronology_event_icon.dart
 │   │           ├── chronology_filter_tabs.dart
@@ -151,7 +168,10 @@ lib
 │   │           ├── floor_time_ruler.dart
 │   │           ├── floor_timeline_header.dart
 │   │           ├── guest_traffic_chart.dart
-│   │           └── hall_occupancy_chart.dart
+│   │           ├── hall_occupancy_chart.dart
+│   │           ├── shift_card.dart
+│   │           ├── table_form_sheet.dart
+│   │           └── table_options_sheet.dart
 │   ├── guests
 │   │   ├── data
 │   │   │   ├── datasources
@@ -178,6 +198,7 @@ lib
 │   │           ├── guest_avatar.dart
 │   │           ├── guest_card.dart
 │   │           ├── guest_contact_row.dart
+│   │           ├── guest_form_sheet.dart
 │   │           ├── guest_info_stat_row.dart
 │   │           ├── guest_notes_card.dart
 │   │           ├── guest_visit_history_card.dart
@@ -240,6 +261,7 @@ lib
 │           │   ├── statistics_page.dart
 │           │   └── stats_page.dart
 │           └── widgets
+│               ├── stat_summary_card.dart
 │               ├── statistics_chart.dart
 │               ├── statistics_date_selector.dart
 │               └── statistics_period_selector.dart

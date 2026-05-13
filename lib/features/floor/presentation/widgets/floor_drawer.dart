@@ -62,67 +62,6 @@ class FloorDrawer extends StatelessWidget {
                 destinations: floorDrawerSections[1].destinations,
                 onDestinationTap: onDestinationTap,
               ),
-              // const Spacer(),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              //   child: FloorSupportButton(onTap: onSupportTap),
-              // ),
-              // const SizedBox(height: AppSpacing.xxl),
-              // Padding(
-              //   padding: const EdgeInsets.fromLTRB(
-              //     AppSpacing.lg,
-              //     0,
-              //     AppSpacing.lg,
-              //     AppSpacing.xl,
-              //   ),
-              //   child: Material(
-              //     color: Colors.transparent,
-              //     borderRadius: BorderRadius.circular(14),
-              //     child: InkWell(
-              //       onTap: onLogoutTap,
-              //       borderRadius: BorderRadius.circular(14),
-              //       splashFactory: NoSplash.splashFactory,
-              //       overlayColor: WidgetStateProperty.resolveWith<Color?>((
-              //         states,
-              //       ) {
-              //         if (states.contains(WidgetState.pressed)) {
-              //           return const Color(0x0F1A1A2E);
-              //         }
-              //         return null;
-              //       }),
-              //       child: Padding(
-              //         padding: const EdgeInsets.symmetric(
-              //           horizontal: AppSpacing.sm,
-              //           vertical: AppSpacing.xs,
-              //         ),
-              //         child: Row(
-              //           mainAxisSize: MainAxisSize.min,
-              //           children: [
-              //             Image.asset(
-              //               'assets/icons/ic_logout.png',
-              //               width: 26,
-              //               height: 26,
-              //               color: const Color(0xFF7D8698),
-              //               filterQuality: FilterQuality.low,
-              //             ),
-              //             const SizedBox(width: AppSpacing.md),
-              //             Text(
-              //               AppLocalizations.of(context)!.logout,
-              //               style: Theme.of(context)
-              //                   .textTheme
-              //                   .titleMedium
-              //                   ?.copyWith(
-              //                     color: const Color(0xFF7D8698),
-              //                     fontWeight: FontWeight.w500,
-              //                     fontSize: 16,
-              //                   ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),

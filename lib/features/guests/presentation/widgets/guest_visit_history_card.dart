@@ -31,6 +31,7 @@ class GuestVisitHistoryCard extends StatelessWidget {
     }
 
     return Column(
+      spacing: AppSpacing.md,
       children: visits.map((visit) => _VisitRow(visit: visit)).toList(),
     );
   }

@@ -123,10 +123,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             institutionType: _selectedInstitutionType,
           );
       if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        final messenger = ScaffoldMessenger.of(context);
+        context.pop();
+        messenger.showSnackBar(
           const SnackBar(content: Text('Profil yangilandi')),
         );
-        if (mounted) context.pop();
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);

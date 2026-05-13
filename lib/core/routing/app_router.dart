@@ -21,6 +21,7 @@ import 'package:mehmon/features/floor/presentation/pages/shifts_page.dart';
 import 'package:mehmon/features/guests/domain/entities/guest_entity.dart';
 import 'package:mehmon/features/guests/presentation/pages/guest_detail_page.dart';
 import 'package:mehmon/features/guests/presentation/pages/guests_page.dart';
+import 'package:mehmon/features/settings/domain/entities/profile_entity.dart';
 import 'package:mehmon/features/settings/presentation/controllers/profile_controller.dart';
 import 'package:mehmon/features/settings/presentation/pages/about_us_page.dart';
 import 'package:mehmon/features/settings/presentation/pages/edit_profile_page.dart';
@@ -33,7 +34,7 @@ import 'package:mehmon/l10n/app_localizations.dart';
 // whenever profile state changes (e.g. after the async fetch completes post-login).
 class _ProfileRefreshNotifier extends ChangeNotifier {
   bool _attached = false;
-  ProviderSubscription<dynamic>? _subscription;
+  ProviderSubscription<AsyncValue<ProfileEntity?>>? _subscription;
 
   void attachIfNeeded(BuildContext context) {
     // Only subscribe to profile when authenticated. Prevents the cold-start
@@ -47,7 +48,11 @@ class _ProfileRefreshNotifier extends ChangeNotifier {
     _attached = true;
     _subscription = container.listen(
       profileControllerProvider,
-      (_, __) => notifyListeners(),
+      (AsyncValue<ProfileEntity?>? prev, AsyncValue<ProfileEntity?> next) {
+        if (prev?.valueOrNull == null && next.valueOrNull != null) {
+          notifyListeners();
+        }
+      },
     );
   }
 
@@ -109,7 +114,10 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
       // D. Authenticated but profile incomplete → /profile-setup.
       final isProfileSetup = location == RoutePaths.profileSetup;
       final isRegister = location == RoutePaths.register;
-      if (!isProfileSetup && !isRegister) {
+      // Never redirect away from edit-profile — user is actively fixing their
+      // profile, and the refresh from updateProfile would cancel their pop.
+      final isEditProfile = location == RoutePaths.editProfile;
+      if (!isProfileSetup && !isRegister && !isEditProfile) {
         final profile =
             container.read(profileControllerProvider).valueOrNull;
         if (profile != null &&

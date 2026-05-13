@@ -74,7 +74,7 @@ class DashboardPage extends ConsumerWidget {
             _sectionSpacing,
             const GuestTrafficChart(),
             _sectionSpacing,
-            HallOccupancyChart(occupancy: summary?.occupancyRate ?? 0.0),
+            HallOccupancyChart(occupancy: ((summary?.occupancyRate ?? 0.0) / 100).clamp(0.0, 1.0)),
           ],
         ),
       ),
