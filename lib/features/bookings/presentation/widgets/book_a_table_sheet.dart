@@ -14,6 +14,7 @@ import 'package:mehmon/features/bookings/presentation/widgets/booking_time_selec
 import 'package:mehmon/features/bookings/presentation/widgets/guest_count_picker.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
+import 'package:mehmon/features/settings/presentation/controllers/profile_controller.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 extension BookingTypeApi on BookingType {
@@ -120,6 +121,40 @@ class BookATableSheet extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<BookATableSheet> createState() => _BookATableSheetState();
+
+  static List<String> buildTimeSlots({
+    String? opening,
+    String? closing,
+    List<String> fallback = defaultBookingTimes,
+  }) {
+    if (opening == null || closing == null) return fallback;
+    final start = _parseHHMM(opening);
+    final end = _parseHHMM(closing);
+    if (start == null || end == null) return fallback;
+
+    final slots = <String>[];
+    var current = start;
+    while (current < end) {
+      slots.add(_formatHHMM(current));
+      current += 30;
+    }
+    return slots.isEmpty ? fallback : slots;
+  }
+
+  static int? _parseHHMM(String hhmm) {
+    final parts = hhmm.split(':');
+    if (parts.length != 2) return null;
+    final h = int.tryParse(parts[0]);
+    final m = int.tryParse(parts[1]);
+    if (h == null || m == null) return null;
+    return h * 60 + m;
+  }
+
+  static String _formatHHMM(int minutes) {
+    final h = (minutes ~/ 60).toString().padLeft(2, '0');
+    final m = (minutes % 60).toString().padLeft(2, '0');
+    return '$h:$m';
+  }
 }
 
 class _BookATableSheetState extends ConsumerState<BookATableSheet> {
@@ -143,13 +178,12 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   @override
   void initState() {
     super.initState();
+    final initialSlots = _resolveSlots();
     final existing = widget.existingBooking;
     if (existing == null) {
       _guestCount = ValueNotifier<int>(_initialGuests);
       _selectedTime = ValueNotifier<String>(
-        widget.timeSlots.contains('18:00')
-            ? '18:00'
-            : widget.timeSlots.first,
+        initialSlots.contains('18:00') ? '18:00' : initialSlots.first,
       );
       _selectedEndTime = ValueNotifier<String?>(null);
       _selectedBookingType = ValueNotifier<BookingType>(BookingType.standard);
@@ -164,9 +198,9 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       );
       _guestCount = ValueNotifier<int>(existing.numberOfGuests);
       _selectedTime = ValueNotifier<String>(
-        widget.timeSlots.contains(existing.timeSlot)
+        initialSlots.contains(existing.timeSlot)
             ? existing.timeSlot
-            : (widget.timeSlots.isNotEmpty ? widget.timeSlots.first : '18:00'),
+            : (initialSlots.isNotEmpty ? initialSlots.first : '18:00'),
       );
       _selectedEndTime = ValueNotifier<String?>(existing.endTime);
       _selectedTable = ValueNotifier<FloorEntity?>(null);
@@ -176,6 +210,15 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       }
     }
     _lastPhoneValue = _phoneController.text;
+  }
+
+  List<String> _resolveSlots() {
+    final profile = ref.read(profileControllerProvider).valueOrNull;
+    return BookATableSheet.buildTimeSlots(
+      opening: profile?.openingTime,
+      closing: profile?.closingTime,
+      fallback: widget.timeSlots,
+    );
   }
 
   void _tryPreFillTable() {
@@ -328,7 +371,26 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     final dateController = ref.read(bookATableDateControllerProvider.notifier);
     final isEditMode = widget.existingBooking != null;
 
-    ref.listen(floorControllerProvider, (_, __) => _tryPreFillTable());
+    final profile = ref.watch(profileControllerProvider).valueOrNull;
+    final timeSlots = BookATableSheet.buildTimeSlots(
+      opening: profile?.openingTime,
+      closing: profile?.closingTime,
+      fallback: widget.timeSlots,
+    );
+
+    ref
+      ..listen(profileControllerProvider, (_, __) {
+        final slots = _resolveSlots();
+        if (!slots.contains(_selectedTime.value)) {
+          _selectedTime.value =
+              slots.contains('18:00') ? '18:00' : slots.first;
+        }
+        final end = _selectedEndTime.value;
+        if (end != null && !slots.contains(end)) {
+          _selectedEndTime.value = null;
+        }
+      })
+      ..listen(floorControllerProvider, (_, __) => _tryPreFillTable());
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -393,7 +455,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                     ValueListenableBuilder<String>(
                       valueListenable: _selectedTime,
                       builder: (_, time, __) => BookingTimeSelector(
-                        times: widget.timeSlots,
+                        times: timeSlots,
                         selectedTime: time,
                         onTimeSelected: (selected) =>
                             _selectedTime.value = selected,
@@ -441,7 +503,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                             ValueListenableBuilder<String?>(
                               valueListenable: _selectedEndTime,
                               builder: (_, end, __) => _EndTimeSelector(
-                                times: widget.timeSlots,
+                                times: timeSlots,
                                 selectedTime: end,
                                 onTimeSelected: (String t) {
                                   _selectedEndTime.value =

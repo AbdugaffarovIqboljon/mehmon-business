@@ -10,6 +10,7 @@ import 'package:mehmon/features/settings/presentation/controllers/profile_contro
 import 'package:mehmon/features/settings/presentation/widgets/change_language_sheet.dart';
 import 'package:mehmon/features/settings/presentation/widgets/profile_action_tile.dart';
 import 'package:mehmon/features/settings/presentation/widgets/profile_header_card.dart';
+import 'package:mehmon/features/settings/presentation/widgets/zone_management_sheet.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -46,6 +47,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   void _openAboutUs() {
     context.pushNamed(RouteNames.aboutUs);
+  }
+
+  Future<void> _openZoneManagement() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const ZoneManagementSheet(),
+    );
   }
 
   Future<void> _logout() async {
@@ -118,6 +128,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               title: loc.profileAboutUs,
               icon: Icons.info_outline_rounded,
               onTap: _openAboutUs,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ProfileActionTile(
+              title: 'Zonalar boshqaruvi',
+              icon: Icons.category_outlined,
+              onTap: _openZoneManagement,
             ),
             const SizedBox(height: AppSpacing.md),
             ProfileActionTile(
