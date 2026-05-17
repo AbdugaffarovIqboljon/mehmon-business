@@ -40,6 +40,10 @@ _$GuestModelImpl _$$GuestModelImplFromJson(Map<String, dynamic> json) =>
       avatarUrl: json['avatarUrl'] as String?,
       notes: json['notes'] as String?,
       lastVisitTableNumber: json['lastVisitTableNumber'] as String?,
+      currentTableId: json['currentTableId'] as String?,
+      bookingId: json['bookingId'] as String?,
+      bookingTimeSlot: json['bookingTimeSlot'] as String?,
+      bookingEndTime: json['bookingEndTime'] as String?,
     );
 
 Map<String, dynamic> _$$GuestModelImplToJson(_$GuestModelImpl instance) =>
@@ -56,4 +60,8 @@ Map<String, dynamic> _$$GuestModelImplToJson(_$GuestModelImpl instance) =>
       'avatarUrl': instance.avatarUrl,
       'notes': instance.notes,
       'lastVisitTableNumber': instance.lastVisitTableNumber,
+      'currentTableId': instance.currentTableId,
+      'bookingId': instance.bookingId,
+      'bookingTimeSlot': instance.bookingTimeSlot,
+      'bookingEndTime': instance.bookingEndTime,
     };

@@ -24,6 +24,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
         openingTime: m.openingTime,
         closingTime: m.closingTime,
         createdAt: m.createdAt,
+        zones: m.zones,
+        isSetupCompleted: m.isSetupCompleted,
       );
 
   @override

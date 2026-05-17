@@ -11,6 +11,9 @@ abstract class FloorModel with _$FloorModel {
     required int capacity,
     required String status,
     required String location,
+    @Default(0.0) double x,
+    @Default(0.0) double y,
+    String? zone,
   }) = _FloorModel;
 
   factory FloorModel.fromJson(Map<String, dynamic> json) =>

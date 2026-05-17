@@ -32,6 +32,10 @@ class GuestRepositoryImpl implements GuestRepository {
         lastVisit: m.lastVisit,
         lastVisitTableNumber: m.lastVisitTableNumber,
         lastVisitGuestCount: m.lastVisitGuestCount,
+        currentTableId: m.currentTableId,
+        bookingId: m.bookingId,
+        bookingTimeSlot: m.bookingTimeSlot,
+        bookingEndTime: m.bookingEndTime,
       );
 
   @override

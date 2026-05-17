@@ -22,6 +22,9 @@ class FloorRepositoryImpl implements FloorRepository {
         capacity: m.capacity,
         status: m.status,
         location: m.location,
+        x: m.x,
+        y: m.y,
+        zone: m.zone,
       );
 
   @override

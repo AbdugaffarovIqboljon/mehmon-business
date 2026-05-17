@@ -27,6 +27,9 @@ mixin _$FloorModel {
   int get capacity => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String get location => throw _privateConstructorUsedError;
+  double get x => throw _privateConstructorUsedError;
+  double get y => throw _privateConstructorUsedError;
+  String? get zone => throw _privateConstructorUsedError;
 
   /// Serializes this FloorModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,6 +54,9 @@ abstract class $FloorModelCopyWith<$Res> {
     int capacity,
     String status,
     String location,
+    double x,
+    double y,
+    String? zone,
   });
 }
 
@@ -74,6 +80,9 @@ class _$FloorModelCopyWithImpl<$Res, $Val extends FloorModel>
     Object? capacity = null,
     Object? status = null,
     Object? location = null,
+    Object? x = null,
+    Object? y = null,
+    Object? zone = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -97,6 +106,18 @@ class _$FloorModelCopyWithImpl<$Res, $Val extends FloorModel>
                 ? _value.location
                 : location // ignore: cast_nullable_to_non_nullable
                       as String,
+            x: null == x
+                ? _value.x
+                : x // ignore: cast_nullable_to_non_nullable
+                      as double,
+            y: null == y
+                ? _value.y
+                : y // ignore: cast_nullable_to_non_nullable
+                      as double,
+            zone: freezed == zone
+                ? _value.zone
+                : zone // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -118,6 +139,9 @@ abstract class _$$FloorModelImplCopyWith<$Res>
     int capacity,
     String status,
     String location,
+    double x,
+    double y,
+    String? zone,
   });
 }
 
@@ -140,6 +164,9 @@ class __$$FloorModelImplCopyWithImpl<$Res>
     Object? capacity = null,
     Object? status = null,
     Object? location = null,
+    Object? x = null,
+    Object? y = null,
+    Object? zone = freezed,
   }) {
     return _then(
       _$FloorModelImpl(
@@ -163,6 +190,18 @@ class __$$FloorModelImplCopyWithImpl<$Res>
             ? _value.location
             : location // ignore: cast_nullable_to_non_nullable
                   as String,
+        x: null == x
+            ? _value.x
+            : x // ignore: cast_nullable_to_non_nullable
+                  as double,
+        y: null == y
+            ? _value.y
+            : y // ignore: cast_nullable_to_non_nullable
+                  as double,
+        zone: freezed == zone
+            ? _value.zone
+            : zone // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -177,6 +216,9 @@ class _$FloorModelImpl implements _FloorModel {
     required this.capacity,
     required this.status,
     required this.location,
+    this.x = 0.0,
+    this.y = 0.0,
+    this.zone,
   });
 
   factory _$FloorModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -193,10 +235,18 @@ class _$FloorModelImpl implements _FloorModel {
   final String status;
   @override
   final String location;
+  @override
+  @JsonKey()
+  final double x;
+  @override
+  @JsonKey()
+  final double y;
+  @override
+  final String? zone;
 
   @override
   String toString() {
-    return 'FloorModel(id: $id, number: $number, capacity: $capacity, status: $status, location: $location)';
+    return 'FloorModel(id: $id, number: $number, capacity: $capacity, status: $status, location: $location, x: $x, y: $y, zone: $zone)';
   }
 
   @override
@@ -210,13 +260,25 @@ class _$FloorModelImpl implements _FloorModel {
                 other.capacity == capacity) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.location, location) ||
-                other.location == location));
+                other.location == location) &&
+            (identical(other.x, x) || other.x == x) &&
+            (identical(other.y, y) || other.y == y) &&
+            (identical(other.zone, zone) || other.zone == zone));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, number, capacity, status, location);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    number,
+    capacity,
+    status,
+    location,
+    x,
+    y,
+    zone,
+  );
 
   /// Create a copy of FloorModel
   /// with the given fields replaced by the non-null parameter values.
@@ -239,6 +301,9 @@ abstract class _FloorModel implements FloorModel {
     required final int capacity,
     required final String status,
     required final String location,
+    final double x,
+    final double y,
+    final String? zone,
   }) = _$FloorModelImpl;
 
   factory _FloorModel.fromJson(Map<String, dynamic> json) =
@@ -255,6 +320,12 @@ abstract class _FloorModel implements FloorModel {
   String get status;
   @override
   String get location;
+  @override
+  double get x;
+  @override
+  double get y;
+  @override
+  String? get zone;
 
   /// Create a copy of FloorModel
   /// with the given fields replaced by the non-null parameter values.

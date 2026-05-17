@@ -16,10 +16,13 @@ abstract final class ApiConstants {
   // ── Guests ────────────────────────────────────────────────────────
   static const String guests = '/api/guests';
   static const String guestById = '/api/guests/';
+  static const String guestsInHall = '/api/guests/in-hall';
 
   // ── Tables ────────────────────────────────────────────────────────
   static const String tables = '/api/tables';
   static const String tableById = '/api/tables/';
+  static const String tableDetails = '/api/tables/{id}/details';
+  static String tableDetailsById(String id) => '/api/tables/$id/details';
 
   // ── Analytics ─────────────────────────────────────────────────────
   static const String analyticsSummary = '/api/analytics/summary';

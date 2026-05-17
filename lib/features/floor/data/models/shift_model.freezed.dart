@@ -15,6 +15,183 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
+AssignedTableModel _$AssignedTableModelFromJson(Map<String, dynamic> json) {
+  return _AssignedTableModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AssignedTableModel {
+  @JsonKey(name: '_id')
+  String get id => throw _privateConstructorUsedError;
+  String get number => throw _privateConstructorUsedError;
+
+  /// Serializes this AssignedTableModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of AssignedTableModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $AssignedTableModelCopyWith<AssignedTableModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AssignedTableModelCopyWith<$Res> {
+  factory $AssignedTableModelCopyWith(
+    AssignedTableModel value,
+    $Res Function(AssignedTableModel) then,
+  ) = _$AssignedTableModelCopyWithImpl<$Res, AssignedTableModel>;
+  @useResult
+  $Res call({@JsonKey(name: '_id') String id, String number});
+}
+
+/// @nodoc
+class _$AssignedTableModelCopyWithImpl<$Res, $Val extends AssignedTableModel>
+    implements $AssignedTableModelCopyWith<$Res> {
+  _$AssignedTableModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of AssignedTableModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? id = null, Object? number = null}) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            number: null == number
+                ? _value.number
+                : number // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$AssignedTableModelImplCopyWith<$Res>
+    implements $AssignedTableModelCopyWith<$Res> {
+  factory _$$AssignedTableModelImplCopyWith(
+    _$AssignedTableModelImpl value,
+    $Res Function(_$AssignedTableModelImpl) then,
+  ) = __$$AssignedTableModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({@JsonKey(name: '_id') String id, String number});
+}
+
+/// @nodoc
+class __$$AssignedTableModelImplCopyWithImpl<$Res>
+    extends _$AssignedTableModelCopyWithImpl<$Res, _$AssignedTableModelImpl>
+    implements _$$AssignedTableModelImplCopyWith<$Res> {
+  __$$AssignedTableModelImplCopyWithImpl(
+    _$AssignedTableModelImpl _value,
+    $Res Function(_$AssignedTableModelImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AssignedTableModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? id = null, Object? number = null}) {
+    return _then(
+      _$AssignedTableModelImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        number: null == number
+            ? _value.number
+            : number // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AssignedTableModelImpl implements _AssignedTableModel {
+  const _$AssignedTableModelImpl({
+    @JsonKey(name: '_id') required this.id,
+    required this.number,
+  });
+
+  factory _$AssignedTableModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AssignedTableModelImplFromJson(json);
+
+  @override
+  @JsonKey(name: '_id')
+  final String id;
+  @override
+  final String number;
+
+  @override
+  String toString() {
+    return 'AssignedTableModel(id: $id, number: $number)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AssignedTableModelImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.number, number) || other.number == number));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, number);
+
+  /// Create a copy of AssignedTableModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AssignedTableModelImplCopyWith<_$AssignedTableModelImpl> get copyWith =>
+      __$$AssignedTableModelImplCopyWithImpl<_$AssignedTableModelImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AssignedTableModelImplToJson(this);
+  }
+}
+
+abstract class _AssignedTableModel implements AssignedTableModel {
+  const factory _AssignedTableModel({
+    @JsonKey(name: '_id') required final String id,
+    required final String number,
+  }) = _$AssignedTableModelImpl;
+
+  factory _AssignedTableModel.fromJson(Map<String, dynamic> json) =
+      _$AssignedTableModelImpl.fromJson;
+
+  @override
+  @JsonKey(name: '_id')
+  String get id;
+  @override
+  String get number;
+
+  /// Create a copy of AssignedTableModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AssignedTableModelImplCopyWith<_$AssignedTableModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 ShiftModel _$ShiftModelFromJson(Map<String, dynamic> json) {
   return _ShiftModel.fromJson(json);
 }
@@ -37,6 +214,8 @@ mixin _$ShiftModel {
   String get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'notes')
   String? get notes => throw _privateConstructorUsedError;
+  List<AssignedTableModel> get assignedTables =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this ShiftModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -64,6 +243,7 @@ abstract class $ShiftModelCopyWith<$Res> {
     @JsonKey(name: 'restaurantId') String restaurantId,
     @JsonKey(name: 'createdAt') String createdAt,
     @JsonKey(name: 'notes') String? notes,
+    List<AssignedTableModel> assignedTables,
   });
 }
 
@@ -90,6 +270,7 @@ class _$ShiftModelCopyWithImpl<$Res, $Val extends ShiftModel>
     Object? restaurantId = null,
     Object? createdAt = null,
     Object? notes = freezed,
+    Object? assignedTables = null,
   }) {
     return _then(
       _value.copyWith(
@@ -125,6 +306,10 @@ class _$ShiftModelCopyWithImpl<$Res, $Val extends ShiftModel>
                 ? _value.notes
                 : notes // ignore: cast_nullable_to_non_nullable
                       as String?,
+            assignedTables: null == assignedTables
+                ? _value.assignedTables
+                : assignedTables // ignore: cast_nullable_to_non_nullable
+                      as List<AssignedTableModel>,
           )
           as $Val,
     );
@@ -149,6 +334,7 @@ abstract class _$$ShiftModelImplCopyWith<$Res>
     @JsonKey(name: 'restaurantId') String restaurantId,
     @JsonKey(name: 'createdAt') String createdAt,
     @JsonKey(name: 'notes') String? notes,
+    List<AssignedTableModel> assignedTables,
   });
 }
 
@@ -174,6 +360,7 @@ class __$$ShiftModelImplCopyWithImpl<$Res>
     Object? restaurantId = null,
     Object? createdAt = null,
     Object? notes = freezed,
+    Object? assignedTables = null,
   }) {
     return _then(
       _$ShiftModelImpl(
@@ -209,6 +396,10 @@ class __$$ShiftModelImplCopyWithImpl<$Res>
             ? _value.notes
             : notes // ignore: cast_nullable_to_non_nullable
                   as String?,
+        assignedTables: null == assignedTables
+            ? _value._assignedTables
+            : assignedTables // ignore: cast_nullable_to_non_nullable
+                  as List<AssignedTableModel>,
       ),
     );
   }
@@ -226,7 +417,8 @@ class _$ShiftModelImpl implements _ShiftModel {
     @JsonKey(name: 'restaurantId') required this.restaurantId,
     @JsonKey(name: 'createdAt') required this.createdAt,
     @JsonKey(name: 'notes') this.notes,
-  });
+    final List<AssignedTableModel> assignedTables = const [],
+  }) : _assignedTables = assignedTables;
 
   factory _$ShiftModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ShiftModelImplFromJson(json);
@@ -255,10 +447,18 @@ class _$ShiftModelImpl implements _ShiftModel {
   @override
   @JsonKey(name: 'notes')
   final String? notes;
+  final List<AssignedTableModel> _assignedTables;
+  @override
+  @JsonKey()
+  List<AssignedTableModel> get assignedTables {
+    if (_assignedTables is EqualUnmodifiableListView) return _assignedTables;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_assignedTables);
+  }
 
   @override
   String toString() {
-    return 'ShiftModel(id: $id, staffName: $staffName, startTime: $startTime, endTime: $endTime, date: $date, restaurantId: $restaurantId, createdAt: $createdAt, notes: $notes)';
+    return 'ShiftModel(id: $id, staffName: $staffName, startTime: $startTime, endTime: $endTime, date: $date, restaurantId: $restaurantId, createdAt: $createdAt, notes: $notes, assignedTables: $assignedTables)';
   }
 
   @override
@@ -277,7 +477,11 @@ class _$ShiftModelImpl implements _ShiftModel {
                 other.restaurantId == restaurantId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.notes, notes) || other.notes == notes));
+            (identical(other.notes, notes) || other.notes == notes) &&
+            const DeepCollectionEquality().equals(
+              other._assignedTables,
+              _assignedTables,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -292,6 +496,7 @@ class _$ShiftModelImpl implements _ShiftModel {
     restaurantId,
     createdAt,
     notes,
+    const DeepCollectionEquality().hash(_assignedTables),
   );
 
   /// Create a copy of ShiftModel
@@ -318,6 +523,7 @@ abstract class _ShiftModel implements ShiftModel {
     @JsonKey(name: 'restaurantId') required final String restaurantId,
     @JsonKey(name: 'createdAt') required final String createdAt,
     @JsonKey(name: 'notes') final String? notes,
+    final List<AssignedTableModel> assignedTables,
   }) = _$ShiftModelImpl;
 
   factory _ShiftModel.fromJson(Map<String, dynamic> json) =
@@ -347,6 +553,8 @@ abstract class _ShiftModel implements ShiftModel {
   @override
   @JsonKey(name: 'notes')
   String? get notes;
+  @override
+  List<AssignedTableModel> get assignedTables;
 
   /// Create a copy of ShiftModel
   /// with the given fields replaced by the non-null parameter values.

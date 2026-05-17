@@ -27,5 +27,9 @@ abstract class GuestEntity with _$GuestEntity {
     String? notes,
     String? lastVisitTableNumber,
     @Default(0) int lastVisitGuestCount,
+    String? currentTableId,
+    String? bookingId,
+    String? bookingTimeSlot,
+    String? bookingEndTime,
   }) = _GuestEntity;
 }

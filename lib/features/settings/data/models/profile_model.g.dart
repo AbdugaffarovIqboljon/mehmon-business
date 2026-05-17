@@ -19,6 +19,10 @@ _$ProfileModelImpl _$$ProfileModelImplFromJson(Map<String, dynamic> json) =>
       openingTime: json['openingTime'] as String?,
       closingTime: json['closingTime'] as String?,
       createdAt: json['createdAt'] as String?,
+      zones:
+          (json['zones'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+          const [],
+      isSetupCompleted: json['isSetupCompleted'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$ProfileModelImplToJson(_$ProfileModelImpl instance) =>
@@ -34,4 +38,6 @@ Map<String, dynamic> _$$ProfileModelImplToJson(_$ProfileModelImpl instance) =>
       'openingTime': instance.openingTime,
       'closingTime': instance.closingTime,
       'createdAt': instance.createdAt,
+      'zones': instance.zones,
+      'isSetupCompleted': instance.isSetupCompleted,
     };

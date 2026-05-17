@@ -31,6 +31,10 @@ abstract class GuestModel with _$GuestModel {
     String? avatarUrl,
     String? notes,
     String? lastVisitTableNumber,
+    String? currentTableId,
+    String? bookingId,
+    String? bookingTimeSlot,
+    String? bookingEndTime,
   }) = _GuestModel;
 
   factory GuestModel.fromJson(Map<String, dynamic> json) =>

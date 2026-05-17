@@ -265,6 +265,10 @@ mixin _$GuestModel {
   String? get avatarUrl => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
   String? get lastVisitTableNumber => throw _privateConstructorUsedError;
+  String? get currentTableId => throw _privateConstructorUsedError;
+  String? get bookingId => throw _privateConstructorUsedError;
+  String? get bookingTimeSlot => throw _privateConstructorUsedError;
+  String? get bookingEndTime => throw _privateConstructorUsedError;
 
   /// Serializes this GuestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -296,6 +300,10 @@ abstract class $GuestModelCopyWith<$Res> {
     String? avatarUrl,
     String? notes,
     String? lastVisitTableNumber,
+    String? currentTableId,
+    String? bookingId,
+    String? bookingTimeSlot,
+    String? bookingEndTime,
   });
 }
 
@@ -326,6 +334,10 @@ class _$GuestModelCopyWithImpl<$Res, $Val extends GuestModel>
     Object? avatarUrl = freezed,
     Object? notes = freezed,
     Object? lastVisitTableNumber = freezed,
+    Object? currentTableId = freezed,
+    Object? bookingId = freezed,
+    Object? bookingTimeSlot = freezed,
+    Object? bookingEndTime = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -377,6 +389,22 @@ class _$GuestModelCopyWithImpl<$Res, $Val extends GuestModel>
                 ? _value.lastVisitTableNumber
                 : lastVisitTableNumber // ignore: cast_nullable_to_non_nullable
                       as String?,
+            currentTableId: freezed == currentTableId
+                ? _value.currentTableId
+                : currentTableId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bookingId: freezed == bookingId
+                ? _value.bookingId
+                : bookingId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bookingTimeSlot: freezed == bookingTimeSlot
+                ? _value.bookingTimeSlot
+                : bookingTimeSlot // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bookingEndTime: freezed == bookingEndTime
+                ? _value.bookingEndTime
+                : bookingEndTime // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -405,6 +433,10 @@ abstract class _$$GuestModelImplCopyWith<$Res>
     String? avatarUrl,
     String? notes,
     String? lastVisitTableNumber,
+    String? currentTableId,
+    String? bookingId,
+    String? bookingTimeSlot,
+    String? bookingEndTime,
   });
 }
 
@@ -434,6 +466,10 @@ class __$$GuestModelImplCopyWithImpl<$Res>
     Object? avatarUrl = freezed,
     Object? notes = freezed,
     Object? lastVisitTableNumber = freezed,
+    Object? currentTableId = freezed,
+    Object? bookingId = freezed,
+    Object? bookingTimeSlot = freezed,
+    Object? bookingEndTime = freezed,
   }) {
     return _then(
       _$GuestModelImpl(
@@ -485,6 +521,22 @@ class __$$GuestModelImplCopyWithImpl<$Res>
             ? _value.lastVisitTableNumber
             : lastVisitTableNumber // ignore: cast_nullable_to_non_nullable
                   as String?,
+        currentTableId: freezed == currentTableId
+            ? _value.currentTableId
+            : currentTableId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bookingId: freezed == bookingId
+            ? _value.bookingId
+            : bookingId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bookingTimeSlot: freezed == bookingTimeSlot
+            ? _value.bookingTimeSlot
+            : bookingTimeSlot // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bookingEndTime: freezed == bookingEndTime
+            ? _value.bookingEndTime
+            : bookingEndTime // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -506,6 +558,10 @@ class _$GuestModelImpl implements _GuestModel {
     this.avatarUrl,
     this.notes,
     this.lastVisitTableNumber,
+    this.currentTableId,
+    this.bookingId,
+    this.bookingTimeSlot,
+    this.bookingEndTime,
   }) : _visits = visits;
 
   factory _$GuestModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -544,10 +600,18 @@ class _$GuestModelImpl implements _GuestModel {
   final String? notes;
   @override
   final String? lastVisitTableNumber;
+  @override
+  final String? currentTableId;
+  @override
+  final String? bookingId;
+  @override
+  final String? bookingTimeSlot;
+  @override
+  final String? bookingEndTime;
 
   @override
   String toString() {
-    return 'GuestModel(id: $id, name: $name, phone: $phone, visitCount: $visitCount, visits: $visits, isVIP: $isVIP, lastVisit: $lastVisit, lastVisitGuestCount: $lastVisitGuestCount, email: $email, avatarUrl: $avatarUrl, notes: $notes, lastVisitTableNumber: $lastVisitTableNumber)';
+    return 'GuestModel(id: $id, name: $name, phone: $phone, visitCount: $visitCount, visits: $visits, isVIP: $isVIP, lastVisit: $lastVisit, lastVisitGuestCount: $lastVisitGuestCount, email: $email, avatarUrl: $avatarUrl, notes: $notes, lastVisitTableNumber: $lastVisitTableNumber, currentTableId: $currentTableId, bookingId: $bookingId, bookingTimeSlot: $bookingTimeSlot, bookingEndTime: $bookingEndTime)';
   }
 
   @override
@@ -571,7 +635,15 @@ class _$GuestModelImpl implements _GuestModel {
                 other.avatarUrl == avatarUrl) &&
             (identical(other.notes, notes) || other.notes == notes) &&
             (identical(other.lastVisitTableNumber, lastVisitTableNumber) ||
-                other.lastVisitTableNumber == lastVisitTableNumber));
+                other.lastVisitTableNumber == lastVisitTableNumber) &&
+            (identical(other.currentTableId, currentTableId) ||
+                other.currentTableId == currentTableId) &&
+            (identical(other.bookingId, bookingId) ||
+                other.bookingId == bookingId) &&
+            (identical(other.bookingTimeSlot, bookingTimeSlot) ||
+                other.bookingTimeSlot == bookingTimeSlot) &&
+            (identical(other.bookingEndTime, bookingEndTime) ||
+                other.bookingEndTime == bookingEndTime));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -590,6 +662,10 @@ class _$GuestModelImpl implements _GuestModel {
     avatarUrl,
     notes,
     lastVisitTableNumber,
+    currentTableId,
+    bookingId,
+    bookingTimeSlot,
+    bookingEndTime,
   );
 
   /// Create a copy of GuestModel
@@ -620,6 +696,10 @@ abstract class _GuestModel implements GuestModel {
     final String? avatarUrl,
     final String? notes,
     final String? lastVisitTableNumber,
+    final String? currentTableId,
+    final String? bookingId,
+    final String? bookingTimeSlot,
+    final String? bookingEndTime,
   }) = _$GuestModelImpl;
 
   factory _GuestModel.fromJson(Map<String, dynamic> json) =
@@ -652,6 +732,14 @@ abstract class _GuestModel implements GuestModel {
   String? get notes;
   @override
   String? get lastVisitTableNumber;
+  @override
+  String? get currentTableId;
+  @override
+  String? get bookingId;
+  @override
+  String? get bookingTimeSlot;
+  @override
+  String? get bookingEndTime;
 
   /// Create a copy of GuestModel
   /// with the given fields replaced by the non-null parameter values.

@@ -28,6 +28,8 @@ mixin _$ProfileEntity {
   String? get openingTime => throw _privateConstructorUsedError;
   String? get closingTime => throw _privateConstructorUsedError;
   String? get createdAt => throw _privateConstructorUsedError;
+  List<String> get zones => throw _privateConstructorUsedError;
+  bool get isSetupCompleted => throw _privateConstructorUsedError;
 
   /// Create a copy of ProfileEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -55,6 +57,8 @@ abstract class $ProfileEntityCopyWith<$Res> {
     String? openingTime,
     String? closingTime,
     String? createdAt,
+    List<String> zones,
+    bool isSetupCompleted,
   });
 }
 
@@ -84,6 +88,8 @@ class _$ProfileEntityCopyWithImpl<$Res, $Val extends ProfileEntity>
     Object? openingTime = freezed,
     Object? closingTime = freezed,
     Object? createdAt = freezed,
+    Object? zones = null,
+    Object? isSetupCompleted = null,
   }) {
     return _then(
       _value.copyWith(
@@ -131,6 +137,14 @@ class _$ProfileEntityCopyWithImpl<$Res, $Val extends ProfileEntity>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as String?,
+            zones: null == zones
+                ? _value.zones
+                : zones // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            isSetupCompleted: null == isSetupCompleted
+                ? _value.isSetupCompleted
+                : isSetupCompleted // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -158,6 +172,8 @@ abstract class _$$ProfileEntityImplCopyWith<$Res>
     String? openingTime,
     String? closingTime,
     String? createdAt,
+    List<String> zones,
+    bool isSetupCompleted,
   });
 }
 
@@ -186,6 +202,8 @@ class __$$ProfileEntityImplCopyWithImpl<$Res>
     Object? openingTime = freezed,
     Object? closingTime = freezed,
     Object? createdAt = freezed,
+    Object? zones = null,
+    Object? isSetupCompleted = null,
   }) {
     return _then(
       _$ProfileEntityImpl(
@@ -233,6 +251,14 @@ class __$$ProfileEntityImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as String?,
+        zones: null == zones
+            ? _value._zones
+            : zones // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        isSetupCompleted: null == isSetupCompleted
+            ? _value.isSetupCompleted
+            : isSetupCompleted // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -253,7 +279,9 @@ class _$ProfileEntityImpl implements _ProfileEntity {
     this.openingTime,
     this.closingTime,
     this.createdAt,
-  });
+    final List<String> zones = const [],
+    this.isSetupCompleted = false,
+  }) : _zones = zones;
 
   @override
   final String id;
@@ -277,10 +305,22 @@ class _$ProfileEntityImpl implements _ProfileEntity {
   final String? closingTime;
   @override
   final String? createdAt;
+  final List<String> _zones;
+  @override
+  @JsonKey()
+  List<String> get zones {
+    if (_zones is EqualUnmodifiableListView) return _zones;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_zones);
+  }
+
+  @override
+  @JsonKey()
+  final bool isSetupCompleted;
 
   @override
   String toString() {
-    return 'ProfileEntity(id: $id, name: $name, phone: $phone, cafeName: $cafeName, role: $role, imageUrl: $imageUrl, institutionType: $institutionType, address: $address, openingTime: $openingTime, closingTime: $closingTime, createdAt: $createdAt)';
+    return 'ProfileEntity(id: $id, name: $name, phone: $phone, cafeName: $cafeName, role: $role, imageUrl: $imageUrl, institutionType: $institutionType, address: $address, openingTime: $openingTime, closingTime: $closingTime, createdAt: $createdAt, zones: $zones, isSetupCompleted: $isSetupCompleted)';
   }
 
   @override
@@ -304,7 +344,10 @@ class _$ProfileEntityImpl implements _ProfileEntity {
             (identical(other.closingTime, closingTime) ||
                 other.closingTime == closingTime) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality().equals(other._zones, _zones) &&
+            (identical(other.isSetupCompleted, isSetupCompleted) ||
+                other.isSetupCompleted == isSetupCompleted));
   }
 
   @override
@@ -321,6 +364,8 @@ class _$ProfileEntityImpl implements _ProfileEntity {
     openingTime,
     closingTime,
     createdAt,
+    const DeepCollectionEquality().hash(_zones),
+    isSetupCompleted,
   );
 
   /// Create a copy of ProfileEntity
@@ -345,6 +390,8 @@ abstract class _ProfileEntity implements ProfileEntity {
     final String? openingTime,
     final String? closingTime,
     final String? createdAt,
+    final List<String> zones,
+    final bool isSetupCompleted,
   }) = _$ProfileEntityImpl;
 
   @override
@@ -369,6 +416,10 @@ abstract class _ProfileEntity implements ProfileEntity {
   String? get closingTime;
   @override
   String? get createdAt;
+  @override
+  List<String> get zones;
+  @override
+  bool get isSetupCompleted;
 
   /// Create a copy of ProfileEntity
   /// with the given fields replaced by the non-null parameter values.

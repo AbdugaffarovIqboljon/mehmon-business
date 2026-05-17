@@ -16,5 +16,7 @@ abstract class ProfileEntity with _$ProfileEntity {
     String? openingTime,
     String? closingTime,
     String? createdAt,
+    @Default([]) List<String> zones,
+    @Default(false) bool isSetupCompleted,
   }) = _ProfileEntity;
 }

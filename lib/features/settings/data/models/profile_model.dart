@@ -17,6 +17,8 @@ abstract class ProfileModel with _$ProfileModel {
     String? openingTime,
     String? closingTime,
     String? createdAt,
+    @Default([]) List<String> zones,
+    @Default(false) bool isSetupCompleted,
   }) = _ProfileModel;
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) =>

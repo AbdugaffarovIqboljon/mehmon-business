@@ -16,6 +16,158 @@ final _privateConstructorUsedError = UnsupportedError(
 );
 
 /// @nodoc
+mixin _$AssignedTableEntity {
+  String get id => throw _privateConstructorUsedError;
+  String get number => throw _privateConstructorUsedError;
+
+  /// Create a copy of AssignedTableEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $AssignedTableEntityCopyWith<AssignedTableEntity> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AssignedTableEntityCopyWith<$Res> {
+  factory $AssignedTableEntityCopyWith(
+    AssignedTableEntity value,
+    $Res Function(AssignedTableEntity) then,
+  ) = _$AssignedTableEntityCopyWithImpl<$Res, AssignedTableEntity>;
+  @useResult
+  $Res call({String id, String number});
+}
+
+/// @nodoc
+class _$AssignedTableEntityCopyWithImpl<$Res, $Val extends AssignedTableEntity>
+    implements $AssignedTableEntityCopyWith<$Res> {
+  _$AssignedTableEntityCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of AssignedTableEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? id = null, Object? number = null}) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            number: null == number
+                ? _value.number
+                : number // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$AssignedTableEntityImplCopyWith<$Res>
+    implements $AssignedTableEntityCopyWith<$Res> {
+  factory _$$AssignedTableEntityImplCopyWith(
+    _$AssignedTableEntityImpl value,
+    $Res Function(_$AssignedTableEntityImpl) then,
+  ) = __$$AssignedTableEntityImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String number});
+}
+
+/// @nodoc
+class __$$AssignedTableEntityImplCopyWithImpl<$Res>
+    extends _$AssignedTableEntityCopyWithImpl<$Res, _$AssignedTableEntityImpl>
+    implements _$$AssignedTableEntityImplCopyWith<$Res> {
+  __$$AssignedTableEntityImplCopyWithImpl(
+    _$AssignedTableEntityImpl _value,
+    $Res Function(_$AssignedTableEntityImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AssignedTableEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? id = null, Object? number = null}) {
+    return _then(
+      _$AssignedTableEntityImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        number: null == number
+            ? _value.number
+            : number // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$AssignedTableEntityImpl implements _AssignedTableEntity {
+  const _$AssignedTableEntityImpl({required this.id, required this.number});
+
+  @override
+  final String id;
+  @override
+  final String number;
+
+  @override
+  String toString() {
+    return 'AssignedTableEntity(id: $id, number: $number)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AssignedTableEntityImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.number, number) || other.number == number));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id, number);
+
+  /// Create a copy of AssignedTableEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AssignedTableEntityImplCopyWith<_$AssignedTableEntityImpl> get copyWith =>
+      __$$AssignedTableEntityImplCopyWithImpl<_$AssignedTableEntityImpl>(
+        this,
+        _$identity,
+      );
+}
+
+abstract class _AssignedTableEntity implements AssignedTableEntity {
+  const factory _AssignedTableEntity({
+    required final String id,
+    required final String number,
+  }) = _$AssignedTableEntityImpl;
+
+  @override
+  String get id;
+  @override
+  String get number;
+
+  /// Create a copy of AssignedTableEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AssignedTableEntityImplCopyWith<_$AssignedTableEntityImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$ShiftEntity {
   String get id => throw _privateConstructorUsedError;
   String get staffName => throw _privateConstructorUsedError;
@@ -25,6 +177,8 @@ mixin _$ShiftEntity {
   String get restaurantId => throw _privateConstructorUsedError;
   String get createdAt => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
+  List<AssignedTableEntity> get assignedTables =>
+      throw _privateConstructorUsedError;
 
   /// Create a copy of ShiftEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -49,6 +203,7 @@ abstract class $ShiftEntityCopyWith<$Res> {
     String restaurantId,
     String createdAt,
     String? notes,
+    List<AssignedTableEntity> assignedTables,
   });
 }
 
@@ -75,6 +230,7 @@ class _$ShiftEntityCopyWithImpl<$Res, $Val extends ShiftEntity>
     Object? restaurantId = null,
     Object? createdAt = null,
     Object? notes = freezed,
+    Object? assignedTables = null,
   }) {
     return _then(
       _value.copyWith(
@@ -110,6 +266,10 @@ class _$ShiftEntityCopyWithImpl<$Res, $Val extends ShiftEntity>
                 ? _value.notes
                 : notes // ignore: cast_nullable_to_non_nullable
                       as String?,
+            assignedTables: null == assignedTables
+                ? _value.assignedTables
+                : assignedTables // ignore: cast_nullable_to_non_nullable
+                      as List<AssignedTableEntity>,
           )
           as $Val,
     );
@@ -134,6 +294,7 @@ abstract class _$$ShiftEntityImplCopyWith<$Res>
     String restaurantId,
     String createdAt,
     String? notes,
+    List<AssignedTableEntity> assignedTables,
   });
 }
 
@@ -159,6 +320,7 @@ class __$$ShiftEntityImplCopyWithImpl<$Res>
     Object? restaurantId = null,
     Object? createdAt = null,
     Object? notes = freezed,
+    Object? assignedTables = null,
   }) {
     return _then(
       _$ShiftEntityImpl(
@@ -194,6 +356,10 @@ class __$$ShiftEntityImplCopyWithImpl<$Res>
             ? _value.notes
             : notes // ignore: cast_nullable_to_non_nullable
                   as String?,
+        assignedTables: null == assignedTables
+            ? _value._assignedTables
+            : assignedTables // ignore: cast_nullable_to_non_nullable
+                  as List<AssignedTableEntity>,
       ),
     );
   }
@@ -211,7 +377,8 @@ class _$ShiftEntityImpl implements _ShiftEntity {
     required this.restaurantId,
     required this.createdAt,
     this.notes,
-  });
+    final List<AssignedTableEntity> assignedTables = const [],
+  }) : _assignedTables = assignedTables;
 
   @override
   final String id;
@@ -229,10 +396,18 @@ class _$ShiftEntityImpl implements _ShiftEntity {
   final String createdAt;
   @override
   final String? notes;
+  final List<AssignedTableEntity> _assignedTables;
+  @override
+  @JsonKey()
+  List<AssignedTableEntity> get assignedTables {
+    if (_assignedTables is EqualUnmodifiableListView) return _assignedTables;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_assignedTables);
+  }
 
   @override
   String toString() {
-    return 'ShiftEntity(id: $id, staffName: $staffName, startTime: $startTime, endTime: $endTime, date: $date, restaurantId: $restaurantId, createdAt: $createdAt, notes: $notes)';
+    return 'ShiftEntity(id: $id, staffName: $staffName, startTime: $startTime, endTime: $endTime, date: $date, restaurantId: $restaurantId, createdAt: $createdAt, notes: $notes, assignedTables: $assignedTables)';
   }
 
   @override
@@ -251,7 +426,11 @@ class _$ShiftEntityImpl implements _ShiftEntity {
                 other.restaurantId == restaurantId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.notes, notes) || other.notes == notes));
+            (identical(other.notes, notes) || other.notes == notes) &&
+            const DeepCollectionEquality().equals(
+              other._assignedTables,
+              _assignedTables,
+            ));
   }
 
   @override
@@ -265,6 +444,7 @@ class _$ShiftEntityImpl implements _ShiftEntity {
     restaurantId,
     createdAt,
     notes,
+    const DeepCollectionEquality().hash(_assignedTables),
   );
 
   /// Create a copy of ShiftEntity
@@ -286,6 +466,7 @@ abstract class _ShiftEntity implements ShiftEntity {
     required final String restaurantId,
     required final String createdAt,
     final String? notes,
+    final List<AssignedTableEntity> assignedTables,
   }) = _$ShiftEntityImpl;
 
   @override
@@ -304,6 +485,8 @@ abstract class _ShiftEntity implements ShiftEntity {
   String get createdAt;
   @override
   String? get notes;
+  @override
+  List<AssignedTableEntity> get assignedTables;
 
   /// Create a copy of ShiftEntity
   /// with the given fields replaced by the non-null parameter values.

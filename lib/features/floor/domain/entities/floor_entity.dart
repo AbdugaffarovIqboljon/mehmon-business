@@ -10,9 +10,10 @@ abstract class FloorEntity with _$FloorEntity {
     required int capacity,
     required String status,
     required String location,
-    @Default(null) String? tableType,
+    String? tableType,
     @Default(0.0) double x,
     @Default(0.0) double y,
+    String? zone,
   }) = _FloorEntity;
 }
 

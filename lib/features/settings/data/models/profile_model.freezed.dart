@@ -33,6 +33,8 @@ mixin _$ProfileModel {
   String? get openingTime => throw _privateConstructorUsedError;
   String? get closingTime => throw _privateConstructorUsedError;
   String? get createdAt => throw _privateConstructorUsedError;
+  List<String> get zones => throw _privateConstructorUsedError;
+  bool get isSetupCompleted => throw _privateConstructorUsedError;
 
   /// Serializes this ProfileModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -63,6 +65,8 @@ abstract class $ProfileModelCopyWith<$Res> {
     String? openingTime,
     String? closingTime,
     String? createdAt,
+    List<String> zones,
+    bool isSetupCompleted,
   });
 }
 
@@ -92,6 +96,8 @@ class _$ProfileModelCopyWithImpl<$Res, $Val extends ProfileModel>
     Object? openingTime = freezed,
     Object? closingTime = freezed,
     Object? createdAt = freezed,
+    Object? zones = null,
+    Object? isSetupCompleted = null,
   }) {
     return _then(
       _value.copyWith(
@@ -139,6 +145,14 @@ class _$ProfileModelCopyWithImpl<$Res, $Val extends ProfileModel>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as String?,
+            zones: null == zones
+                ? _value.zones
+                : zones // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            isSetupCompleted: null == isSetupCompleted
+                ? _value.isSetupCompleted
+                : isSetupCompleted // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -166,6 +180,8 @@ abstract class _$$ProfileModelImplCopyWith<$Res>
     String? openingTime,
     String? closingTime,
     String? createdAt,
+    List<String> zones,
+    bool isSetupCompleted,
   });
 }
 
@@ -194,6 +210,8 @@ class __$$ProfileModelImplCopyWithImpl<$Res>
     Object? openingTime = freezed,
     Object? closingTime = freezed,
     Object? createdAt = freezed,
+    Object? zones = null,
+    Object? isSetupCompleted = null,
   }) {
     return _then(
       _$ProfileModelImpl(
@@ -241,6 +259,14 @@ class __$$ProfileModelImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as String?,
+        zones: null == zones
+            ? _value._zones
+            : zones // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        isSetupCompleted: null == isSetupCompleted
+            ? _value.isSetupCompleted
+            : isSetupCompleted // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -261,7 +287,9 @@ class _$ProfileModelImpl implements _ProfileModel {
     this.openingTime,
     this.closingTime,
     this.createdAt,
-  });
+    final List<String> zones = const [],
+    this.isSetupCompleted = false,
+  }) : _zones = zones;
 
   factory _$ProfileModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProfileModelImplFromJson(json);
@@ -289,10 +317,22 @@ class _$ProfileModelImpl implements _ProfileModel {
   final String? closingTime;
   @override
   final String? createdAt;
+  final List<String> _zones;
+  @override
+  @JsonKey()
+  List<String> get zones {
+    if (_zones is EqualUnmodifiableListView) return _zones;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_zones);
+  }
+
+  @override
+  @JsonKey()
+  final bool isSetupCompleted;
 
   @override
   String toString() {
-    return 'ProfileModel(id: $id, name: $name, phone: $phone, cafeName: $cafeName, role: $role, imageUrl: $imageUrl, institutionType: $institutionType, address: $address, openingTime: $openingTime, closingTime: $closingTime, createdAt: $createdAt)';
+    return 'ProfileModel(id: $id, name: $name, phone: $phone, cafeName: $cafeName, role: $role, imageUrl: $imageUrl, institutionType: $institutionType, address: $address, openingTime: $openingTime, closingTime: $closingTime, createdAt: $createdAt, zones: $zones, isSetupCompleted: $isSetupCompleted)';
   }
 
   @override
@@ -316,7 +356,10 @@ class _$ProfileModelImpl implements _ProfileModel {
             (identical(other.closingTime, closingTime) ||
                 other.closingTime == closingTime) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality().equals(other._zones, _zones) &&
+            (identical(other.isSetupCompleted, isSetupCompleted) ||
+                other.isSetupCompleted == isSetupCompleted));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -334,6 +377,8 @@ class _$ProfileModelImpl implements _ProfileModel {
     openingTime,
     closingTime,
     createdAt,
+    const DeepCollectionEquality().hash(_zones),
+    isSetupCompleted,
   );
 
   /// Create a copy of ProfileModel
@@ -363,6 +408,8 @@ abstract class _ProfileModel implements ProfileModel {
     final String? openingTime,
     final String? closingTime,
     final String? createdAt,
+    final List<String> zones,
+    final bool isSetupCompleted,
   }) = _$ProfileModelImpl;
 
   factory _ProfileModel.fromJson(Map<String, dynamic> json) =
@@ -391,6 +438,10 @@ abstract class _ProfileModel implements ProfileModel {
   String? get closingTime;
   @override
   String? get createdAt;
+  @override
+  List<String> get zones;
+  @override
+  bool get isSetupCompleted;
 
   /// Create a copy of ProfileModel
   /// with the given fields replaced by the non-null parameter values.

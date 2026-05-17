@@ -5,6 +5,17 @@ part 'shift_model.freezed.dart';
 part 'shift_model.g.dart';
 
 @freezed
+abstract class AssignedTableModel with _$AssignedTableModel {
+  const factory AssignedTableModel({
+    @JsonKey(name: '_id') required String id,
+    required String number,
+  }) = _AssignedTableModel;
+
+  factory AssignedTableModel.fromJson(Map<String, dynamic> json) =>
+      _$AssignedTableModelFromJson(json);
+}
+
+@freezed
 abstract class ShiftModel with _$ShiftModel {
   const factory ShiftModel({
     @JsonKey(name: '_id') required String id,
@@ -15,10 +26,16 @@ abstract class ShiftModel with _$ShiftModel {
     @JsonKey(name: 'restaurantId') required String restaurantId,
     @JsonKey(name: 'createdAt') required String createdAt,
     @JsonKey(name: 'notes') String? notes,
+    @Default([]) List<AssignedTableModel> assignedTables,
   }) = _ShiftModel;
 
   factory ShiftModel.fromJson(Map<String, dynamic> json) =>
       _$ShiftModelFromJson(json);
+}
+
+extension AssignedTableModelX on AssignedTableModel {
+  AssignedTableEntity toEntity() =>
+      AssignedTableEntity(id: id, number: number);
 }
 
 extension ShiftModelX on ShiftModel {
@@ -31,5 +48,7 @@ extension ShiftModelX on ShiftModel {
         notes: notes,
         restaurantId: restaurantId,
         createdAt: createdAt,
+        assignedTables:
+            assignedTables.map((t) => t.toEntity()).toList(),
       );
 }

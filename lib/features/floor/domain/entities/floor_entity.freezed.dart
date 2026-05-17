@@ -25,6 +25,7 @@ mixin _$FloorEntity {
   String? get tableType => throw _privateConstructorUsedError;
   double get x => throw _privateConstructorUsedError;
   double get y => throw _privateConstructorUsedError;
+  String? get zone => throw _privateConstructorUsedError;
 
   /// Create a copy of FloorEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -49,6 +50,7 @@ abstract class $FloorEntityCopyWith<$Res> {
     String? tableType,
     double x,
     double y,
+    String? zone,
   });
 }
 
@@ -75,6 +77,7 @@ class _$FloorEntityCopyWithImpl<$Res, $Val extends FloorEntity>
     Object? tableType = freezed,
     Object? x = null,
     Object? y = null,
+    Object? zone = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -110,6 +113,10 @@ class _$FloorEntityCopyWithImpl<$Res, $Val extends FloorEntity>
                 ? _value.y
                 : y // ignore: cast_nullable_to_non_nullable
                       as double,
+            zone: freezed == zone
+                ? _value.zone
+                : zone // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -134,6 +141,7 @@ abstract class _$$FloorEntityImplCopyWith<$Res>
     String? tableType,
     double x,
     double y,
+    String? zone,
   });
 }
 
@@ -159,6 +167,7 @@ class __$$FloorEntityImplCopyWithImpl<$Res>
     Object? tableType = freezed,
     Object? x = null,
     Object? y = null,
+    Object? zone = freezed,
   }) {
     return _then(
       _$FloorEntityImpl(
@@ -194,6 +203,10 @@ class __$$FloorEntityImplCopyWithImpl<$Res>
             ? _value.y
             : y // ignore: cast_nullable_to_non_nullable
                   as double,
+        zone: freezed == zone
+            ? _value.zone
+            : zone // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -208,9 +221,10 @@ class _$FloorEntityImpl implements _FloorEntity {
     required this.capacity,
     required this.status,
     required this.location,
-    this.tableType = null,
+    this.tableType,
     this.x = 0.0,
     this.y = 0.0,
+    this.zone,
   });
 
   @override
@@ -224,7 +238,6 @@ class _$FloorEntityImpl implements _FloorEntity {
   @override
   final String location;
   @override
-  @JsonKey()
   final String? tableType;
   @override
   @JsonKey()
@@ -232,10 +245,12 @@ class _$FloorEntityImpl implements _FloorEntity {
   @override
   @JsonKey()
   final double y;
+  @override
+  final String? zone;
 
   @override
   String toString() {
-    return 'FloorEntity(id: $id, number: $number, capacity: $capacity, status: $status, location: $location, tableType: $tableType, x: $x, y: $y)';
+    return 'FloorEntity(id: $id, number: $number, capacity: $capacity, status: $status, location: $location, tableType: $tableType, x: $x, y: $y, zone: $zone)';
   }
 
   @override
@@ -253,7 +268,8 @@ class _$FloorEntityImpl implements _FloorEntity {
             (identical(other.tableType, tableType) ||
                 other.tableType == tableType) &&
             (identical(other.x, x) || other.x == x) &&
-            (identical(other.y, y) || other.y == y));
+            (identical(other.y, y) || other.y == y) &&
+            (identical(other.zone, zone) || other.zone == zone));
   }
 
   @override
@@ -267,6 +283,7 @@ class _$FloorEntityImpl implements _FloorEntity {
     tableType,
     x,
     y,
+    zone,
   );
 
   /// Create a copy of FloorEntity
@@ -288,6 +305,7 @@ abstract class _FloorEntity implements FloorEntity {
     final String? tableType,
     final double x,
     final double y,
+    final String? zone,
   }) = _$FloorEntityImpl;
 
   @override
@@ -306,6 +324,8 @@ abstract class _FloorEntity implements FloorEntity {
   double get x;
   @override
   double get y;
+  @override
+  String? get zone;
 
   /// Create a copy of FloorEntity
   /// with the given fields replaced by the non-null parameter values.

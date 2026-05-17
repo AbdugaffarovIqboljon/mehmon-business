@@ -226,6 +226,10 @@ mixin _$GuestEntity {
   String? get notes => throw _privateConstructorUsedError;
   String? get lastVisitTableNumber => throw _privateConstructorUsedError;
   int get lastVisitGuestCount => throw _privateConstructorUsedError;
+  String? get currentTableId => throw _privateConstructorUsedError;
+  String? get bookingId => throw _privateConstructorUsedError;
+  String? get bookingTimeSlot => throw _privateConstructorUsedError;
+  String? get bookingEndTime => throw _privateConstructorUsedError;
 
   /// Create a copy of GuestEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -254,6 +258,10 @@ abstract class $GuestEntityCopyWith<$Res> {
     String? notes,
     String? lastVisitTableNumber,
     int lastVisitGuestCount,
+    String? currentTableId,
+    String? bookingId,
+    String? bookingTimeSlot,
+    String? bookingEndTime,
   });
 }
 
@@ -284,6 +292,10 @@ class _$GuestEntityCopyWithImpl<$Res, $Val extends GuestEntity>
     Object? notes = freezed,
     Object? lastVisitTableNumber = freezed,
     Object? lastVisitGuestCount = null,
+    Object? currentTableId = freezed,
+    Object? bookingId = freezed,
+    Object? bookingTimeSlot = freezed,
+    Object? bookingEndTime = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -335,6 +347,22 @@ class _$GuestEntityCopyWithImpl<$Res, $Val extends GuestEntity>
                 ? _value.lastVisitGuestCount
                 : lastVisitGuestCount // ignore: cast_nullable_to_non_nullable
                       as int,
+            currentTableId: freezed == currentTableId
+                ? _value.currentTableId
+                : currentTableId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bookingId: freezed == bookingId
+                ? _value.bookingId
+                : bookingId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bookingTimeSlot: freezed == bookingTimeSlot
+                ? _value.bookingTimeSlot
+                : bookingTimeSlot // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bookingEndTime: freezed == bookingEndTime
+                ? _value.bookingEndTime
+                : bookingEndTime // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -363,6 +391,10 @@ abstract class _$$GuestEntityImplCopyWith<$Res>
     String? notes,
     String? lastVisitTableNumber,
     int lastVisitGuestCount,
+    String? currentTableId,
+    String? bookingId,
+    String? bookingTimeSlot,
+    String? bookingEndTime,
   });
 }
 
@@ -392,6 +424,10 @@ class __$$GuestEntityImplCopyWithImpl<$Res>
     Object? notes = freezed,
     Object? lastVisitTableNumber = freezed,
     Object? lastVisitGuestCount = null,
+    Object? currentTableId = freezed,
+    Object? bookingId = freezed,
+    Object? bookingTimeSlot = freezed,
+    Object? bookingEndTime = freezed,
   }) {
     return _then(
       _$GuestEntityImpl(
@@ -443,6 +479,22 @@ class __$$GuestEntityImplCopyWithImpl<$Res>
             ? _value.lastVisitGuestCount
             : lastVisitGuestCount // ignore: cast_nullable_to_non_nullable
                   as int,
+        currentTableId: freezed == currentTableId
+            ? _value.currentTableId
+            : currentTableId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bookingId: freezed == bookingId
+            ? _value.bookingId
+            : bookingId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bookingTimeSlot: freezed == bookingTimeSlot
+            ? _value.bookingTimeSlot
+            : bookingTimeSlot // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bookingEndTime: freezed == bookingEndTime
+            ? _value.bookingEndTime
+            : bookingEndTime // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -464,6 +516,10 @@ class _$GuestEntityImpl implements _GuestEntity {
     this.notes,
     this.lastVisitTableNumber,
     this.lastVisitGuestCount = 0,
+    this.currentTableId,
+    this.bookingId,
+    this.bookingTimeSlot,
+    this.bookingEndTime,
   }) : _visits = visits;
 
   @override
@@ -498,10 +554,18 @@ class _$GuestEntityImpl implements _GuestEntity {
   @override
   @JsonKey()
   final int lastVisitGuestCount;
+  @override
+  final String? currentTableId;
+  @override
+  final String? bookingId;
+  @override
+  final String? bookingTimeSlot;
+  @override
+  final String? bookingEndTime;
 
   @override
   String toString() {
-    return 'GuestEntity(id: $id, name: $name, phone: $phone, visitCount: $visitCount, isVIP: $isVIP, lastVisit: $lastVisit, email: $email, avatarUrl: $avatarUrl, visits: $visits, notes: $notes, lastVisitTableNumber: $lastVisitTableNumber, lastVisitGuestCount: $lastVisitGuestCount)';
+    return 'GuestEntity(id: $id, name: $name, phone: $phone, visitCount: $visitCount, isVIP: $isVIP, lastVisit: $lastVisit, email: $email, avatarUrl: $avatarUrl, visits: $visits, notes: $notes, lastVisitTableNumber: $lastVisitTableNumber, lastVisitGuestCount: $lastVisitGuestCount, currentTableId: $currentTableId, bookingId: $bookingId, bookingTimeSlot: $bookingTimeSlot, bookingEndTime: $bookingEndTime)';
   }
 
   @override
@@ -525,7 +589,15 @@ class _$GuestEntityImpl implements _GuestEntity {
             (identical(other.lastVisitTableNumber, lastVisitTableNumber) ||
                 other.lastVisitTableNumber == lastVisitTableNumber) &&
             (identical(other.lastVisitGuestCount, lastVisitGuestCount) ||
-                other.lastVisitGuestCount == lastVisitGuestCount));
+                other.lastVisitGuestCount == lastVisitGuestCount) &&
+            (identical(other.currentTableId, currentTableId) ||
+                other.currentTableId == currentTableId) &&
+            (identical(other.bookingId, bookingId) ||
+                other.bookingId == bookingId) &&
+            (identical(other.bookingTimeSlot, bookingTimeSlot) ||
+                other.bookingTimeSlot == bookingTimeSlot) &&
+            (identical(other.bookingEndTime, bookingEndTime) ||
+                other.bookingEndTime == bookingEndTime));
   }
 
   @override
@@ -543,6 +615,10 @@ class _$GuestEntityImpl implements _GuestEntity {
     notes,
     lastVisitTableNumber,
     lastVisitGuestCount,
+    currentTableId,
+    bookingId,
+    bookingTimeSlot,
+    bookingEndTime,
   );
 
   /// Create a copy of GuestEntity
@@ -568,6 +644,10 @@ abstract class _GuestEntity implements GuestEntity {
     final String? notes,
     final String? lastVisitTableNumber,
     final int lastVisitGuestCount,
+    final String? currentTableId,
+    final String? bookingId,
+    final String? bookingTimeSlot,
+    final String? bookingEndTime,
   }) = _$GuestEntityImpl;
 
   @override
@@ -594,6 +674,14 @@ abstract class _GuestEntity implements GuestEntity {
   String? get lastVisitTableNumber;
   @override
   int get lastVisitGuestCount;
+  @override
+  String? get currentTableId;
+  @override
+  String? get bookingId;
+  @override
+  String? get bookingTimeSlot;
+  @override
+  String? get bookingEndTime;
 
   /// Create a copy of GuestEntity
   /// with the given fields replaced by the non-null parameter values.
