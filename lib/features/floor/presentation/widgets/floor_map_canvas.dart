@@ -6,7 +6,7 @@ import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/models/floor_table_config.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_table_widget.dart';
-import 'package:mehmon/features/floor/presentation/widgets/table_options_sheet.dart';
+import 'package:mehmon/features/floor/presentation/widgets/table_detail_sheet.dart';
 
 /// The floor map area that positions table widgets using [Stack] + [Positioned].
 ///
@@ -55,7 +55,11 @@ class _FloorMapCanvasState extends State<FloorMapCanvas> {
 
     showModalBottomSheet<void>(
       context: context,
-      builder: (_) => TableOptionsSheet(table: entity!),
+      isScrollControlled: true,
+      builder: (_) => TableDetailSheet(
+        tableId: entity!.id,
+        tableNumber: entity.number,
+      ),
     );
   }
 
