@@ -4,6 +4,8 @@ import 'package:mehmon/features/guests/domain/entities/guest_entity.dart';
 abstract class GuestRepository {
   Future<Result<List<GuestEntity>>> getGuests();
 
+  Future<Result<List<GuestEntity>>> getGuestsInHall();
+
   Future<Result<GuestEntity>> getGuestById({
     required String id,
   });

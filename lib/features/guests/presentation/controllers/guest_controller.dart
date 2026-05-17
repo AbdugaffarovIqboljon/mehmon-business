@@ -21,6 +21,11 @@ final guestControllerProvider =
       GuestController.new,
     );
 
+final inHallGuestsControllerProvider =
+    AsyncNotifierProvider<InHallGuestsController, List<GuestEntity>>(
+      InHallGuestsController.new,
+    );
+
 final guestDetailProvider = AsyncNotifierProvider.autoDispose
     .family<GuestDetailNotifier, GuestEntity, String>(GuestDetailNotifier.new);
 
@@ -29,17 +34,6 @@ enum GuestFilterTab { allGuests, inHall }
 final guestFilterTabProvider = StateProvider<GuestFilterTab>(
   (ref) => GuestFilterTab.allGuests,
 );
-
-final filteredGuestsProvider = Provider<List<GuestEntity>>((ref) {
-  final guests = ref.watch(guestControllerProvider).asData?.value ?? [];
-  final filter = ref.watch(guestFilterTabProvider);
-
-  if (filter == GuestFilterTab.inHall) {
-    return guests;
-  }
-
-  return guests;
-});
 
 final guestByIdProvider = Provider.family<GuestEntity?, String>((ref, guestId) {
   final guests = ref.watch(guestControllerProvider).asData?.value;
@@ -127,6 +121,26 @@ class GuestController extends AsyncNotifier<List<GuestEntity>> {
       },
       error: (_) => false,
     );
+  }
+}
+
+// ── In-Hall List Controller ───────────────────────────────────────────────
+
+class InHallGuestsController extends AsyncNotifier<List<GuestEntity>> {
+  @override
+  FutureOr<List<GuestEntity>> build() => _load();
+
+  Future<List<GuestEntity>> _load() async {
+    final result = await ref.read(guestRepositoryProvider).getGuestsInHall();
+    return result.when(
+      success: (list) => list,
+      error: (f) => throw Exception(f.message),
+    );
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(_load);
   }
 }
 

@@ -51,6 +51,18 @@ class GuestRepositoryImpl implements GuestRepository {
   }
 
   @override
+  Future<Result<List<GuestEntity>>> getGuestsInHall() async {
+    try {
+      final models = await _dataSource.getGuestsInHall();
+      return Success(models.map(_toEntity).toList());
+    } on ApiException catch (e) {
+      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on Object catch (e) {
+      return Err(UnknownFailure(message: e.toString()));
+    }
+  }
+
+  @override
   Future<Result<GuestEntity>> getGuestById({required String id}) async {
     try {
       final model = await _dataSource.getGuestById(id: id);

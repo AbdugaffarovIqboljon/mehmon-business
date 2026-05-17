@@ -6,6 +6,8 @@ import 'package:mehmon/features/guests/data/models/guest_model.dart';
 abstract class GuestRemoteDataSource {
   Future<List<GuestModel>> getGuests();
 
+  Future<List<GuestModel>> getGuestsInHall();
+
   Future<GuestModel> getGuestById({required String id});
 
   Future<GuestModel> createGuest({
@@ -37,6 +39,18 @@ class GuestRemoteDataSourceImpl implements GuestRemoteDataSource {
   Future<List<GuestModel>> getGuests() async {
     try {
       final response = await _dio.get<dynamic>(ApiConstants.guests);
+      return (response.data as List)
+          .map((e) => GuestModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<List<GuestModel>> getGuestsInHall() async {
+    try {
+      final response = await _dio.get<dynamic>(ApiConstants.guestsInHall);
       return (response.data as List)
           .map((e) => GuestModel.fromJson(e as Map<String, dynamic>))
           .toList();

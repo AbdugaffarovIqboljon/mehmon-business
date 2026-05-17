@@ -40,8 +40,11 @@ class _GuestsBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final guestsAsync = ref.watch(guestControllerProvider);
     final selectedTab = ref.watch(guestFilterTabProvider);
+    final isInHall = selectedTab == GuestFilterTab.inHall;
+    final guestsAsync = isInHall
+        ? ref.watch(inHallGuestsControllerProvider)
+        : ref.watch(guestControllerProvider);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -76,17 +79,20 @@ class _GuestsBody extends ConsumerWidget {
               error: (error, _) {
                 return _GuestsErrorState(
                   error: error,
-                  onRetry: ref.read(guestControllerProvider.notifier).refresh,
+                  onRetry: isInHall
+                      ? ref
+                            .read(inHallGuestsControllerProvider.notifier)
+                            .refresh
+                      : ref.read(guestControllerProvider.notifier).refresh,
                 );
               },
-              data: (_) {
-                final guests = ref.watch(filteredGuestsProvider);
+              data: (guests) {
                 if (guests.isEmpty) {
                   return _GuestsEmptyState(
-                    title: selectedTab == GuestFilterTab.inHall
+                    title: isInHall
                         ? AppLocalizations.of(context)!.guestsEmptyInHallTitle
                         : AppLocalizations.of(context)!.guestsEmptyAllTitle,
-                    subtitle: selectedTab == GuestFilterTab.inHall
+                    subtitle: isInHall
                         ? AppLocalizations.of(context)!.guestsEmptyInHallSubtitle
                         : AppLocalizations.of(context)!.guestsEmptyAllSubtitle,
                   );
