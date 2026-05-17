@@ -92,6 +92,38 @@ class ProfileController extends AsyncNotifier<ProfileEntity?> {
     );
   }
 
+  Future<bool> updateZones(List<String> zones) async {
+    final result = await ref
+        .read(profileRepositoryProvider)
+        .updateProfile(zones: zones);
+    return result.when(
+      success: (entity) {
+        // Optimistic: trust the locally-known zones list. The PUT response may
+        // omit the zones array, which would otherwise wipe what we just saved.
+        final existing = state.valueOrNull;
+        state = AsyncData((existing ?? entity).copyWith(zones: zones));
+        return true;
+      },
+      error: (_) => false,
+    );
+  }
+
+  Future<bool> completeSetup() async {
+    final result = await ref
+        .read(profileRepositoryProvider)
+        .updateProfile(isSetupCompleted: true);
+    return result.when(
+      success: (entity) {
+        final existing = state.valueOrNull;
+        state = AsyncData(
+          (existing ?? entity).copyWith(isSetupCompleted: true),
+        );
+        return true;
+      },
+      error: (_) => false,
+    );
+  }
+
   Future<void> logout() async {
     await ref.read(authControllerProvider.notifier).logout();
     state = const AsyncData(null);

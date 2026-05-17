@@ -9,6 +9,7 @@ import 'package:mehmon/core/widgets/app_text_field.dart';
 import 'package:mehmon/core/widgets/primary_button.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
+import 'package:mehmon/features/settings/presentation/controllers/profile_controller.dart';
 
 class TableFormSheet extends ConsumerStatefulWidget {
   const TableFormSheet({super.key, this.existingTable});
@@ -25,6 +26,7 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
   late final TextEditingController _capacityCtrl;
   late final TextEditingController _locationCtrl;
   late final ValueNotifier<bool> _isLoading;
+  String? _selectedZone;
 
   bool get _isEdit => widget.existingTable != null;
 
@@ -37,6 +39,7 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
       text: t != null ? t.capacity.toString() : '',
     );
     _locationCtrl = TextEditingController(text: t?.location);
+    _selectedZone = t?.location;
     _isLoading = ValueNotifier(false);
   }
 
@@ -54,7 +57,10 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
 
     final number = _numberCtrl.text.trim();
     final capacity = int.parse(_capacityCtrl.text.trim());
-    final location = _locationCtrl.text.trim();
+    final location =
+        (_selectedZone?.trim().isNotEmpty ?? false)
+            ? _selectedZone!.trim()
+            : _locationCtrl.text.trim();
 
     _isLoading.value = true;
 
@@ -89,6 +95,15 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
   @override
   Widget build(BuildContext context) {
     final viewInsets = MediaQuery.of(context).viewInsets.bottom;
+    final zones =
+        ref.watch(profileControllerProvider).valueOrNull?.zones ?? const [];
+    // Pre-existing location that isn't a known zone (e.g. legacy free-text
+    // value) — keep it as a selectable option so editing doesn't silently
+    // drop the value.
+    final dropdownValue =
+        (_selectedZone != null && zones.contains(_selectedZone))
+            ? _selectedZone
+            : null;
 
     return Padding(
       padding: EdgeInsets.only(bottom: viewInsets),
@@ -138,11 +153,29 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
                   },
                 ),
                 const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  controller: _locationCtrl,
-                  label: 'Joylashuv (ixtiyoriy)',
-                  hint: 'Asosiy zal, Terassa...',
-                ),
+                if (zones.isEmpty)
+                  AppTextField(
+                    controller: _locationCtrl,
+                    label: 'Joylashuv (ixtiyoriy)',
+                    hint: 'Asosiy zal, Terassa...',
+                  )
+                else
+                  DropdownButtonFormField<String>(
+                    initialValue: dropdownValue,
+                    decoration: const InputDecoration(
+                      labelText: 'Zona',
+                      hintText: 'Zona tanlang',
+                    ),
+                    items: [
+                      for (final z in zones)
+                        DropdownMenuItem<String>(value: z, child: Text(z)),
+                    ],
+                    onChanged: (value) {
+                      setState(() => _selectedZone = value);
+                    },
+                    validator: (value) =>
+                        (value == null || value.isEmpty) ? 'Majburiy' : null,
+                  ),
                 const SizedBox(height: AppSpacing.xl),
                 ValueListenableBuilder<bool>(
                   valueListenable: _isLoading,

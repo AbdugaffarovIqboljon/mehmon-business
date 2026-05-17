@@ -49,6 +49,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
     String? address,
     String? openingTime,
     String? closingTime,
+    List<String>? zones,
+    bool? isSetupCompleted,
   }) async {
     try {
       return Success(
@@ -62,6 +64,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
             address: address,
             openingTime: openingTime,
             closingTime: closingTime,
+            zones: zones,
+            isSetupCompleted: isSetupCompleted,
           ),
         ),
       );

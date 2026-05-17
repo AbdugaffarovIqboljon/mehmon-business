@@ -12,6 +12,7 @@ import 'package:mehmon/features/auth/presentation/pages/language_select_page.dar
 import 'package:mehmon/features/auth/presentation/pages/login_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/register_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/restaurant_profile_page.dart';
+import 'package:mehmon/features/auth/presentation/pages/restaurant_setup_page.dart';
 import 'package:mehmon/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:mehmon/features/floor/presentation/pages/chronology_page.dart';
 import 'package:mehmon/features/floor/presentation/pages/dashboard_page.dart';
@@ -117,6 +118,7 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
       // Never redirect away from edit-profile — user is actively fixing their
       // profile, and the refresh from updateProfile would cancel their pop.
       final isEditProfile = location == RoutePaths.editProfile;
+      final isRestaurantSetup = location == RoutePaths.restaurantSetup;
       if (!isProfileSetup && !isRegister && !isEditProfile) {
         final profile =
             container.read(profileControllerProvider).valueOrNull;
@@ -128,7 +130,30 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
         }
       }
 
-      // E. Authenticated & complete — bounce away from guest-only routes.
+      // E. Authenticated & profile complete but restaurant setup pending →
+      // /restaurant-setup. Excluding the setup route itself prevents a
+      // redirect loop.
+      if (!isProfileSetup &&
+          !isRegister &&
+          !isEditProfile &&
+          !isRestaurantSetup) {
+        final profile =
+            container.read(profileControllerProvider).valueOrNull;
+        if (profile != null && !profile.isSetupCompleted) {
+          return RoutePaths.restaurantSetup;
+        }
+      }
+
+      // F. Setup already completed — bounce away from the setup route.
+      if (isRestaurantSetup) {
+        final profile =
+            container.read(profileControllerProvider).valueOrNull;
+        if (profile != null && profile.isSetupCompleted) {
+          return RoutePaths.floor;
+        }
+      }
+
+      // G. Authenticated & complete — bounce away from guest-only routes.
       const guestOnly = {
         RoutePaths.languageSelect,
         RoutePaths.onboarding,
@@ -165,6 +190,11 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
         name: RouteNames.profileSetup,
         path: RoutePaths.profileSetup,
         builder: (context, state) => const RestaurantProfilePage(),
+      ),
+      GoRoute(
+        name: RouteNames.restaurantSetup,
+        path: RoutePaths.restaurantSetup,
+        builder: (context, state) => const RestaurantSetupPage(),
       ),
 
       // ── Floor Drawer Routes (no shell) ───────────────────────────

@@ -13,6 +13,8 @@ abstract class ProfileRepository {
     String? address,
     String? openingTime,
     String? closingTime,
+    List<String>? zones,
+    bool? isSetupCompleted,
   });
 
   Future<Result<String>> logout();

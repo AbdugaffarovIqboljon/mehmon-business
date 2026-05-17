@@ -15,6 +15,8 @@ abstract class ProfileRemoteDataSource {
     String? address,
     String? openingTime,
     String? closingTime,
+    List<String>? zones,
+    bool? isSetupCompleted,
   });
 
   Future<String> logout();
@@ -45,6 +47,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     String? address,
     String? openingTime,
     String? closingTime,
+    List<String>? zones,
+    bool? isSetupCompleted,
   }) async {
     try {
       final response = await _dio.put<dynamic>(
@@ -58,6 +62,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           if (address != null) 'address': address,
           if (openingTime != null) 'openingTime': openingTime,
           if (closingTime != null) 'closingTime': closingTime,
+          if (zones != null) 'zones': zones,
+          if (isSetupCompleted != null) 'isSetupCompleted': isSetupCompleted,
         },
       );
       return ProfileModel.fromJson(response.data as Map<String, dynamic>);

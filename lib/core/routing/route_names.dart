@@ -6,6 +6,7 @@ abstract final class RouteNames {
   static const String login = 'login';
   static const String register = 'register';
   static const String profileSetup = 'profile-setup';
+  static const String restaurantSetup = 'restaurant-setup';
 
   // ── Main App ──────────────────────────────────────────────────────
   static const String floor = 'floor';
@@ -32,6 +33,7 @@ abstract final class RoutePaths {
   static const String login = '/login';
   static const String register = '/register';
   static const String profileSetup = '/profile-setup';
+  static const String restaurantSetup = '/restaurant-setup';
 
   // ── Main App ──────────────────────────────────────────────────────
   static const String floor = '/floor';
