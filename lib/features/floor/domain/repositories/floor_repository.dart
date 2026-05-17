@@ -40,6 +40,17 @@ abstract class FloorRepository {
     required String endTime,
     required String date,
     String? notes,
+    List<String>? assignedTables,
+  });
+
+  Future<Result<ShiftEntity>> editShift(
+    String id, {
+    String? staffName,
+    String? startTime,
+    String? endTime,
+    String? date,
+    String? notes,
+    List<String>? assignedTables,
   });
 
   Future<Result<void>> deleteShift(String id);

@@ -6,10 +6,14 @@ import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/core/widgets/app_text_field.dart';
 import 'package:mehmon/core/widgets/primary_button.dart';
+import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
+import 'package:mehmon/features/floor/domain/entities/shift_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 
 class AddShiftSheet extends ConsumerStatefulWidget {
-  const AddShiftSheet({super.key});
+  const AddShiftSheet({this.existingShift, super.key});
+
+  final ShiftEntity? existingShift;
 
   @override
   ConsumerState<AddShiftSheet> createState() => _AddShiftSheetState();
@@ -22,16 +26,23 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
   late final ValueNotifier<DateTime?> _date;
   late final ValueNotifier<TimeOfDay?> _startTime;
   late final ValueNotifier<TimeOfDay?> _endTime;
+  late final ValueNotifier<List<String>> _selectedTableIds;
   late final ValueNotifier<bool> _submitting;
+
+  bool get _isEdit => widget.existingShift != null;
 
   @override
   void initState() {
     super.initState();
-    _staffNameCtrl = TextEditingController();
-    _notesCtrl = TextEditingController();
-    _date = ValueNotifier(null);
-    _startTime = ValueNotifier(null);
-    _endTime = ValueNotifier(null);
+    final shift = widget.existingShift;
+    _staffNameCtrl = TextEditingController(text: shift?.staffName ?? '');
+    _notesCtrl = TextEditingController(text: shift?.notes ?? '');
+    _date = ValueNotifier(_parseDate(shift?.date));
+    _startTime = ValueNotifier(_parseTime(shift?.startTime));
+    _endTime = ValueNotifier(_parseTime(shift?.endTime));
+    _selectedTableIds = ValueNotifier<List<String>>(
+      shift?.assignedTables.map((t) => t.id).toList() ?? <String>[],
+    );
     _submitting = ValueNotifier(false);
   }
 
@@ -42,8 +53,24 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
     _date.dispose();
     _startTime.dispose();
     _endTime.dispose();
+    _selectedTableIds.dispose();
     _submitting.dispose();
     super.dispose();
+  }
+
+  DateTime? _parseDate(String? raw) {
+    if (raw == null || raw.isEmpty) return null;
+    return DateTime.tryParse(raw);
+  }
+
+  TimeOfDay? _parseTime(String? raw) {
+    if (raw == null || raw.isEmpty) return null;
+    final parts = raw.split(':');
+    if (parts.length < 2) return null;
+    final h = int.tryParse(parts[0]);
+    final m = int.tryParse(parts[1]);
+    if (h == null || m == null) return null;
+    return TimeOfDay(hour: h, minute: m);
   }
 
   String _formatDate(DateTime d) {
@@ -96,13 +123,28 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
 
     _submitting.value = true;
     final notes = _notesCtrl.text.trim();
-    final ok = await ref.read(shiftsControllerProvider.notifier).addShift(
-          staffName: _staffNameCtrl.text.trim(),
-          startTime: _formatTime(start),
-          endTime: _formatTime(end),
-          date: _formatDate(date),
-          notes: notes.isEmpty ? null : notes,
-        );
+    final controller = ref.read(shiftsControllerProvider.notifier);
+    final bool ok;
+    if (_isEdit) {
+      ok = await controller.editShift(
+        widget.existingShift!.id,
+        staffName: _staffNameCtrl.text.trim(),
+        startTime: _formatTime(start),
+        endTime: _formatTime(end),
+        date: _formatDate(date),
+        notes: notes.isEmpty ? '' : notes,
+        assignedTables: _selectedTableIds.value,
+      );
+    } else {
+      ok = await controller.addShift(
+        staffName: _staffNameCtrl.text.trim(),
+        startTime: _formatTime(start),
+        endTime: _formatTime(end),
+        date: _formatDate(date),
+        notes: notes.isEmpty ? null : notes,
+        assignedTables: _selectedTableIds.value,
+      );
+    }
     if (!mounted) return;
     _submitting.value = false;
     if (ok) {
@@ -117,6 +159,8 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
   @override
   Widget build(BuildContext context) {
     final viewInsets = MediaQuery.of(context).viewInsets.bottom;
+    final tables =
+        ref.watch(floorControllerProvider).valueOrNull ?? const [];
 
     return Padding(
       padding: EdgeInsets.only(bottom: viewInsets),
@@ -130,77 +174,138 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
           ),
           child: Form(
             key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const _Handle(),
-                const SizedBox(height: AppSpacing.md),
-                const Text(
-                  "Yangi smena qo'shish",
-                  style: AppTextStyles.titleLarge,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                AppTextField(
-                  controller: _staffNameCtrl,
-                  label: 'Xodim ismi',
-                  validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'Majburiy' : null,
-                  textInputAction: TextInputAction.next,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                _PickerField(
-                  label: 'Sana',
-                  icon: Icons.calendar_today_outlined,
-                  listenable: _date,
-                  formatter: (v) => v == null ? null : _formatDate(v),
-                  onTap: _pickDate,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _PickerField(
-                        label: 'Boshlanish',
-                        icon: Icons.access_time,
-                        listenable: _startTime,
-                        formatter: (v) => v == null ? null : _formatTime(v),
-                        onTap: () => _pickTime(_startTime),
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: _PickerField(
-                        label: 'Tugash',
-                        icon: Icons.access_time,
-                        listenable: _endTime,
-                        formatter: (v) => v == null ? null : _formatTime(v),
-                        onTap: () => _pickTime(_endTime),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  controller: _notesCtrl,
-                  label: 'Izoh (ixtiyoriy)',
-                  maxLines: 3,
-                ),
-                const SizedBox(height: AppSpacing.xl),
-                ValueListenableBuilder<bool>(
-                  valueListenable: _submitting,
-                  builder: (_, submitting, __) => PrimaryButton(
-                    label: 'Saqlash',
-                    isLoading: submitting,
-                    onPressed: submitting ? null : _submit,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _Handle(),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    _isEdit ? 'Smenani tahrirlash' : "Yangi smena qo'shish",
+                    style: AppTextStyles.titleLarge,
+                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
+                  const SizedBox(height: AppSpacing.lg),
+                  AppTextField(
+                    controller: _staffNameCtrl,
+                    label: 'Xodim ismi',
+                    validator: (v) =>
+                        (v == null || v.trim().isEmpty) ? 'Majburiy' : null,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _PickerField(
+                    label: 'Sana',
+                    icon: Icons.calendar_today_outlined,
+                    listenable: _date,
+                    formatter: (v) => v == null ? null : _formatDate(v),
+                    onTap: _pickDate,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _PickerField(
+                          label: 'Boshlanish',
+                          icon: Icons.access_time,
+                          listenable: _startTime,
+                          formatter: (v) =>
+                              v == null ? null : _formatTime(v),
+                          onTap: () => _pickTime(_startTime),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: _PickerField(
+                          label: 'Tugash',
+                          icon: Icons.access_time,
+                          listenable: _endTime,
+                          formatter: (v) =>
+                              v == null ? null : _formatTime(v),
+                          onTap: () => _pickTime(_endTime),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppTextField(
+                    controller: _notesCtrl,
+                    label: 'Izoh (ixtiyoriy)',
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  _TablesSelector(
+                    tables: tables,
+                    selectedIds: _selectedTableIds,
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _submitting,
+                    builder: (_, submitting, __) => PrimaryButton(
+                      label: 'Saqlash',
+                      isLoading: submitting,
+                      onPressed: submitting ? null : _submit,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TablesSelector extends StatelessWidget {
+  const _TablesSelector({
+    required this.tables,
+    required this.selectedIds,
+  });
+
+  final List<FloorEntity> tables;
+  final ValueNotifier<List<String>> selectedIds;
+
+  @override
+  Widget build(BuildContext context) {
+    if (tables.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Stollar (ixtiyoriy)',
+          style: AppTextStyles.labelLarge,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        ValueListenableBuilder<List<String>>(
+          valueListenable: selectedIds,
+          builder: (_, selected, __) => Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            children: [
+              for (final table in tables)
+                FilterChip(
+                  label: Text('Stol ${table.displayNumber}'),
+                  selected: selected.contains(table.id),
+                  onSelected: (val) {
+                    final next = [...selected];
+                    if (val) {
+                      next.add(table.id);
+                    } else {
+                      next.remove(table.id);
+                    }
+                    selectedIds.value = next;
+                  },
+                  selectedColor: AppColors.primary.withValues(alpha: 0.2),
+                  checkmarkColor: AppColors.primary,
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -38,6 +38,17 @@ abstract class FloorRemoteDataSource {
     required String endTime,
     required String date,
     String? notes,
+    List<String>? assignedTables,
+  });
+
+  Future<ShiftModel> editShift(
+    String id, {
+    String? staffName,
+    String? startTime,
+    String? endTime,
+    String? date,
+    String? notes,
+    List<String>? assignedTables,
   });
 
   Future<String> deleteShift(String id);
@@ -170,6 +181,7 @@ class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
     required String endTime,
     required String date,
     String? notes,
+    List<String>? assignedTables,
   }) async {
     try {
       final response = await _dio.post<dynamic>(
@@ -180,6 +192,36 @@ class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
           'endTime': endTime,
           'date': date,
           if (notes != null && notes.isNotEmpty) 'notes': notes,
+          if (assignedTables != null && assignedTables.isNotEmpty)
+            'assignedTables': assignedTables,
+        },
+      );
+      return ShiftModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<ShiftModel> editShift(
+    String id, {
+    String? staffName,
+    String? startTime,
+    String? endTime,
+    String? date,
+    String? notes,
+    List<String>? assignedTables,
+  }) async {
+    try {
+      final response = await _dio.put<dynamic>(
+        ApiConstants.shiftId(id),
+        data: {
+          if (staffName != null) 'staffName': staffName,
+          if (startTime != null) 'startTime': startTime,
+          if (endTime != null) 'endTime': endTime,
+          if (date != null) 'date': date,
+          if (notes != null) 'notes': notes,
+          if (assignedTables != null) 'assignedTables': assignedTables,
         },
       );
       return ShiftModel.fromJson(response.data as Map<String, dynamic>);

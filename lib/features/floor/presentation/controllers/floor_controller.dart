@@ -218,6 +218,7 @@ class ShiftsController extends AsyncNotifier<List<ShiftEntity>> {
     required String endTime,
     required String date,
     String? notes,
+    List<String>? assignedTables,
   }) async {
     final result = await _repo.createShift(
       staffName: staffName,
@@ -225,11 +226,43 @@ class ShiftsController extends AsyncNotifier<List<ShiftEntity>> {
       endTime: endTime,
       date: date,
       notes: notes,
+      assignedTables: assignedTables,
     );
     return result.when(
       success: (entity) {
         final current = state.valueOrNull ?? [];
         state = AsyncData([entity, ...current]);
+        return true;
+      },
+      error: (_) => false,
+    );
+  }
+
+  Future<bool> editShift(
+    String id, {
+    String? staffName,
+    String? startTime,
+    String? endTime,
+    String? date,
+    String? notes,
+    List<String>? assignedTables,
+  }) async {
+    final result = await _repo.editShift(
+      id,
+      staffName: staffName,
+      startTime: startTime,
+      endTime: endTime,
+      date: date,
+      notes: notes,
+      assignedTables: assignedTables,
+    );
+    return result.when(
+      success: (updated) {
+        final current = state.valueOrNull ?? [];
+        state = AsyncData([
+          for (final s in current)
+            if (s.id == updated.id) updated else s,
+        ]);
         return true;
       },
       error: (_) => false,

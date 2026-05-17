@@ -8,15 +8,18 @@ class ShiftCard extends StatelessWidget {
   const ShiftCard({
     required this.shift,
     required this.onDelete,
+    required this.onEdit,
     super.key,
   });
 
   final ShiftEntity shift;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
     final hasNotes = shift.notes != null && shift.notes!.trim().isNotEmpty;
+    final hasTables = shift.assignedTables.isNotEmpty;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
@@ -79,16 +82,56 @@ class ShiftCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
+                if (hasTables) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    runSpacing: AppSpacing.xs,
+                    children: [
+                      for (final table in shift.assignedTables)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.radiusFull),
+                          ),
+                          child: Text(
+                            'Stol ${table.number}',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
-          IconButton(
-            onPressed: onDelete,
-            icon: const Icon(
-              Icons.delete_outline,
-              color: AppColors.error,
-            ),
-            tooltip: 'Delete',
+          Column(
+            children: [
+              IconButton(
+                onPressed: onEdit,
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  color: AppColors.textSecondary,
+                ),
+                tooltip: 'Edit',
+              ),
+              IconButton(
+                onPressed: onDelete,
+                icon: const Icon(
+                  Icons.delete_outline,
+                  color: AppColors.error,
+                ),
+                tooltip: 'Delete',
+              ),
+            ],
           ),
         ],
       ),

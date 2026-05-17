@@ -154,6 +154,7 @@ class FloorRepositoryImpl implements FloorRepository {
     required String endTime,
     required String date,
     String? notes,
+    List<String>? assignedTables,
   }) async {
     try {
       final model = await _dataSource.createShift(
@@ -162,6 +163,35 @@ class FloorRepositoryImpl implements FloorRepository {
         endTime: endTime,
         date: date,
         notes: notes,
+        assignedTables: assignedTables,
+      );
+      return Success(model.toEntity());
+    } on ApiException catch (e) {
+      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on Object catch (e) {
+      return Err(UnknownFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<ShiftEntity>> editShift(
+    String id, {
+    String? staffName,
+    String? startTime,
+    String? endTime,
+    String? date,
+    String? notes,
+    List<String>? assignedTables,
+  }) async {
+    try {
+      final model = await _dataSource.editShift(
+        id,
+        staffName: staffName,
+        startTime: startTime,
+        endTime: endTime,
+        date: date,
+        notes: notes,
+        assignedTables: assignedTables,
       );
       return Success(model.toEntity());
     } on ApiException catch (e) {

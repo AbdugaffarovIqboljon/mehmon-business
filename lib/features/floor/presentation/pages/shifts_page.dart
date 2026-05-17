@@ -13,7 +13,7 @@ import 'package:mehmon/l10n/app_localizations.dart';
 class ShiftsPage extends ConsumerWidget {
   const ShiftsPage({super.key});
 
-  Future<void> _openAddSheet(BuildContext context) {
+  Future<void> _openSheet(BuildContext context, {ShiftEntity? shift}) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -23,7 +23,7 @@ class ShiftsPage extends ConsumerWidget {
           top: Radius.circular(AppSpacing.radiusXl),
         ),
       ),
-      builder: (_) => const AddShiftSheet(),
+      builder: (_) => AddShiftSheet(existingShift: shift),
     );
   }
 
@@ -63,7 +63,7 @@ class ShiftsPage extends ConsumerWidget {
     return AppScaffold(
       title: l10n.drawerShifts,
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _openAddSheet(context),
+        onPressed: () => _openSheet(context),
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -113,6 +113,7 @@ class ShiftsPage extends ConsumerWidget {
                   key: ValueKey(shift.id),
                   shift: shift,
                   onDelete: () => _confirmDelete(context, ref, shift),
+                  onEdit: () => _openSheet(context, shift: shift),
                 );
               },
             ),
