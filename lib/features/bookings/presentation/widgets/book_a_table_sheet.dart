@@ -133,11 +133,11 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
 
   static const List<BookingType> _bookingTypes = BookingType.values;
 
-  late int _guestCount;
-  late String _selectedTime;
-  String? _selectedEndTime;
-  BookingType _selectedBookingType = BookingType.standard;
-  FloorEntity? _selectedTable;
+  late final ValueNotifier<int> _guestCount;
+  late final ValueNotifier<String> _selectedTime;
+  late final ValueNotifier<String?> _selectedEndTime;
+  late final ValueNotifier<BookingType> _selectedBookingType;
+  late final ValueNotifier<FloorEntity?> _selectedTable;
   bool _tablePreFilled = false;
 
   @override
@@ -145,21 +145,31 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     super.initState();
     final existing = widget.existingBooking;
     if (existing == null) {
-      _guestCount = _initialGuests;
-      _selectedTime = widget.timeSlots.contains('18:00')
-          ? '18:00'
-          : widget.timeSlots.first;
+      _guestCount = ValueNotifier<int>(_initialGuests);
+      _selectedTime = ValueNotifier<String>(
+        widget.timeSlots.contains('18:00')
+            ? '18:00'
+            : widget.timeSlots.first,
+      );
+      _selectedEndTime = ValueNotifier<String?>(null);
+      _selectedBookingType = ValueNotifier<BookingType>(BookingType.standard);
+      _selectedTable = ValueNotifier<FloorEntity?>(null);
       UzbekPhoneInput.seedController(_phoneController);
     } else {
       _guestNameController.text = existing.guestName;
       final localDigits = UzbekPhoneInput.extractLocalDigits(existing.phone);
       _phoneController.text = UzbekPhoneInput.formatLocalDigits(localDigits);
-      _selectedBookingType = existing.bookingType ?? BookingType.standard;
-      _guestCount = existing.numberOfGuests;
-      _selectedTime = widget.timeSlots.contains(existing.timeSlot)
-          ? existing.timeSlot
-          : (widget.timeSlots.isNotEmpty ? widget.timeSlots.first : '18:00');
-      _selectedEndTime = existing.endTime;
+      _selectedBookingType = ValueNotifier<BookingType>(
+        existing.bookingType ?? BookingType.standard,
+      );
+      _guestCount = ValueNotifier<int>(existing.numberOfGuests);
+      _selectedTime = ValueNotifier<String>(
+        widget.timeSlots.contains(existing.timeSlot)
+            ? existing.timeSlot
+            : (widget.timeSlots.isNotEmpty ? widget.timeSlots.first : '18:00'),
+      );
+      _selectedEndTime = ValueNotifier<String?>(existing.endTime);
+      _selectedTable = ValueNotifier<FloorEntity?>(null);
       _notesController.text = existing.notes ?? '';
       if (existing.tableInfo != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) => _tryPreFillTable());
@@ -175,10 +185,8 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     final floors = ref.read(floorControllerProvider).valueOrNull ?? [];
     for (final floor in floors) {
       if (floor.id == tableId) {
-        setState(() {
-          _selectedTable = floor;
-          _tablePreFilled = true;
-        });
+        _selectedTable.value = floor;
+        _tablePreFilled = true;
         return;
       }
     }
@@ -189,6 +197,11 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     _guestNameController.dispose();
     _phoneController.dispose();
     _notesController.dispose();
+    _guestCount.dispose();
+    _selectedTime.dispose();
+    _selectedEndTime.dispose();
+    _selectedBookingType.dispose();
+    _selectedTable.dispose();
     super.dispose();
   }
 
@@ -203,12 +216,12 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   }
 
   void _decreaseGuests() {
-    if (_guestCount <= _minGuests) return;
-    setState(() => _guestCount--);
+    if (_guestCount.value <= _minGuests) return;
+    _guestCount.value--;
   }
 
   void _increaseGuests() {
-    setState(() => _guestCount++);
+    _guestCount.value++;
   }
 
   Future<void> _confirm() async {
@@ -227,14 +240,16 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       );
       return;
     }
-    if (_selectedTable == null) {
+    final selectedTable = _selectedTable.value;
+    if (selectedTable == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Stol tanlang')),
       );
       return;
     }
-    if (_selectedBookingType == BookingType.banket &&
-        _selectedEndTime == null) {
+    final bookingType = _selectedBookingType.value;
+    final endTimeValue = _selectedEndTime.value;
+    if (bookingType == BookingType.banket && endTimeValue == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Banket uchun tugash vaqtini tanlang'),
@@ -245,8 +260,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
 
     final dateState = ref.read(bookATableDateControllerProvider);
     final dateStr = DateFormat('yyyy-MM-dd').format(dateState.selectedDate);
-    final endTime =
-        _selectedBookingType == BookingType.banket ? _selectedEndTime : null;
+    final endTime = bookingType == BookingType.banket ? endTimeValue : null;
     final notes = _notesController.text.trim().isEmpty
         ? null
         : _notesController.text.trim();
@@ -260,13 +274,13 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
             id: existing.id,
             guestName: guestName,
             phone: UzbekPhoneInput.toE164(phone),
-            tableId: _selectedTable!.id,
+            tableId: selectedTable.id,
             date: dateStr,
-            timeSlot: _selectedTime,
-            numberOfGuests: _guestCount,
+            timeSlot: _selectedTime.value,
+            numberOfGuests: _guestCount.value,
             status: existing.status,
             endTime: endTime,
-            bookingType: _selectedBookingType.apiValue,
+            bookingType: bookingType.apiValue,
             notes: notes,
           );
     } else {
@@ -275,12 +289,12 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
           .createBooking(
             guestName: guestName,
             phone: UzbekPhoneInput.toE164(phone),
-            tableId: _selectedTable!.id,
+            tableId: selectedTable.id,
             date: dateStr,
-            timeSlot: _selectedTime,
-            numberOfGuests: _guestCount,
+            timeSlot: _selectedTime.value,
+            numberOfGuests: _guestCount.value,
             endTime: endTime,
-            bookingType: _selectedBookingType.apiValue,
+            bookingType: bookingType.apiValue,
             notes: notes,
           );
     }
@@ -307,6 +321,9 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
+    final headlineBold = textTheme.headlineSmall?.copyWith(
+      fontWeight: FontWeight.w700,
+    );
     final dateState = ref.watch(bookATableDateControllerProvider);
     final dateController = ref.read(bookATableDateControllerProvider.notifier);
     final isEditMode = widget.existingBooking != null;
@@ -342,9 +359,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                   Center(
                     child: Text(
                       isEditMode ? 'Bronni tahrirlash' : loc.bookATable,
-                      style: textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: headlineBold,
                     ),
                   ),
                 ],
@@ -361,86 +376,83 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          loc.guestsLabel,
-                          style: textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
+                        Text(loc.guestsLabel, style: headlineBold),
+                        ValueListenableBuilder<int>(
+                          valueListenable: _guestCount,
+                          builder: (_, count, __) => GuestCountPicker(
+                            guestCount: count,
+                            onIncrement: _increaseGuests,
+                            onDecrement: _decreaseGuests,
                           ),
-                        ),
-                        GuestCountPicker(
-                          guestCount: _guestCount,
-                          onIncrement: _increaseGuests,
-                          onDecrement: _decreaseGuests,
                         ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.xxl),
-                    Text(
-                      loc.selectTime,
-                      style: textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    Text(loc.selectTime, style: headlineBold),
                     const SizedBox(height: AppSpacing.md),
-                    BookingTimeSelector(
-                      times: widget.timeSlots,
-                      selectedTime: _selectedTime,
-                      onTimeSelected: (time) {
-                        setState(() => _selectedTime = time);
-                      },
-                    ),
-                    const SizedBox(height: AppSpacing.xxl),
-                    Text(
-                      'Bron turi',
-                      style: textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _BookingTypeSelector(
-                      types: _bookingTypes,
-                      selectedType: _selectedBookingType,
-                      onTypeSelected: (BookingType type) {
-                        setState(() {
-                          _selectedBookingType = type;
-                          if (type != BookingType.banket) {
-                            _selectedEndTime = null;
-                          }
-                        });
-                      },
-                    ),
-                    const SizedBox(height: AppSpacing.xxl),
-                    Text(
-                      'Stol',
-                      style: textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _TableSelector(
-                      selectedTable: _selectedTable,
-                      onTableSelected: (table) {
-                        setState(() => _selectedTable = table);
-                      },
-                    ),
-                    if (_selectedBookingType == BookingType.banket) ...[
-                      const SizedBox(height: AppSpacing.xxl),
-                      Text(
-                        'Tugash vaqti',
-                        style: textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      _EndTimeSelector(
+                    ValueListenableBuilder<String>(
+                      valueListenable: _selectedTime,
+                      builder: (_, time, __) => BookingTimeSelector(
                         times: widget.timeSlots,
-                        selectedTime: _selectedEndTime,
-                        onTimeSelected: (String time) {
-                          setState(() => _selectedEndTime =
-                              _selectedEndTime == time ? null : time);
+                        selectedTime: time,
+                        onTimeSelected: (selected) =>
+                            _selectedTime.value = selected,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xxl),
+                    Text('Bron turi', style: headlineBold),
+                    const SizedBox(height: AppSpacing.md),
+                    ValueListenableBuilder<BookingType>(
+                      valueListenable: _selectedBookingType,
+                      builder: (_, type, __) => _BookingTypeSelector(
+                        types: _bookingTypes,
+                        selectedType: type,
+                        onTypeSelected: (BookingType selected) {
+                          _selectedBookingType.value = selected;
+                          if (selected != BookingType.banket) {
+                            _selectedEndTime.value = null;
+                          }
                         },
                       ),
-                    ],
+                    ),
+                    const SizedBox(height: AppSpacing.xxl),
+                    Text('Stol', style: headlineBold),
+                    const SizedBox(height: AppSpacing.md),
+                    ValueListenableBuilder<FloorEntity?>(
+                      valueListenable: _selectedTable,
+                      builder: (_, table, __) => _TableSelector(
+                        selectedTable: table,
+                        onTableSelected: (selected) =>
+                            _selectedTable.value = selected,
+                      ),
+                    ),
+                    ValueListenableBuilder<BookingType>(
+                      valueListenable: _selectedBookingType,
+                      builder: (_, type, __) {
+                        if (type != BookingType.banket) {
+                          return const SizedBox.shrink();
+                        }
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: AppSpacing.xxl),
+                            Text('Tugash vaqti', style: headlineBold),
+                            const SizedBox(height: AppSpacing.md),
+                            ValueListenableBuilder<String?>(
+                              valueListenable: _selectedEndTime,
+                              builder: (_, end, __) => _EndTimeSelector(
+                                times: widget.timeSlots,
+                                selectedTime: end,
+                                onTimeSelected: (String t) {
+                                  _selectedEndTime.value =
+                                      _selectedEndTime.value == t ? null : t;
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                     const SizedBox(height: AppSpacing.xxl),
                     BookingDateSelector(
                       selectedMonth: dateState.selectedMonth,
@@ -452,24 +464,14 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       onRevealNextDates: dateController.revealNextDates,
                     ),
                     const SizedBox(height: AppSpacing.xl),
-                    Text(
-                      loc.guestNameLabel,
-                      style: textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    Text(loc.guestNameLabel, style: headlineBold),
                     const SizedBox(height: AppSpacing.sm),
                     AppTextField(
                       controller: _guestNameController,
                       hint: loc.nameHint,
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    Text(
-                      loc.phoneLabel,
-                      style: textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    Text(loc.phoneLabel, style: headlineBold),
                     const SizedBox(height: AppSpacing.sm),
                     AppTextField(
                       controller: _phoneController,
@@ -511,70 +513,66 @@ class _TableSelector extends ConsumerWidget {
   final FloorEntity? selectedTable;
   final ValueChanged<FloorEntity?> onTableSelected;
 
+  InputDecoration _decoration() => InputDecoration(
+        filled: true,
+        fillColor: AppColors.surfaceVariant,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
+      );
+
+  Widget _disabledDropdown(String hintText) => IgnorePointer(
+        child: DropdownButtonFormField<FloorEntity>(
+          decoration: _decoration(),
+          hint: Text(hintText),
+          items: const [],
+          onChanged: null,
+        ),
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final floorsAsync = ref.watch(floorControllerProvider);
 
-    return floorsAsync.when(
-      loading: () => IgnorePointer(
-        child: DropdownButtonFormField<FloorEntity>(
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: AppColors.surfaceVariant,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
-            ),
-          ),
-          hint: const Text('Stollar yuklanmoqda...'),
-          items: const [],
-          onChanged: null,
-        ),
+    final tables = floorsAsync.valueOrNull;
+    final isFirstLoad = tables == null && floorsAsync.isLoading;
+    final hasError = tables == null && floorsAsync.hasError;
+
+    if (isFirstLoad) {
+      return _disabledDropdown('Stollar yuklanmoqda...');
+    }
+    if (hasError) {
+      return _disabledDropdown('Stollarni yuklashda xatolik');
+    }
+
+    final items = tables ?? const <FloorEntity>[];
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        border: Border.all(color: AppColors.divider),
       ),
-      error: (_, __) => DropdownButtonFormField<FloorEntity>(
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: AppColors.surfaceVariant,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            borderSide: BorderSide.none,
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
-          ),
-        ),
-        hint: const Text('Stollarni yuklashda xatolik'),
-        items: const [],
-        onChanged: null,
-      ),
-      data: (tables) => DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          border: Border.all(color: AppColors.divider),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-          child: DropdownButton<FloorEntity>(
-            value: selectedTable,
-            isExpanded: true,
-            underline: const SizedBox.shrink(),
-            hint: const Text('Stol tanlang'),
-            items: tables
-                .map(
-                  (t) => DropdownMenuItem<FloorEntity>(
-                    value: t,
-                    child: Text('${t.number} (${t.capacity} kishi)'),
-                  ),
-                )
-                .toList(),
-            onChanged: onTableSelected,
-          ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        child: DropdownButton<FloorEntity>(
+          value: selectedTable,
+          isExpanded: true,
+          underline: const SizedBox.shrink(),
+          hint: const Text('Stol tanlang'),
+          items: items
+              .map(
+                (t) => DropdownMenuItem<FloorEntity>(
+                  value: t,
+                  child: Text('${t.number} (${t.capacity} kishi)'),
+                ),
+              )
+              .toList(),
+          onChanged: onTableSelected,
         ),
       ),
     );

@@ -22,6 +22,12 @@ abstract class FloorRepository {
 
   Future<Result<String>> deleteTable({required String id});
 
+  Future<Result<void>> updateTablePosition(
+    String id,
+    double x,
+    double y,
+  );
+
   Future<Result<TableDetailsEntity>> getTableDetails(String id);
 
   Future<Result<List<ActivityLogEntity>>> getActivityLog();

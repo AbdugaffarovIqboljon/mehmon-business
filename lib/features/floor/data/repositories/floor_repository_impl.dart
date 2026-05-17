@@ -96,6 +96,22 @@ class FloorRepositoryImpl implements FloorRepository {
   }
 
   @override
+  Future<Result<void>> updateTablePosition(
+    String id,
+    double x,
+    double y,
+  ) async {
+    try {
+      await _dataSource.updateTablePosition(id, x, y);
+      return const Success(null);
+    } on ApiException catch (e) {
+      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on Object catch (e) {
+      return Err(UnknownFailure(message: e.toString()));
+    }
+  }
+
+  @override
   Future<Result<TableDetailsEntity>> getTableDetails(String id) async {
     try {
       final model = await _dataSource.getTableDetails(id);

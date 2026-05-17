@@ -11,14 +11,27 @@ import 'package:mehmon/features/floor/presentation/models/floor_table_config.dar
 class FloorTableWidget extends StatelessWidget {
   const FloorTableWidget({
     required this.config,
+    this.displayStatus,
     this.selectedNotifier,
     this.onTap,
     super.key,
   });
 
   final FloorTableConfig config;
+
+  /// Optional status string ("available" | "occupied" | ...) that overrides
+  /// [FloorTableConfig.statusColor]. When non-null, the dot color is
+  /// resolved from [AppColors] instead of the config.
+  final String? displayStatus;
+
   final ValueListenable<String?>? selectedNotifier;
   final VoidCallback? onTap;
+
+  static Color? _colorForStatus(String status) => switch (status) {
+        'available' => AppColors.success,
+        'occupied' => AppColors.error,
+        _ => AppColors.disabled,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +87,10 @@ class FloorTableWidget extends StatelessWidget {
   }
 
   Widget _tableContent() {
+    final dotColor = displayStatus != null
+        ? _colorForStatus(displayStatus!)
+        : config.statusColor;
+
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -94,7 +111,7 @@ class FloorTableWidget extends StatelessWidget {
               ),
             ),
           ),
-        if (config.statusColor != null)
+        if (dotColor != null)
           Positioned(
             top: 2,
             right: 2,
@@ -102,7 +119,7 @@ class FloorTableWidget extends StatelessWidget {
               width: 9,
               height: 9,
               decoration: BoxDecoration(
-                color: config.statusColor,
+                color: dotColor,
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 1.5),
               ),

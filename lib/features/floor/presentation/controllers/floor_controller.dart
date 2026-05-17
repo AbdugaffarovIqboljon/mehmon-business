@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mehmon/core/networking/dio_client.dart';
@@ -28,6 +29,13 @@ final floorControllerProvider =
       FloorController.new,
     );
 
+/// Currently scrubbed time on the floor timeline.
+///
+/// `null` means live mode — tables show the server-computed status.
+/// A non-null value means the user is scrubbing — tables show locally
+/// computed status from cached bookings at that time of day.
+final selectedTimelineProvider = StateProvider<TimeOfDay?>((ref) => null);
+
 final activityLogControllerProvider =
     AsyncNotifierProvider<ActivityLogController, List<ActivityLogEntity>>(
       ActivityLogController.new,
@@ -51,16 +59,21 @@ final tableDetailsProvider = FutureProvider.autoDispose
 // ── Controller ────────────────────────────────────────────────────────────
 
 class FloorController extends AsyncNotifier<List<FloorEntity>> {
-  late final FloorRepository _repo;
-
   @override
   FutureOr<List<FloorEntity>> build() async {
-    _repo = ref.watch(floorRepositoryProvider);
-    return _loadFloors();
+    final repo = ref.watch(floorRepositoryProvider);
+
+    final timer = Timer.periodic(
+      const Duration(seconds: 30),
+      (_) => ref.invalidateSelf(),
+    );
+    ref.onDispose(timer.cancel);
+
+    return _fetchFloors(repo);
   }
 
-  Future<List<FloorEntity>> _loadFloors() async {
-    final result = await _repo.getTables();
+  Future<List<FloorEntity>> _fetchFloors(FloorRepository repo) async {
+    final result = await repo.getTables();
     return result.when(
       success: (floors) => floors,
       error: (f) => throw Exception(f.message),
@@ -68,8 +81,9 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
   }
 
   Future<void> refresh() async {
+    final repo = ref.read(floorRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(_loadFloors);
+    state = await AsyncValue.guard(() => _fetchFloors(repo));
   }
 
   Future<bool> createTable({
@@ -77,11 +91,11 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
     required int capacity,
     required String location,
   }) async {
-    final result = await _repo.createTable(
-      number: number,
-      capacity: capacity,
-      location: location,
-    );
+    final result = await ref.read(floorRepositoryProvider).createTable(
+          number: number,
+          capacity: capacity,
+          location: location,
+        );
     return result.when(
       success: (entity) {
         final current = state.valueOrNull ?? [];
@@ -98,12 +112,12 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
     required int capacity,
     required String location,
   }) async {
-    final result = await _repo.updateTable(
-      id: id,
-      number: number,
-      capacity: capacity,
-      location: location,
-    );
+    final result = await ref.read(floorRepositoryProvider).updateTable(
+          id: id,
+          number: number,
+          capacity: capacity,
+          location: location,
+        );
     return result.when(
       success: (entity) {
         final current = state.valueOrNull ?? [];
@@ -118,7 +132,7 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
   }
 
   Future<bool> deleteTable({required String id}) async {
-    final result = await _repo.deleteTable(id: id);
+    final result = await ref.read(floorRepositoryProvider).deleteTable(id: id);
     return result.when(
       success: (_) {
         final current = state.valueOrNull ?? [];
@@ -127,6 +141,25 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
       },
       error: (_) => false,
     );
+  }
+
+  /// Optimistically updates table position locally, then persists to backend.
+  /// Position is cosmetic — backend errors are swallowed so the user's
+  /// arrangement isn't lost when the network blips.
+  Future<void> updateTablePosition(
+    String tableId,
+    double x,
+    double y,
+  ) async {
+    state = state.whenData(
+      (tables) => [
+        for (final t in tables)
+          if (t.id == tableId) t.copyWith(x: x, y: y) else t,
+      ],
+    );
+    await ref
+        .read(floorRepositoryProvider)
+        .updateTablePosition(tableId, x, y);
   }
 }
 

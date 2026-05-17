@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 
 /// An interactive horizontal time ruler rendered with [CustomPainter].
 ///
@@ -6,7 +11,12 @@ import 'package:flutter/material.dart';
 /// Past tick marks are drawn faded; future ticks are solid black.
 /// Between each pair of full-hour marks there are two evenly spaced short ticks
 /// (at +20 min and +40 min), matching the Figma density.
-class FloorTimeRuler extends StatefulWidget {
+///
+/// While the user drags, the ruler also updates
+/// [selectedTimelineProvider] so that downstream widgets (e.g. the floor
+/// canvas) can render locally computed status for the scrubbed time. The
+/// provider is reset to `null` (live mode) 5 seconds after the user releases.
+class FloorTimeRuler extends ConsumerStatefulWidget {
   const FloorTimeRuler({
     required this.selectedMinute,
     required this.onTimeChanged,
@@ -20,12 +30,16 @@ class FloorTimeRuler extends StatefulWidget {
   final ValueChanged<int> onTimeChanged;
 
   @override
-  State<FloorTimeRuler> createState() => _FloorTimeRulerState();
+  ConsumerState<FloorTimeRuler> createState() => _FloorTimeRulerState();
 }
 
-class _FloorTimeRulerState extends State<FloorTimeRuler> {
+class _FloorTimeRulerState extends ConsumerState<FloorTimeRuler> {
   /// Accumulated horizontal drag offset in logical pixels.
   double _dragOffset = 0;
+
+  /// Pending timer that flips the timeline back to live mode after a
+  /// short idle period following the user's last drag.
+  Timer? _resetTimer;
 
   // ── Layout constants ────────────────────────────────────────────────────
   /// Logical pixels per minute — controls overall ruler density.
@@ -33,6 +47,13 @@ class _FloorTimeRulerState extends State<FloorTimeRuler> {
 
   static const int _minMinute = 0;
   static const int _maxMinute = 24 * 60;
+
+  static const Duration _liveResetDelay = Duration(seconds: 5);
+
+  void _syncToProvider(int minute) {
+    ref.read(selectedTimelineProvider.notifier).state =
+        TimeOfDay(hour: minute ~/ 60, minute: minute % 60);
+  }
 
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
     _dragOffset += details.delta.dx;
@@ -47,11 +68,26 @@ class _FloorTimeRulerState extends State<FloorTimeRuler> {
     _dragOffset += minuteDelta * _minuteWidth;
 
     if (newMinute != widget.selectedMinute) {
+      _resetTimer?.cancel();
       widget.onTimeChanged(newMinute);
+      _syncToProvider(newMinute);
     }
   }
 
-  void _onHorizontalDragEnd(DragEndDetails _) => _dragOffset = 0;
+  void _onHorizontalDragEnd(DragEndDetails _) {
+    _dragOffset = 0;
+    _resetTimer?.cancel();
+    _resetTimer = Timer(_liveResetDelay, () {
+      if (!mounted) return;
+      ref.read(selectedTimelineProvider.notifier).state = null;
+    });
+  }
+
+  @override
+  void dispose() {
+    _resetTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
