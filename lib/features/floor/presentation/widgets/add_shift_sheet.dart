@@ -159,8 +159,6 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
   @override
   Widget build(BuildContext context) {
     final viewInsets = MediaQuery.of(context).viewInsets.bottom;
-    final tables =
-        ref.watch(floorControllerProvider).valueOrNull ?? const [];
 
     return Padding(
       padding: EdgeInsets.only(bottom: viewInsets),
@@ -236,7 +234,6 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   _TablesSelector(
-                    tables: tables,
                     selectedIds: _selectedTableIds,
                   ),
                   const SizedBox(height: AppSpacing.xl),
@@ -258,20 +255,36 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
   }
 }
 
-class _TablesSelector extends StatelessWidget {
-  const _TablesSelector({
-    required this.tables,
-    required this.selectedIds,
-  });
+class _TablesSelector extends ConsumerWidget {
+  const _TablesSelector({required this.selectedIds});
 
-  final List<FloorEntity> tables;
   final ValueNotifier<List<String>> selectedIds;
 
   @override
-  Widget build(BuildContext context) {
-    if (tables.isEmpty) {
-      return const SizedBox.shrink();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final floorAsync = ref.watch(floorControllerProvider);
+    final tables = floorAsync.valueOrNull;
+
+    if (floorAsync.isLoading && tables == null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        child: Text(
+          'Stollar yuklanmoqda...',
+          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
+        ),
+      );
     }
+
+    if (tables == null || tables.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        child: Text(
+          'Stollar mavjud emas',
+          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

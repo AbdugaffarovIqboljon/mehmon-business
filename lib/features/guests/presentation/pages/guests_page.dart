@@ -107,6 +107,7 @@ class _GuestsBody extends ConsumerWidget {
                     final guest = guests[index];
                     return GuestCard(
                       guest: guest,
+                      isInHall: isInHall,
                       onTap: () {
                         context.pushNamed(
                           RouteNames.guestDetail,

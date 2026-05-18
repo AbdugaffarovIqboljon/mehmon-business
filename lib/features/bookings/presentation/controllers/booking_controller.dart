@@ -7,6 +7,7 @@ import 'package:mehmon/features/bookings/data/datasources/booking_remote_data_so
 import 'package:mehmon/features/bookings/data/repositories/booking_repository_impl.dart';
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
 import 'package:mehmon/features/bookings/domain/repositories/booking_repository.dart';
+import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────
 
@@ -68,6 +69,7 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
       success: (entity) {
         final current = state.valueOrNull ?? [];
         state = AsyncData([...current, entity]);
+        ref.invalidate(floorControllerProvider);
         return true;
       },
       error: (_) => false,
