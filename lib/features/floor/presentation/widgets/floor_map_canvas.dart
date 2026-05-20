@@ -46,15 +46,16 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
   static const double _tableSmall = 100;
   static const double _tableLarge = 140;
 
-  static const double _kDragThreshold = 12.0;
+  static const double _kDragThreshold = 12;
 
   late final ValueNotifier<String?> _selectedTableNotifier;
   late final TransformationController _transformController;
   final Map<String, ValueNotifier<Offset>> _positionNotifiers = {};
   final Map<String, Timer> _debounceTimers = {};
   final Map<String, Offset> _dragStartPositions = {};
-  Offset? _dragStartLocalPosition;
-  bool _isDragging = false;
+  final Map<int, Offset> _dragStartByPointer = {};
+  final Map<int, bool> _isDraggingByPointer = {};
+  int? _activePanPointerId;
   bool _hasFit = false;
 
   @override
@@ -85,6 +86,8 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     }
     _debounceTimers.clear();
     _dragStartPositions.clear();
+    _dragStartByPointer.clear();
+    _isDraggingByPointer.clear();
     _selectedTableNotifier.dispose();
     _transformController.dispose();
     for (final n in _positionNotifiers.values) {
@@ -173,7 +176,21 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     final m = Matrix4.identity()
       ..translateByDouble(tx, ty, 0, 1)
       ..scaleByDouble(scale, scale, 1, 1);
-    _transformController.value = m;
+    _transformController.value = _clampedMatrix(m, viewport);
+  }
+
+  Matrix4 _clampedMatrix(Matrix4 m, BoxConstraints viewport) {
+    final scale = m.getMaxScaleOnAxis();
+    final scaledW = kCanvasWidth * scale;
+    final scaledH = kCanvasHeight * scale;
+    // Any world point can be centered: canvas edge reaches screen midpoint
+    final minTx = viewport.maxWidth  / 2 - scaledW;
+    final maxTx = viewport.maxWidth  / 2;
+    final minTy = viewport.maxHeight / 2 - scaledH;
+    final maxTy = viewport.maxHeight / 2;
+    final tx = m[12].clamp(minTx, maxTx);
+    final ty = m[13].clamp(minTy, maxTy);
+    return m..setTranslationRaw(tx, ty, 0);
   }
 
   ValueNotifier<Offset> _notifierFor(
@@ -198,6 +215,13 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     return null;
   }
 
+  // Gesture flow:
+  // 1-finger on empty canvas → InteractiveViewer pan (smooth, inertia)
+  // 1-finger on table       → table GestureDetector wins (opaque + deeper)
+  //                           → tap or drag with threshold
+  // 2-finger anywhere       → InteractiveViewer ScaleRecognizer wins
+  //                           → focal-point pinch zoom (native feel)
+  // After any interaction   → onInteractionEnd clamps matrix
   void _onPanStart(
     FloorEntity entity,
     ValueNotifier<Offset> notifier,
@@ -205,8 +229,9 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
   ) {
     _debounceTimers.remove(entity.id)?.cancel();
     _dragStartPositions[entity.id] = notifier.value;
-    _dragStartLocalPosition = details.localPosition;
-    _isDragging = false;
+    _activePanPointerId = details.sourceTimeStamp?.hashCode ?? 0;
+    _dragStartByPointer[_activePanPointerId!] = details.localPosition;
+    _isDraggingByPointer[_activePanPointerId!] = false;
   }
 
   void _onPanUpdate(
@@ -214,21 +239,28 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     double tableW,
     DragUpdateDetails details,
   ) {
-    if (!_isDragging) {
-      final start = _dragStartLocalPosition;
+    final key = _activePanPointerId ?? 0;
+    if (!(_isDraggingByPointer[key] ?? false)) {
+      final start = _dragStartByPointer[key];
       if (start == null) return;
       final distance = (details.localPosition - start).distance;
       if (distance < _kDragThreshold) return;
-      _isDragging = true;
+      _isDraggingByPointer[key] = true;
     }
     // Clamp NEW drags into canvas; existing negative positions are only
     // preserved on initial display.
-    notifier.value = _clampToCanvas(notifier.value + details.delta, tableW);
+    final scale = _transformController.value.getMaxScaleOnAxis();
+    final worldDelta = details.delta / scale;
+    notifier.value = _clampToCanvas(notifier.value + worldDelta, tableW);
   }
 
   void _onPanEnd(FloorEntity entity, ValueNotifier<Offset> notifier) {
-    if (!_isDragging) {
-      _dragStartLocalPosition = null;
+    final key = _activePanPointerId ?? 0;
+    final wasDragging = _isDraggingByPointer[key] ?? false;
+    if (!wasDragging) {
+      _dragStartByPointer.remove(key);
+      _isDraggingByPointer.remove(key);
+      _activePanPointerId = null;
       _onTableTap(context, entity);
       return;
     }
@@ -243,14 +275,16 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
         ...pending,
         entity.id: pos,
       };
-      _isDragging = false;
-      _dragStartLocalPosition = null;
+      _dragStartByPointer.remove(key);
+      _isDraggingByPointer.remove(key);
+      _activePanPointerId = null;
       return;
     }
 
     final oldPosition = _dragStartPositions[entity.id] ?? pos;
-    _isDragging = false;
-    _dragStartLocalPosition = null;
+    _dragStartByPointer.remove(key);
+    _isDraggingByPointer.remove(key);
+    _activePanPointerId = null;
     unawaited(_confirmAndSave(context, entity, oldPosition, pos, notifier));
   }
 
@@ -406,47 +440,37 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
             }
           });
           return InteractiveViewer(
-        transformationController: _transformController,
-        boundaryMargin: const EdgeInsets.all(200),
-        minScale: 0.4,
-        maxScale: 2,
-        scaleFactor: 600,
-        constrained: false,
-        // Pan handled manually so table drags don't conflict with the
-        // viewer's own pan recognizer (which previously ate left-direction
-        // drags on tables). Pinch zoom stays on.
-        panEnabled: false,
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onPanUpdate: (d) {
-            // Table GestureDetectors win onPanUpdate via hit-testing, so
-            // this only fires on empty canvas areas — correct priority.
-            final double scale =
-                _transformController.value.getMaxScaleOnAxis();
-            final double dx = d.delta.dx / scale;
-            final double dy = d.delta.dy / scale;
-            final m = _transformController.value.clone()
-              ..translateByDouble(dx, dy, 0, 1);
-            _transformController.value = m;
-          },
-          child: SizedBox(
-            width: kCanvasWidth,
-            height: kCanvasHeight,
-            child: Stack(
-              children: [
-                for (var i = 0; i < entities.length; i++)
-                  _buildTable(
-                    entities[i],
-                    i,
-                    _statusFor(entities[i], selectedTime, bookings),
-                    isEditing: isEditing,
-                    pendingRotation: pendingRotations[entities[i].id],
-                  ),
-              ],
+            transformationController: _transformController,
+            boundaryMargin: const EdgeInsets.all(200),
+            minScale: 0.4,
+            maxScale: 2,
+            constrained: false,
+            onInteractionEnd: (_) {
+              final clamped = _clampedMatrix(
+                _transformController.value,
+                constraints,
+              );
+              if (clamped != _transformController.value) {
+                _transformController.value = clamped;
+              }
+            },
+            child: SizedBox(
+              width: kCanvasWidth,
+              height: kCanvasHeight,
+              child: Stack(
+                children: [
+                  for (var i = 0; i < entities.length; i++)
+                    _buildTable(
+                      entities[i],
+                      i,
+                      _statusFor(entities[i], selectedTime, bookings),
+                      isEditing: isEditing,
+                      pendingRotation: pendingRotations[entities[i].id],
+                    ),
+                ],
+              ),
             ),
-          ),
-        ),
-      );
+          );
         },
       ),
     );
