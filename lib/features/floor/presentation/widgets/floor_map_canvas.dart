@@ -441,7 +441,7 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
           });
           return InteractiveViewer(
             transformationController: _transformController,
-            boundaryMargin: const EdgeInsets.all(200),
+            boundaryMargin: const EdgeInsets.all(double.infinity),
             minScale: 0.4,
             maxScale: 2,
             constrained: false,

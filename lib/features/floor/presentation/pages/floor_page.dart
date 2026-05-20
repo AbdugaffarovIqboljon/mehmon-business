@@ -28,13 +28,14 @@ class _FloorPageState extends ConsumerState<FloorPage>
   FloorDrawerDestination? _pendingDestination;
   bool _isNavigatingFromDrawer = false;
 
-  late int _selectedMinute = _currentMinute;
+  late final ValueNotifier<int> _selectedMinuteNotifier;
 
   late final AnimationController _snapController;
 
   @override
   void initState() {
     super.initState();
+    _selectedMinuteNotifier = ValueNotifier<int>(_currentMinute);
     _snapController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 350),
@@ -49,13 +50,14 @@ class _FloorPageState extends ConsumerState<FloorPage>
   @override
   void dispose() {
     _snapController.dispose();
+    _selectedMinuteNotifier.dispose();
     super.dispose();
   }
 
   // ── Snap-to-now ─────────────────────────────────────────────────────────
 
   void _snapToNow() {
-    final from = _selectedMinute;
+    final from = _selectedMinuteNotifier.value;
     final to = _currentMinute;
     if (from == to) return;
 
@@ -64,7 +66,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
       CurvedAnimation(parent: _snapController, curve: Curves.easeInOut),
     );
     animation.addListener(() {
-      setState(() => _selectedMinute = animation.value);
+      _selectedMinuteNotifier.value = animation.value;
     });
     _snapController.forward();
   }
@@ -115,7 +117,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
 
   void _onTimeChanged(int minute) {
     if (_snapController.isAnimating) _snapController.stop();
-    setState(() => _selectedMinute = minute);
+    _selectedMinuteNotifier.value = minute;
   }
 
   // ── Edit mode ────────────────────────────────────────────────────────────
@@ -237,7 +239,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
       body: Column(
         children: [
           FloorTimelineHeader(
-            selectedMinute: _selectedMinute,
+            minuteNotifier: _selectedMinuteNotifier,
             onTimeChanged: _onTimeChanged,
             onMenuTap: _openDrawer,
             onTimeTap: _snapToNow,

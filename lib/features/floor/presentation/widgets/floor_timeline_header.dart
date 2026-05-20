@@ -9,15 +9,16 @@ import 'package:mehmon/l10n/app_localizations.dart';
 /// date text, centered time display, and interactive time ruler.
 class FloorTimelineHeader extends StatelessWidget {
   const FloorTimelineHeader({
-    required this.selectedMinute,
+    required this.minuteNotifier,
     required this.onTimeChanged,
     required this.onMenuTap,
     required this.onTimeTap,
     super.key,
   });
 
-  /// Current time in minutes since midnight.
-  final int selectedMinute;
+  /// Current time in minutes since midnight, as a notifier so only the
+  /// time-displaying widgets rebuild on minute-tick — not the whole header.
+  final ValueNotifier<int> minuteNotifier;
 
   /// Fires when the ruler is dragged to a new time.
   final ValueChanged<int> onTimeChanged;
@@ -28,9 +29,9 @@ class FloorTimelineHeader extends StatelessWidget {
   /// Fires when the user taps the centered time text (snap-to-now).
   final VoidCallback onTimeTap;
 
-  String get _formattedTime {
-    final h = (selectedMinute ~/ 60).toString().padLeft(2, '0');
-    final m = (selectedMinute % 60).toString().padLeft(2, '0');
+  static String _formatTime(int minute) {
+    final h = (minute ~/ 60).toString().padLeft(2, '0');
+    final m = (minute % 60).toString().padLeft(2, '0');
     return '$h:$m';
   }
 
@@ -75,20 +76,23 @@ class FloorTimelineHeader extends StatelessWidget {
               GestureDetector(
                 onTap: onTimeTap,
                 behavior: HitTestBehavior.opaque,
-                child: Text(
-                  _formattedTime,
-                  style: const TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                    height: 1.2,
+                child: ValueListenableBuilder<int>(
+                  valueListenable: minuteNotifier,
+                  builder: (_, minute, __) => Text(
+                    _formatTime(minute),
+                    style: const TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                      height: 1.2,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
               // ── Row 3: time ruler ──────────────────────────────────
               FloorTimeRuler(
-                selectedMinute: selectedMinute,
+                minuteNotifier: minuteNotifier,
                 onTimeChanged: onTimeChanged,
               ),
               const SizedBox(height: AppSpacing.xs),

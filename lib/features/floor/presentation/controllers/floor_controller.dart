@@ -79,7 +79,11 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
 
     final timer = Timer.periodic(
       const Duration(seconds: 30),
-      (_) => ref.invalidateSelf(),
+      (_) {
+        if (state.isLoading) return;
+        if (ref.read(selectedTimelineProvider) != null) return;
+        ref.invalidateSelf();
+      },
     );
     ref.onDispose(timer.cancel);
 

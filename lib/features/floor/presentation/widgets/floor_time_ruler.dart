@@ -7,7 +7,8 @@ import 'package:mehmon/features/floor/presentation/controllers/floor_controller.
 
 /// An interactive horizontal time ruler rendered with [CustomPainter].
 ///
-/// The ruler is draggable. The [selectedMinute] is always visually centered.
+/// The ruler is draggable. The minute carried by [minuteNotifier] is always
+/// visually centered.
 /// Past tick marks are drawn faded; future ticks are solid black.
 /// Between each pair of full-hour marks there are two evenly spaced short ticks
 /// (at +20 min and +40 min), matching the Figma density.
@@ -18,13 +19,15 @@ import 'package:mehmon/features/floor/presentation/controllers/floor_controller.
 /// provider is reset to `null` (live mode) 5 seconds after the user releases.
 class FloorTimeRuler extends ConsumerStatefulWidget {
   const FloorTimeRuler({
-    required this.selectedMinute,
+    required this.minuteNotifier,
     required this.onTimeChanged,
     super.key,
   });
 
-  /// Currently selected time expressed as minutes since midnight.
-  final int selectedMinute;
+  /// Currently selected time expressed as minutes since midnight, as a
+  /// notifier so only the painter rebuilds during drag — not the whole
+  /// gesture/Layout subtree.
+  final ValueNotifier<int> minuteNotifier;
 
   /// Called when the user drags the ruler to a new time.
   final ValueChanged<int> onTimeChanged;
@@ -61,13 +64,14 @@ class _FloorTimeRulerState extends ConsumerState<FloorTimeRuler> {
     final minuteDelta = (-_dragOffset / _minuteWidth).round();
     if (minuteDelta == 0) return;
 
-    final newMinute = (widget.selectedMinute + minuteDelta).clamp(
+    final currentMinute = widget.minuteNotifier.value;
+    final newMinute = (currentMinute + minuteDelta).clamp(
       _minMinute,
       _maxMinute,
     );
     _dragOffset += minuteDelta * _minuteWidth;
 
-    if (newMinute != widget.selectedMinute) {
+    if (newMinute != currentMinute) {
       _resetTimer?.cancel();
       widget.onTimeChanged(newMinute);
       _syncToProvider(newMinute);
@@ -97,11 +101,14 @@ class _FloorTimeRulerState extends ConsumerState<FloorTimeRuler> {
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
         height: 52,
-        child: CustomPaint(
-          size: Size.infinite,
-          painter: _TimeRulerPainter(
-            selectedMinute: widget.selectedMinute,
-            minuteWidth: _minuteWidth,
+        child: ValueListenableBuilder<int>(
+          valueListenable: widget.minuteNotifier,
+          builder: (_, minute, __) => CustomPaint(
+            size: Size.infinite,
+            painter: _TimeRulerPainter(
+              selectedMinute: minute,
+              minuteWidth: _minuteWidth,
+            ),
           ),
         ),
       ),
