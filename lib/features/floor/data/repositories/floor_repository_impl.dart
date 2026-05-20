@@ -26,6 +26,7 @@ class FloorRepositoryImpl implements FloorRepository {
         location: m.location,
         x: m.x,
         y: m.y,
+        rotation: m.rotation,
         zone: m.zone,
       );
 
@@ -99,10 +100,11 @@ class FloorRepositoryImpl implements FloorRepository {
   Future<Result<void>> updateTablePosition(
     String id,
     double x,
-    double y,
-  ) async {
+    double y, {
+    double? rotation,
+  }) async {
     try {
-      await _dataSource.updateTablePosition(id, x, y);
+      await _dataSource.updateTablePosition(id, x, y, rotation: rotation);
       return const Success(null);
     } on ApiException catch (e) {
       return Err(ServerFailure(message: e.message, statusCode: e.statusCode));

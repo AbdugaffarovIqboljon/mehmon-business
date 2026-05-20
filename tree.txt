@@ -60,7 +60,8 @@ lib
 │   │       │   ├── language_select_page.dart
 │   │       │   ├── login_page.dart
 │   │       │   ├── register_page.dart
-│   │       │   └── restaurant_profile_page.dart
+│   │       │   ├── restaurant_profile_page.dart
+│   │       │   └── restaurant_setup_page.dart
 │   │       └── widgets
 │   │           ├── auth_form_section.dart
 │   │           ├── auth_selection_field.dart
@@ -124,7 +125,10 @@ lib
 │   │   │   │   ├── floor_model.g.dart
 │   │   │   │   ├── shift_model.dart
 │   │   │   │   ├── shift_model.freezed.dart
-│   │   │   │   └── shift_model.g.dart
+│   │   │   │   ├── shift_model.g.dart
+│   │   │   │   ├── table_details_model.dart
+│   │   │   │   ├── table_details_model.freezed.dart
+│   │   │   │   └── table_details_model.g.dart
 │   │   │   └── repositories
 │   │   │       └── floor_repository_impl.dart
 │   │   ├── domain
@@ -134,7 +138,9 @@ lib
 │   │   │   │   ├── floor_entity.dart
 │   │   │   │   ├── floor_entity.freezed.dart
 │   │   │   │   ├── shift_entity.dart
-│   │   │   │   └── shift_entity.freezed.dart
+│   │   │   │   ├── shift_entity.freezed.dart
+│   │   │   │   ├── table_details_entity.dart
+│   │   │   │   └── table_details_entity.freezed.dart
 │   │   │   └── repositories
 │   │   │       └── floor_repository.dart
 │   │   └── presentation
@@ -170,6 +176,7 @@ lib
 │   │           ├── guest_traffic_chart.dart
 │   │           ├── hall_occupancy_chart.dart
 │   │           ├── shift_card.dart
+│   │           ├── table_detail_sheet.dart
 │   │           ├── table_form_sheet.dart
 │   │           └── table_options_sheet.dart
 │   ├── guests
@@ -229,7 +236,8 @@ lib
 │   │       └── widgets
 │   │           ├── change_language_sheet.dart
 │   │           ├── profile_action_tile.dart
-│   │           └── profile_header_card.dart
+│   │           ├── profile_header_card.dart
+│   │           └── zone_management_sheet.dart
 │   ├── shell
 │   │   └── presentation
 │   │       ├── models

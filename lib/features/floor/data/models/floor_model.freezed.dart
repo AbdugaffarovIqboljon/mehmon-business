@@ -29,6 +29,7 @@ mixin _$FloorModel {
   String get location => throw _privateConstructorUsedError;
   double get x => throw _privateConstructorUsedError;
   double get y => throw _privateConstructorUsedError;
+  double get rotation => throw _privateConstructorUsedError;
   String? get zone => throw _privateConstructorUsedError;
 
   /// Serializes this FloorModel to a JSON map.
@@ -56,6 +57,7 @@ abstract class $FloorModelCopyWith<$Res> {
     String location,
     double x,
     double y,
+    double rotation,
     String? zone,
   });
 }
@@ -82,6 +84,7 @@ class _$FloorModelCopyWithImpl<$Res, $Val extends FloorModel>
     Object? location = null,
     Object? x = null,
     Object? y = null,
+    Object? rotation = null,
     Object? zone = freezed,
   }) {
     return _then(
@@ -114,6 +117,10 @@ class _$FloorModelCopyWithImpl<$Res, $Val extends FloorModel>
                 ? _value.y
                 : y // ignore: cast_nullable_to_non_nullable
                       as double,
+            rotation: null == rotation
+                ? _value.rotation
+                : rotation // ignore: cast_nullable_to_non_nullable
+                      as double,
             zone: freezed == zone
                 ? _value.zone
                 : zone // ignore: cast_nullable_to_non_nullable
@@ -141,6 +148,7 @@ abstract class _$$FloorModelImplCopyWith<$Res>
     String location,
     double x,
     double y,
+    double rotation,
     String? zone,
   });
 }
@@ -166,6 +174,7 @@ class __$$FloorModelImplCopyWithImpl<$Res>
     Object? location = null,
     Object? x = null,
     Object? y = null,
+    Object? rotation = null,
     Object? zone = freezed,
   }) {
     return _then(
@@ -198,6 +207,10 @@ class __$$FloorModelImplCopyWithImpl<$Res>
             ? _value.y
             : y // ignore: cast_nullable_to_non_nullable
                   as double,
+        rotation: null == rotation
+            ? _value.rotation
+            : rotation // ignore: cast_nullable_to_non_nullable
+                  as double,
         zone: freezed == zone
             ? _value.zone
             : zone // ignore: cast_nullable_to_non_nullable
@@ -218,6 +231,7 @@ class _$FloorModelImpl implements _FloorModel {
     required this.location,
     this.x = 0.0,
     this.y = 0.0,
+    this.rotation = 0.0,
     this.zone,
   });
 
@@ -242,11 +256,14 @@ class _$FloorModelImpl implements _FloorModel {
   @JsonKey()
   final double y;
   @override
+  @JsonKey()
+  final double rotation;
+  @override
   final String? zone;
 
   @override
   String toString() {
-    return 'FloorModel(id: $id, number: $number, capacity: $capacity, status: $status, location: $location, x: $x, y: $y, zone: $zone)';
+    return 'FloorModel(id: $id, number: $number, capacity: $capacity, status: $status, location: $location, x: $x, y: $y, rotation: $rotation, zone: $zone)';
   }
 
   @override
@@ -263,6 +280,8 @@ class _$FloorModelImpl implements _FloorModel {
                 other.location == location) &&
             (identical(other.x, x) || other.x == x) &&
             (identical(other.y, y) || other.y == y) &&
+            (identical(other.rotation, rotation) ||
+                other.rotation == rotation) &&
             (identical(other.zone, zone) || other.zone == zone));
   }
 
@@ -277,6 +296,7 @@ class _$FloorModelImpl implements _FloorModel {
     location,
     x,
     y,
+    rotation,
     zone,
   );
 
@@ -303,6 +323,7 @@ abstract class _FloorModel implements FloorModel {
     required final String location,
     final double x,
     final double y,
+    final double rotation,
     final String? zone,
   }) = _$FloorModelImpl;
 
@@ -324,6 +345,8 @@ abstract class _FloorModel implements FloorModel {
   double get x;
   @override
   double get y;
+  @override
+  double get rotation;
   @override
   String? get zone;
 

@@ -25,6 +25,7 @@ mixin _$FloorEntity {
   String? get tableType => throw _privateConstructorUsedError;
   double get x => throw _privateConstructorUsedError;
   double get y => throw _privateConstructorUsedError;
+  double get rotation => throw _privateConstructorUsedError;
   String? get zone => throw _privateConstructorUsedError;
 
   /// Create a copy of FloorEntity
@@ -50,6 +51,7 @@ abstract class $FloorEntityCopyWith<$Res> {
     String? tableType,
     double x,
     double y,
+    double rotation,
     String? zone,
   });
 }
@@ -77,6 +79,7 @@ class _$FloorEntityCopyWithImpl<$Res, $Val extends FloorEntity>
     Object? tableType = freezed,
     Object? x = null,
     Object? y = null,
+    Object? rotation = null,
     Object? zone = freezed,
   }) {
     return _then(
@@ -113,6 +116,10 @@ class _$FloorEntityCopyWithImpl<$Res, $Val extends FloorEntity>
                 ? _value.y
                 : y // ignore: cast_nullable_to_non_nullable
                       as double,
+            rotation: null == rotation
+                ? _value.rotation
+                : rotation // ignore: cast_nullable_to_non_nullable
+                      as double,
             zone: freezed == zone
                 ? _value.zone
                 : zone // ignore: cast_nullable_to_non_nullable
@@ -141,6 +148,7 @@ abstract class _$$FloorEntityImplCopyWith<$Res>
     String? tableType,
     double x,
     double y,
+    double rotation,
     String? zone,
   });
 }
@@ -167,6 +175,7 @@ class __$$FloorEntityImplCopyWithImpl<$Res>
     Object? tableType = freezed,
     Object? x = null,
     Object? y = null,
+    Object? rotation = null,
     Object? zone = freezed,
   }) {
     return _then(
@@ -203,6 +212,10 @@ class __$$FloorEntityImplCopyWithImpl<$Res>
             ? _value.y
             : y // ignore: cast_nullable_to_non_nullable
                   as double,
+        rotation: null == rotation
+            ? _value.rotation
+            : rotation // ignore: cast_nullable_to_non_nullable
+                  as double,
         zone: freezed == zone
             ? _value.zone
             : zone // ignore: cast_nullable_to_non_nullable
@@ -224,6 +237,7 @@ class _$FloorEntityImpl implements _FloorEntity {
     this.tableType,
     this.x = 0.0,
     this.y = 0.0,
+    this.rotation = 0.0,
     this.zone,
   });
 
@@ -246,11 +260,14 @@ class _$FloorEntityImpl implements _FloorEntity {
   @JsonKey()
   final double y;
   @override
+  @JsonKey()
+  final double rotation;
+  @override
   final String? zone;
 
   @override
   String toString() {
-    return 'FloorEntity(id: $id, number: $number, capacity: $capacity, status: $status, location: $location, tableType: $tableType, x: $x, y: $y, zone: $zone)';
+    return 'FloorEntity(id: $id, number: $number, capacity: $capacity, status: $status, location: $location, tableType: $tableType, x: $x, y: $y, rotation: $rotation, zone: $zone)';
   }
 
   @override
@@ -269,6 +286,8 @@ class _$FloorEntityImpl implements _FloorEntity {
                 other.tableType == tableType) &&
             (identical(other.x, x) || other.x == x) &&
             (identical(other.y, y) || other.y == y) &&
+            (identical(other.rotation, rotation) ||
+                other.rotation == rotation) &&
             (identical(other.zone, zone) || other.zone == zone));
   }
 
@@ -283,6 +302,7 @@ class _$FloorEntityImpl implements _FloorEntity {
     tableType,
     x,
     y,
+    rotation,
     zone,
   );
 
@@ -305,6 +325,7 @@ abstract class _FloorEntity implements FloorEntity {
     final String? tableType,
     final double x,
     final double y,
+    final double rotation,
     final String? zone,
   }) = _$FloorEntityImpl;
 
@@ -324,6 +345,8 @@ abstract class _FloorEntity implements FloorEntity {
   double get x;
   @override
   double get y;
+  @override
+  double get rotation;
   @override
   String? get zone;
 

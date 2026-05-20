@@ -13,6 +13,7 @@ abstract class FloorModel with _$FloorModel {
     required String location,
     @Default(0.0) double x,
     @Default(0.0) double y,
+    @Default(0.0) double rotation,
     String? zone,
   }) = _FloorModel;
 

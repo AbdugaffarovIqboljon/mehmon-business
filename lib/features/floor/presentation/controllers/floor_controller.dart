@@ -36,6 +36,20 @@ final floorControllerProvider =
 /// computed status from cached bookings at that time of day.
 final selectedTimelineProvider = StateProvider<TimeOfDay?>((ref) => null);
 
+/// Floor edit mode toggle. When `true`, drag changes and rotations buffer
+/// into [pendingPositionsProvider] / [pendingRotationsProvider] instead of
+/// auto-saving, and tapping a table reveals rotation controls instead of
+/// opening the detail sheet.
+final floorEditModeProvider = StateProvider<bool>((ref) => false);
+
+/// Per-table in-flight position changes awaiting "Saqlash" in edit mode.
+final pendingPositionsProvider =
+    StateProvider<Map<String, Offset>>((ref) => {});
+
+/// Per-table in-flight rotation changes awaiting "Saqlash" in edit mode.
+final pendingRotationsProvider =
+    StateProvider<Map<String, double>>((ref) => {});
+
 final activityLogControllerProvider =
     AsyncNotifierProvider<ActivityLogController, List<ActivityLogEntity>>(
       ActivityLogController.new,
@@ -143,23 +157,47 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
     );
   }
 
-  /// Optimistically updates table position locally, then persists to backend.
-  /// Position is cosmetic — backend errors are swallowed so the user's
-  /// arrangement isn't lost when the network blips.
+  /// Optimistically updates table position (and optionally rotation)
+  /// locally, then persists to backend. Position/rotation are cosmetic —
+  /// backend errors are swallowed so the user's arrangement isn't lost
+  /// when the network blips.
   Future<void> updateTablePosition(
     String tableId,
     double x,
-    double y,
-  ) async {
+    double y, {
+    double? rotation,
+  }) async {
     state = state.whenData(
       (tables) => [
         for (final t in tables)
-          if (t.id == tableId) t.copyWith(x: x, y: y) else t,
+          if (t.id == tableId)
+            t.copyWith(
+              x: x,
+              y: y,
+              rotation: rotation ?? t.rotation,
+            )
+          else
+            t,
       ],
     );
-    await ref
-        .read(floorRepositoryProvider)
-        .updateTablePosition(tableId, x, y);
+    await ref.read(floorRepositoryProvider).updateTablePosition(
+          tableId,
+          x,
+          y,
+          rotation: rotation,
+        );
+  }
+
+  /// Optimistically applies a rotation update locally without hitting the
+  /// API. Used while the user is fiddling with rotation controls in edit
+  /// mode; the actual PUT is bundled with x/y on "Saqlash".
+  Future<void> updateTableRotation(String tableId, double rotation) async {
+    state = state.whenData(
+      (tables) => [
+        for (final t in tables)
+          if (t.id == tableId) t.copyWith(rotation: rotation) else t,
+      ],
+    );
   }
 }
 

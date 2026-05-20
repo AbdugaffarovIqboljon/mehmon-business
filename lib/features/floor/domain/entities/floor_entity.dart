@@ -13,6 +13,7 @@ abstract class FloorEntity with _$FloorEntity {
     String? tableType,
     @Default(0.0) double x,
     @Default(0.0) double y,
+    @Default(0.0) double rotation,
     String? zone,
   }) = _FloorEntity;
 }

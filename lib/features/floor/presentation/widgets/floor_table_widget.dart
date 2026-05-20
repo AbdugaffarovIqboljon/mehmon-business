@@ -125,6 +125,22 @@ class FloorTableWidget extends StatelessWidget {
               ),
             ),
           ),
+        // Directional marker at the "top" of the table. Rotates with the
+        // parent Transform.rotate so 45°/90° rotations become visible on
+        // otherwise rotationally-symmetric assets.
+        Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            margin: const EdgeInsets.only(top: 4),
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.primary, width: 1.5),
+            ),
+          ),
+        ),
       ],
     );
   }

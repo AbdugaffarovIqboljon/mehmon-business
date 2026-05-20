@@ -153,16 +153,41 @@ class _DetailsBody extends StatelessWidget {
 
   final TableDetailsEntity details;
 
+  // endTime < 06:00 is treated as a next-day booking (crosses midnight).
+  // Same-day bookings get a 30min grace window after endTime.
+  static bool _isCurrentlyActive(TableCurrentBookingEntity booking) {
+    if (booking.endTime == null) return true;
+    try {
+      final now = TimeOfDay.now();
+      final nowMin = now.hour * 60 + now.minute;
+      final parts = booking.endTime!.split(':');
+      final endHour = int.parse(parts[0]);
+      final endMin = int.parse(parts[1]);
+      final endTotalMin = endHour * 60 + endMin;
+
+      if (endHour < 6) {
+        return nowMin <= endTotalMin;
+      }
+      return nowMin <= endTotalMin + 30;
+    } on Object {
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final current = details.currentBooking;
+    final rawCurrent = details.currentBooking;
+    final activeCurrent =
+        (rawCurrent != null && _isCurrentlyActive(rawCurrent))
+            ? rawCurrent
+            : null;
     final upcoming = details.upcomingBookings;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (current != null)
-          _OccupiedCard(booking: current)
+        if (activeCurrent != null)
+          _OccupiedCard(booking: activeCurrent)
         else
           const _FreeCard(),
         if (upcoming.isNotEmpty) ...[
@@ -177,7 +202,7 @@ class _DetailsBody extends StatelessWidget {
                 const Divider(height: 1, color: AppColors.divider),
             itemBuilder: (_, i) => _UpcomingRow(booking: upcoming[i]),
           ),
-        ] else if (current == null) ...[
+        ] else if (activeCurrent == null) ...[
           const SizedBox(height: AppSpacing.md),
           const Text(
             "Bugun bron yo'q",

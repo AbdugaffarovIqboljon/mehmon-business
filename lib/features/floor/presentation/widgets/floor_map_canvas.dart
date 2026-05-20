@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' show min, pi;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,11 +17,14 @@ import 'package:mehmon/features/floor/presentation/widgets/table_detail_sheet.da
 /// Floor map canvas: pan/zoomable 2000×2000 surface with absolute pixel-
 /// positioned tables on a [Stack].
 ///
-/// Tables with non-zero `x` or `y` render at their saved coordinates; the
-/// rest fall into a 3-column auto-layout grid. Drag positions live in
-/// per-table [ValueNotifier]s so only the dragged table rebuilds, and are
-/// clamped into the canvas bounds. Manager-driven drag updates are debounced
-/// 500ms after the last movement and persisted via the floor controller.
+/// Tables with non-zero `x` or `y` render at their saved coordinates as-is
+/// (negative values allowed — only NEW drags are clamped into the canvas
+/// bounds). The rest fall into a 3-column auto-layout grid. Drag positions
+/// live in per-table [ValueNotifier]s so only the dragged table rebuilds.
+///
+/// In live mode, drag end auto-persists 500ms after the last movement via
+/// the floor controller. In edit mode, drag end buffers into
+/// [pendingPositionsProvider] and is persisted on "Saqlash".
 class FloorMapCanvas extends ConsumerStatefulWidget {
   const FloorMapCanvas({this.tables, super.key});
 
@@ -34,6 +38,7 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
   static const double kCanvasWidth = 2000;
   static const double kCanvasHeight = 2000;
   static const double kTableSize = 100;
+  static const double _kFitPadding = 60;
 
   static const int _gridColumns = 3;
   static const double _gridSpacing = 140;
@@ -41,14 +46,22 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
   static const double _tableSmall = 100;
   static const double _tableLarge = 140;
 
+  static const double _kDragThreshold = 12.0;
+
   late final ValueNotifier<String?> _selectedTableNotifier;
+  late final TransformationController _transformController;
   final Map<String, ValueNotifier<Offset>> _positionNotifiers = {};
-  Timer? _debounceTimer;
+  final Map<String, Timer> _debounceTimers = {};
+  final Map<String, Offset> _dragStartPositions = {};
+  Offset? _dragStartLocalPosition;
+  bool _isDragging = false;
+  bool _hasFit = false;
 
   @override
   void initState() {
     super.initState();
     _selectedTableNotifier = ValueNotifier<String?>(null);
+    _transformController = TransformationController();
   }
 
   @override
@@ -67,8 +80,13 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
 
   @override
   void dispose() {
-    _debounceTimer?.cancel();
+    for (final t in _debounceTimers.values) {
+      t.cancel();
+    }
+    _debounceTimers.clear();
+    _dragStartPositions.clear();
     _selectedTableNotifier.dispose();
+    _transformController.dispose();
     for (final n in _positionNotifiers.values) {
       n.dispose();
     }
@@ -78,6 +96,10 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
 
   void _onTableTap(BuildContext context, FloorEntity entity) {
     _selectedTableNotifier.value = entity.id;
+
+    // Edit mode: tap only selects (so rotation controls show). Detail
+    // sheet stays off so the user can keep arranging.
+    if (ref.read(floorEditModeProvider)) return;
 
     showModalBottomSheet<void>(
       context: context,
@@ -100,16 +122,58 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
 
   Offset _initialPositionFor(FloorEntity entity, int index, double tableW) {
     final hasPosition = entity.x != 0 || entity.y != 0;
-    final raw = hasPosition
-        ? Offset(entity.x, entity.y)
-        : _autoLayoutPosition(index);
-    return _clampToCanvas(raw, tableW);
+    // Existing positions are shown as-is (backend may emit negative values).
+    // Only auto-layout fallbacks are clamped into the canvas.
+    if (hasPosition) return _clampToCanvas(Offset(entity.x, entity.y), tableW);
+    return _clampToCanvas(_autoLayoutPosition(index), tableW);
   }
 
   Offset _clampToCanvas(Offset o, double tableW) {
     final maxX = (kCanvasWidth - tableW).clamp(0.0, kCanvasWidth);
     final maxY = (kCanvasHeight - kTableSize).clamp(0.0, kCanvasHeight);
-    return Offset(o.dx.clamp(0.0, maxX), o.dy.clamp(0.0, maxY));
+    // Backend may legitimately store negative coords (e.g. table 5 at x: -16.6)
+    // so the lower bound mirrors the table's own footprint, not 0.
+    return Offset(
+      o.dx.clamp(0.0, maxX),
+      o.dy.clamp(0.0, maxY),
+    );
+  }
+
+  void _fitToContent(BoxConstraints viewport) {
+    if (_positionNotifiers.isEmpty) return;
+
+    var minX = double.infinity;
+    var minY = double.infinity;
+    var maxX = double.negativeInfinity;
+    var maxY = double.negativeInfinity;
+    for (final n in _positionNotifiers.values) {
+      final p = n.value;
+      if (p.dx < minX) minX = p.dx;
+      if (p.dy < minY) minY = p.dy;
+      final right = p.dx + kTableSize;
+      final bottom = p.dy + kTableSize;
+      if (right > maxX) maxX = right;
+      if (bottom > maxY) maxY = bottom;
+    }
+
+    final paddedMinX = (minX - _kFitPadding).clamp(0.0, kCanvasWidth);
+    final paddedMinY = (minY - _kFitPadding).clamp(0.0, kCanvasHeight);
+    final contentW = (maxX - minX) + _kFitPadding * 2;
+    final contentH = (maxY - minY) + _kFitPadding * 2;
+
+    final scaleX = viewport.maxWidth / contentW;
+    final scaleY = viewport.maxHeight / contentH;
+    final scale = min(scaleX, scaleY).clamp(0.4, 1.2);
+
+    final contentCenterX = paddedMinX + contentW / 2;
+    final contentCenterY = paddedMinY + contentH / 2;
+    final tx = viewport.maxWidth / 2 - contentCenterX * scale;
+    final ty = viewport.maxHeight / 2 - contentCenterY * scale;
+
+    final m = Matrix4.identity()
+      ..translateByDouble(tx, ty, 0, 1)
+      ..scaleByDouble(scale, scale, 1, 1);
+    _transformController.value = m;
   }
 
   ValueNotifier<Offset> _notifierFor(
@@ -134,8 +198,15 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     return null;
   }
 
-  void _onPanStart(DragStartDetails _) {
-    _debounceTimer?.cancel();
+  void _onPanStart(
+    FloorEntity entity,
+    ValueNotifier<Offset> notifier,
+    DragStartDetails details,
+  ) {
+    _debounceTimers.remove(entity.id)?.cancel();
+    _dragStartPositions[entity.id] = notifier.value;
+    _dragStartLocalPosition = details.localPosition;
+    _isDragging = false;
   }
 
   void _onPanUpdate(
@@ -143,23 +214,157 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     double tableW,
     DragUpdateDetails details,
   ) {
+    if (!_isDragging) {
+      final start = _dragStartLocalPosition;
+      if (start == null) return;
+      final distance = (details.localPosition - start).distance;
+      if (distance < _kDragThreshold) return;
+      _isDragging = true;
+    }
+    // Clamp NEW drags into canvas; existing negative positions are only
+    // preserved on initial display.
     notifier.value = _clampToCanvas(notifier.value + details.delta, tableW);
   }
 
   void _onPanEnd(FloorEntity entity, ValueNotifier<Offset> notifier) {
+    if (!_isDragging) {
+      _dragStartLocalPosition = null;
+      _onTableTap(context, entity);
+      return;
+    }
+
     final pos = notifier.value;
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(
-      const Duration(milliseconds: 500),
-      () => ref
-          .read(floorControllerProvider.notifier)
-          .updateTablePosition(entity.id, pos.dx, pos.dy),
+    _debounceTimers.remove(entity.id)?.cancel();
+
+    if (ref.read(floorEditModeProvider)) {
+      // Buffer; "Saqlash" will flush both position and rotation in one PUT.
+      final pending = ref.read(pendingPositionsProvider);
+      ref.read(pendingPositionsProvider.notifier).state = {
+        ...pending,
+        entity.id: pos,
+      };
+      _isDragging = false;
+      _dragStartLocalPosition = null;
+      return;
+    }
+
+    final oldPosition = _dragStartPositions[entity.id] ?? pos;
+    _isDragging = false;
+    _dragStartLocalPosition = null;
+    unawaited(_confirmAndSave(context, entity, oldPosition, pos, notifier));
+  }
+
+  Future<void> _confirmAndSave(
+    BuildContext context,
+    FloorEntity entity,
+    Offset oldPosition,
+    Offset newPosition,
+    ValueNotifier<Offset> notifier,
+  ) async {
+    if (!mounted) return;
+    final scheme = Theme.of(context).colorScheme;
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: scheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Stolni yangi joyga saqlaysizmi?',
+                style: AppTextStyles.titleMedium.copyWith(
+                  color: scheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: scheme.onSurface,
+                        side: BorderSide(color: scheme.outline),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: () => Navigator.pop(sheetCtx, false),
+                      child: const Text('Bekor qilish'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: scheme.primary,
+                        foregroundColor: scheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: () => Navigator.pop(sheetCtx, true),
+                      child: const Text('Saqlash'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
+
+    if (!mounted) return;
+    if (result ?? false) {
+      unawaited(
+        ref.read(floorControllerProvider.notifier).updateTablePosition(
+              entity.id,
+              newPosition.dx,
+              newPosition.dy,
+            ),
+      );
+    } else {
+      notifier.value = oldPosition;
+    }
+    _dragStartPositions.remove(entity.id);
+  }
+
+  void _rotateTable(FloorEntity table, double delta) {
+    final pending = ref.read(pendingRotationsProvider);
+    final current = pending[table.id] ?? table.rotation;
+    // Normalize into [0, 360) so the displayed angle stays readable.
+    final newRot = (current + delta) % 360;
+    ref.read(pendingRotationsProvider.notifier).state = {
+      ...pending,
+      table.id: newRot < 0 ? newRot + 360 : newRot,
+    };
+  }
+
+  void _resetNotifiersFromEntities() {
+    final entities = widget.tables ?? const <FloorEntity>[];
+    for (var i = 0; i < entities.length; i++) {
+      final e = entities[i];
+      final notifier = _positionNotifiers[e.id];
+      if (notifier == null) continue;
+      notifier.value = _initialPositionFor(e, i, _tableWidthFor(e));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final entities = widget.tables ?? const <FloorEntity>[];
+
+    // When edit mode exits (Saqlash or Bekor), drop drag-time visuals back
+    // to whatever the entities now hold — for a Saqlash that means the
+    // freshly-persisted x/y, for a Bekor that's the original server value.
+    ref.listen<bool>(floorEditModeProvider, (prev, next) {
+      if ((prev ?? false) && !next) {
+        _selectedTableNotifier.value = null;
+        _resetNotifiersFromEntities();
+      }
+    });
 
     if (entities.isEmpty) {
       return const ColoredBox(
@@ -187,33 +392,73 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     final selectedTime = ref.watch(selectedTimelineProvider);
     final bookings = ref.watch(bookingControllerProvider).valueOrNull ??
         const <BookingEntity>[];
+    final isEditing = ref.watch(floorEditModeProvider);
+    final pendingRotations = ref.watch(pendingRotationsProvider);
 
     return ColoredBox(
       color: AppColors.floorCanvasBg,
-      child: InteractiveViewer(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!_hasFit && mounted) {
+              _hasFit = true;
+              _fitToContent(constraints);
+            }
+          });
+          return InteractiveViewer(
+        transformationController: _transformController,
         boundaryMargin: const EdgeInsets.all(200),
         minScale: 0.4,
         maxScale: 2,
+        scaleFactor: 600,
         constrained: false,
-        child: SizedBox(
-          width: kCanvasWidth,
-          height: kCanvasHeight,
-          child: Stack(
-            children: [
-              for (var i = 0; i < entities.length; i++)
-                _buildTable(
-                  entities[i],
-                  i,
-                  _statusFor(entities[i], selectedTime, bookings),
-                ),
-            ],
+        // Pan handled manually so table drags don't conflict with the
+        // viewer's own pan recognizer (which previously ate left-direction
+        // drags on tables). Pinch zoom stays on.
+        panEnabled: false,
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onPanUpdate: (d) {
+            // Table GestureDetectors win onPanUpdate via hit-testing, so
+            // this only fires on empty canvas areas — correct priority.
+            final double scale =
+                _transformController.value.getMaxScaleOnAxis();
+            final double dx = d.delta.dx / scale;
+            final double dy = d.delta.dy / scale;
+            final m = _transformController.value.clone()
+              ..translateByDouble(dx, dy, 0, 1);
+            _transformController.value = m;
+          },
+          child: SizedBox(
+            width: kCanvasWidth,
+            height: kCanvasHeight,
+            child: Stack(
+              children: [
+                for (var i = 0; i < entities.length; i++)
+                  _buildTable(
+                    entities[i],
+                    i,
+                    _statusFor(entities[i], selectedTime, bookings),
+                    isEditing: isEditing,
+                    pendingRotation: pendingRotations[entities[i].id],
+                  ),
+              ],
+            ),
           ),
         ),
+      );
+        },
       ),
     );
   }
 
-  Widget _buildTable(FloorEntity entity, int index, String? displayStatus) {
+  Widget _buildTable(
+    FloorEntity entity,
+    int index,
+    String? displayStatus, {
+    required bool isEditing,
+    required double? pendingRotation,
+  }) {
     final tableW = _tableWidthFor(entity);
     final notifier = _notifierFor(entity, index, tableW);
     final config = FloorTableConfig.fromEntity(
@@ -222,6 +467,8 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
       useAutoLayout: false,
     );
     final label = _labelFor(entity);
+    final rotationDeg = pendingRotation ?? entity.rotation;
+    final rotationRad = rotationDeg * pi / 180;
 
     return ValueListenableBuilder<Offset>(
       key: ValueKey<String>(entity.id),
@@ -234,22 +481,42 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
       ),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onPanStart: _onPanStart,
+        onPanStart: (d) => _onPanStart(entity, notifier, d),
         onPanUpdate: (d) => _onPanUpdate(notifier, tableW, d),
         onPanEnd: (_) => _onPanEnd(entity, notifier),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FloorTableWidget(
-              config: config,
-              displayStatus: displayStatus,
-              selectedNotifier: _selectedTableNotifier,
-              onTap: () => _onTableTap(context, entity),
+            Transform.rotate(
+              angle: rotationRad,
+              child: FloorTableWidget(
+                config: config,
+                displayStatus: displayStatus,
+                selectedNotifier: _selectedTableNotifier,
+                onTap: () => _onTableTap(context, entity),
+              ),
             ),
             if (label != null) ...[
               const SizedBox(height: 2),
               _ZoneBadge(label: label),
             ],
+            if (isEditing)
+              ValueListenableBuilder<String?>(
+                valueListenable: _selectedTableNotifier,
+                builder: (_, selectedId, __) {
+                  if (selectedId != entity.id) {
+                    return const SizedBox.shrink();
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: _RotationControls(
+                      rotationDeg: rotationDeg,
+                      onRotateLeft: () => _rotateTable(entity, -45),
+                      onRotateRight: () => _rotateTable(entity, 45),
+                    ),
+                  );
+                },
+              ),
           ],
         ),
       ),
@@ -266,6 +533,68 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
       tableId: entity.id,
       bookings: bookings,
       time: selectedTime,
+    );
+  }
+}
+
+class _RotationControls extends StatelessWidget {
+  const _RotationControls({
+    required this.rotationDeg,
+    required this.onRotateLeft,
+    required this.onRotateRight,
+  });
+
+  final double rotationDeg;
+  final VoidCallback onRotateLeft;
+  final VoidCallback onRotateRight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _RotationButton(
+          icon: Icons.rotate_left,
+          onTap: onRotateLeft,
+        ),
+        const SizedBox(width: 6),
+        Text(
+          '${rotationDeg.toStringAsFixed(0)}°',
+          style: const TextStyle(
+            fontSize: 10,
+            color: AppColors.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(width: 6),
+        _RotationButton(
+          icon: Icons.rotate_right,
+          onTap: onRotateRight,
+        ),
+      ],
+    );
+  }
+}
+
+class _RotationButton extends StatelessWidget {
+  const _RotationButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: const BoxDecoration(
+          color: AppColors.primary,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 14, color: Colors.white),
+      ),
     );
   }
 }
@@ -317,12 +646,21 @@ String _computeStatusAtTime({
   required TimeOfDay time,
 }) {
   final selectedMin = time.hour * 60 + time.minute;
+  final now = DateTime.now();
+  final todayStr =
+      '${now.year}-'
+      '${now.month.toString().padLeft(2, '0')}-'
+      '${now.day.toString().padLeft(2, '0')}';
 
   for (final b in bookings) {
     if (b.status == 'cancelled') continue;
 
     final bTableId = b.tableInfo?.id;
     if (bTableId != tableId) continue;
+
+    // Skip non-today bookings so yesterday's slots don't color today's table.
+    final bookingDate = b.date.length >= 10 ? b.date.substring(0, 10) : b.date;
+    if (bookingDate != todayStr) continue;
 
     final startParts = b.timeSlot.split(':');
     if (startParts.length < 2) continue;

@@ -15,6 +15,7 @@ _$FloorModelImpl _$$FloorModelImplFromJson(Map<String, dynamic> json) =>
       location: json['location'] as String,
       x: (json['x'] as num?)?.toDouble() ?? 0.0,
       y: (json['y'] as num?)?.toDouble() ?? 0.0,
+      rotation: (json['rotation'] as num?)?.toDouble() ?? 0.0,
       zone: json['zone'] as String?,
     );
 
@@ -27,5 +28,6 @@ Map<String, dynamic> _$$FloorModelImplToJson(_$FloorModelImpl instance) =>
       'location': instance.location,
       'x': instance.x,
       'y': instance.y,
+      'rotation': instance.rotation,
       'zone': instance.zone,
     };

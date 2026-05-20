@@ -25,8 +25,9 @@ abstract class FloorRepository {
   Future<Result<void>> updateTablePosition(
     String id,
     double x,
-    double y,
-  );
+    double y, {
+    double? rotation,
+  });
 
   Future<Result<TableDetailsEntity>> getTableDetails(String id);
 

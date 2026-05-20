@@ -24,7 +24,12 @@ abstract class FloorRemoteDataSource {
 
   Future<String> deleteTable({required String id});
 
-  Future<void> updateTablePosition(String id, double x, double y);
+  Future<void> updateTablePosition(
+    String id,
+    double x,
+    double y, {
+    double? rotation,
+  });
 
   Future<TableDetailsModel> getTableDetails(String id);
 
@@ -127,11 +132,20 @@ class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
   }
 
   @override
-  Future<void> updateTablePosition(String id, double x, double y) async {
+  Future<void> updateTablePosition(
+    String id,
+    double x,
+    double y, {
+    double? rotation,
+  }) async {
     try {
       await _dio.put<dynamic>(
         '${ApiConstants.tableById}$id',
-        data: {'x': x, 'y': y},
+        data: {
+          'x': x,
+          'y': y,
+          if (rotation != null) 'rotation': rotation,
+        },
       );
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);

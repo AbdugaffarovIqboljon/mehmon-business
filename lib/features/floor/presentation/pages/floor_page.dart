@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/features/floor/presentation/models/floor_drawer_destination.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_drawer.dart';
@@ -116,6 +118,101 @@ class _FloorPageState extends ConsumerState<FloorPage>
     setState(() => _selectedMinute = minute);
   }
 
+  // ── Edit mode ────────────────────────────────────────────────────────────
+
+  void _enterEditMode() {
+    ref.read(floorEditModeProvider.notifier).state = true;
+  }
+
+  void _cancelEdit() {
+    ref
+      ..read(pendingPositionsProvider.notifier).state = {}
+      ..read(pendingRotationsProvider.notifier).state = {}
+      ..read(floorEditModeProvider.notifier).state = false;
+  }
+
+  /// Flushes pending position + rotation changes back to the server. Each
+  /// changed table gets a SINGLE PUT carrying x, y, and (if rotated) the
+  /// new rotation, so we never split layout edits across two requests.
+  Future<void> _saveAllPositions() async {
+    final pendingPos = ref.read(pendingPositionsProvider);
+    final pendingRot = ref.read(pendingRotationsProvider);
+    final allIds = {...pendingPos.keys, ...pendingRot.keys};
+    if (allIds.isEmpty) {
+      ref.read(floorEditModeProvider.notifier).state = false;
+      return;
+    }
+
+    final tables =
+        ref.read(floorControllerProvider).valueOrNull ?? const <FloorEntity>[];
+    final byId = {for (final t in tables) t.id: t};
+
+    final controller = ref.read(floorControllerProvider.notifier);
+    for (final id in allIds) {
+      final entity = byId[id];
+      if (entity == null) continue;
+      final pos = pendingPos[id];
+      await controller.updateTablePosition(
+        id,
+        pos?.dx ?? entity.x,
+        pos?.dy ?? entity.y,
+        rotation: pendingRot[id],
+      );
+    }
+
+    ref
+      ..read(pendingPositionsProvider.notifier).state = {}
+      ..read(pendingRotationsProvider.notifier).state = {}
+      ..read(floorEditModeProvider.notifier).state = false;
+  }
+
+  Widget _buildFloatingActions() {
+    final isEditing = ref.watch(floorEditModeProvider);
+    if (isEditing) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'cancel_edit',
+            backgroundColor: AppColors.error,
+            onPressed: _cancelEdit,
+            child: const Icon(Icons.close),
+          ),
+          const SizedBox(width: 12),
+          FloatingActionButton.extended(
+            heroTag: 'save_edit',
+            onPressed: _saveAllPositions,
+            icon: const Icon(Icons.save),
+            label: const Text('Saqlash'),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        FloatingActionButton(
+          heroTag: 'edit_mode',
+          mini: true,
+          onPressed: _enterEditMode,
+          child: const Icon(Icons.edit),
+        ),
+        const SizedBox(height: 12),
+        FloatingActionButton(
+          heroTag: 'add_table',
+          onPressed: () => showModalBottomSheet<void>(
+            context: context,
+            isScrollControlled: true,
+            builder: (_) => const TableFormSheet(),
+          ),
+          child: const Icon(Icons.add),
+        ),
+      ],
+    );
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────────
 
   @override
@@ -136,15 +233,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
           AppLocalizations.of(context)!.logOutImplNextStep,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'add_table',
-        onPressed: () => showModalBottomSheet<void>(
-          context: context,
-          isScrollControlled: true,
-          builder: (_) => const TableFormSheet(),
-        ),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: _buildFloatingActions(),
       body: Column(
         children: [
           FloorTimelineHeader(
