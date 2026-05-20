@@ -29,6 +29,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
   bool _isNavigatingFromDrawer = false;
 
   late final ValueNotifier<int> _selectedMinuteNotifier;
+  Timer? _liveTickTimer;
 
   late final AnimationController _snapController;
 
@@ -40,6 +41,15 @@ class _FloorPageState extends ConsumerState<FloorPage>
       vsync: this,
       duration: const Duration(milliseconds: 350),
     );
+    _liveTickTimer = Timer.periodic(
+      const Duration(seconds: 60),
+      (_) {
+        if (!mounted) return;
+        if (ref.read(selectedTimelineProvider) == null) {
+          _selectedMinuteNotifier.value = _currentMinute;
+        }
+      },
+    );
   }
 
   static int get _currentMinute {
@@ -49,6 +59,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
 
   @override
   void dispose() {
+    _liveTickTimer?.cancel();
     _snapController.dispose();
     _selectedMinuteNotifier.dispose();
     super.dispose();

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mehmon/core/networking/dio_client.dart';
+import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
 import 'package:mehmon/features/floor/data/datasources/floor_remote_data_source.dart';
 import 'package:mehmon/features/floor/data/repositories/floor_repository_impl.dart';
 import 'package:mehmon/features/floor/domain/entities/activity_log_entity.dart';
@@ -82,7 +83,9 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
       (_) {
         if (state.isLoading) return;
         if (ref.read(selectedTimelineProvider) != null) return;
-        ref.invalidateSelf();
+        ref
+          ..invalidateSelf()
+          ..invalidate(bookingControllerProvider);
       },
     );
     ref.onDispose(timer.cancel);

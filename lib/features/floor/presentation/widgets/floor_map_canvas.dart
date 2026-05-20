@@ -552,11 +552,20 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     TimeOfDay? selectedTime,
     List<BookingEntity> bookings,
   ) {
-    if (selectedTime == null) return entity.status;
+    final t = selectedTime ?? TimeOfDay.fromDateTime(DateTime.now());
+    if (bookings.any((b) =>
+        b.tableInfo?.id == entity.id &&
+        DateTime.tryParse(b.date)?.toLocal().day == DateTime.now().day)) {
+      debugPrint(
+        '🎯 TODAY MATCH | '
+        'table.number=${entity.number} | '
+        'entity.id=${entity.id}',
+      );
+    }
     return _computeStatusAtTime(
       tableId: entity.id,
       bookings: bookings,
-      time: selectedTime,
+      time: t,
     );
   }
 }
@@ -671,20 +680,37 @@ String _computeStatusAtTime({
 }) {
   final selectedMin = time.hour * 60 + time.minute;
   final now = DateTime.now();
-  final todayStr =
-      '${now.year}-'
-      '${now.month.toString().padLeft(2, '0')}-'
-      '${now.day.toString().padLeft(2, '0')}';
+  final today = DateTime(now.year, now.month, now.day);
 
   for (final b in bookings) {
     if (b.status == 'cancelled') continue;
 
     final bTableId = b.tableInfo?.id;
+    debugPrint(
+      '🔍 BOOKING DEBUG | '
+      'booking.id=${b.id} | '
+      'b.tableInfo=${b.tableInfo?.id ?? "NULL"} | '
+      'entity.id=$tableId | '
+      'match=${b.tableInfo?.id == tableId} | '
+      'b.date=${b.date} | '
+      'b.status=${b.status}',
+    );
     if (bTableId != tableId) continue;
 
-    // Skip non-today bookings so yesterday's slots don't color today's table.
-    final bookingDate = b.date.length >= 10 ? b.date.substring(0, 10) : b.date;
-    if (bookingDate != todayStr) continue;
+    final parsedDate = DateTime.tryParse(b.date)?.toLocal();
+    if (parsedDate == null) continue;
+    final bookingDay = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
+    if (bookingDay != today) continue;
+
+    debugPrint(
+      '⏰ TIME CHECK | '
+      'booking.id=${b.id} | '
+      'timeSlot=${b.timeSlot} | '
+      'endTime=${b.endTime} | '
+      'selectedMin=$selectedMin | '
+      'bTableId=$bTableId | '
+      'tableId=$tableId',
+    );
 
     final startParts = b.timeSlot.split(':');
     if (startParts.length < 2) continue;

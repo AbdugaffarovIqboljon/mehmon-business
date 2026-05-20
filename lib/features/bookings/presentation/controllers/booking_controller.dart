@@ -69,7 +69,9 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
       success: (entity) {
         final current = state.valueOrNull ?? [];
         state = AsyncData([...current, entity]);
-        ref.invalidate(floorControllerProvider);
+        ref
+          ..invalidate(floorControllerProvider)
+          ..invalidate(tableDetailsProvider);
         return true;
       },
       error: (_) => false,
@@ -109,6 +111,7 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
           for (final b in current)
             if (b.id == entity.id) entity else b,
         ]);
+        ref.invalidate(tableDetailsProvider);
         return true;
       },
       error: (_) => false,
@@ -122,6 +125,7 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
       success: (_) {
         final current = state.valueOrNull ?? [];
         state = AsyncData(current.where((b) => b.id != id).toList());
+        ref.invalidate(tableDetailsProvider);
         return true;
       },
       error: (_) => false,

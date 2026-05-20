@@ -21,6 +21,15 @@ BookingType? _bookingTypeFromJson(Object? value) => switch (value) {
 String? _bookingTypeToJson(BookingType? value) =>
     value == null ? null : _bookingTypeJson[value];
 
+TableInfoModel? _tableInfoFromJson(Object? value) {
+  if (value == null) return null;
+  if (value is String) return TableInfoModel(id: value, number: '', capacity: 0);
+  if (value is Map<String, dynamic>) return TableInfoModel.fromJson(value);
+  return null;
+}
+
+Map<String, dynamic>? _tableInfoToJson(TableInfoModel? model) => model?.toJson();
+
 @freezed
 abstract class TableInfoModel with _$TableInfoModel {
   const factory TableInfoModel({
@@ -43,6 +52,7 @@ abstract class BookingModel with _$BookingModel {
     required String timeSlot,
     required int numberOfGuests,
     required String createdAt,
+    @JsonKey(fromJson: _tableInfoFromJson, toJson: _tableInfoToJson)
     TableInfoModel? tableId,
     String? endTime,
     @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)

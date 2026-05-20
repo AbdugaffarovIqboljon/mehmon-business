@@ -231,6 +231,7 @@ mixin _$BookingModel {
   String get timeSlot => throw _privateConstructorUsedError;
   int get numberOfGuests => throw _privateConstructorUsedError;
   String get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _tableInfoFromJson, toJson: _tableInfoToJson)
   TableInfoModel? get tableId => throw _privateConstructorUsedError;
   String? get endTime => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
@@ -263,6 +264,7 @@ abstract class $BookingModelCopyWith<$Res> {
     String timeSlot,
     int numberOfGuests,
     String createdAt,
+    @JsonKey(fromJson: _tableInfoFromJson, toJson: _tableInfoToJson)
     TableInfoModel? tableId,
     String? endTime,
     @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
@@ -389,6 +391,7 @@ abstract class _$$BookingModelImplCopyWith<$Res>
     String timeSlot,
     int numberOfGuests,
     String createdAt,
+    @JsonKey(fromJson: _tableInfoFromJson, toJson: _tableInfoToJson)
     TableInfoModel? tableId,
     String? endTime,
     @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
@@ -494,6 +497,7 @@ class _$BookingModelImpl implements _BookingModel {
     required this.timeSlot,
     required this.numberOfGuests,
     required this.createdAt,
+    @JsonKey(fromJson: _tableInfoFromJson, toJson: _tableInfoToJson)
     this.tableId,
     this.endTime,
     @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
@@ -521,6 +525,7 @@ class _$BookingModelImpl implements _BookingModel {
   @override
   final String createdAt;
   @override
+  @JsonKey(fromJson: _tableInfoFromJson, toJson: _tableInfoToJson)
   final TableInfoModel? tableId;
   @override
   final String? endTime;
@@ -603,6 +608,7 @@ abstract class _BookingModel implements BookingModel {
     required final String timeSlot,
     required final int numberOfGuests,
     required final String createdAt,
+    @JsonKey(fromJson: _tableInfoFromJson, toJson: _tableInfoToJson)
     final TableInfoModel? tableId,
     final String? endTime,
     @JsonKey(fromJson: _bookingTypeFromJson, toJson: _bookingTypeToJson)
@@ -630,6 +636,7 @@ abstract class _BookingModel implements BookingModel {
   @override
   String get createdAt;
   @override
+  @JsonKey(fromJson: _tableInfoFromJson, toJson: _tableInfoToJson)
   TableInfoModel? get tableId;
   @override
   String? get endTime;
