@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
@@ -6,6 +7,7 @@ import 'package:mehmon/core/formatters/uzbek_phone_input_formatter.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/widgets/app_text_field.dart';
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
+import 'package:mehmon/features/bookings/domain/services/booking_conflict_resolver.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/book_a_table_date_controller.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_date_selector.dart';
@@ -173,6 +175,8 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   late final ValueNotifier<String?> _selectedEndTime;
   late final ValueNotifier<BookingType> _selectedBookingType;
   late final ValueNotifier<FloorEntity?> _selectedTable;
+  final ValueNotifier<Set<String>> _busyIds = ValueNotifier(const {});
+  final ValueNotifier<String?> _tableConflictMsg = ValueNotifier(null);
   bool _tablePreFilled = false;
 
   @override
@@ -210,6 +214,15 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       }
     }
     _lastPhoneValue = _phoneController.text;
+    _recomputeBusy();
+    _selectedTime.addListener(_recomputeBusy);
+    _selectedEndTime.addListener(_recomputeBusy);
+    _selectedBookingType.addListener(_recomputeBusy);
+    _selectedTable.addListener(() {
+      if (_selectedTable.value != null) {
+        _tableConflictMsg.value = null;
+      }
+    });
   }
 
   List<String> _resolveSlots() {
@@ -240,12 +253,67 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     _guestNameController.dispose();
     _phoneController.dispose();
     _notesController.dispose();
+    _selectedTime.removeListener(_recomputeBusy);
+    _selectedEndTime.removeListener(_recomputeBusy);
+    _selectedBookingType.removeListener(_recomputeBusy);
     _guestCount.dispose();
     _selectedTime.dispose();
     _selectedEndTime.dispose();
     _selectedBookingType.dispose();
     _selectedTable.dispose();
+    _busyIds.dispose();
+    _tableConflictMsg.dispose();
     super.dispose();
+  }
+
+  void _recomputeBusy() {
+    final bookings = ref.read(bookingControllerProvider).valueOrNull ?? [];
+    final dateState = ref.read(bookATableDateControllerProvider);
+    final date = DateFormat('yyyy-MM-dd').format(dateState.selectedDate);
+
+    final startMin = hhmmToMin(_selectedTime.value);
+    if (startMin == null) {
+      _busyIds.value = const {};
+      _tableConflictMsg.value = null;
+      return;
+    }
+
+    final int endMin;
+    if (_selectedBookingType.value == BookingType.banket &&
+        _selectedEndTime.value != null) {
+      final parsed = hhmmToMin(_selectedEndTime.value!);
+      endMin = parsed ?? (startMin + kAssumedStandardDurationMin);
+    } else {
+      endMin = startMin + kAssumedStandardDurationMin;
+    }
+
+    _busyIds.value = busyTableIds(
+      bookings: bookings,
+      date: date,
+      startMin: startMin,
+      endMin: endMin,
+      excludeBookingId: widget.existingBooking?.id,
+    );
+
+    final selected = _selectedTable.value;
+    if (selected != null && _busyIds.value.contains(selected.id)) {
+      final window = conflictWindowFor(
+        bookings: bookings,
+        tableId: selected.id,
+        date: date,
+        startMin: startMin,
+        endMin: endMin,
+        excludeBookingId: widget.existingBooking?.id,
+      );
+      _tableConflictMsg.value = window != null
+          ? "Bu stol $window vaqt oralig'ida band"
+          : 'Bu stol band';
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _selectedTable.value = null;
+      });
+    } else {
+      _tableConflictMsg.value = null;
+    }
   }
 
   void _onPhoneChanged(String value) {
@@ -308,6 +376,42 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
         ? null
         : _notesController.text.trim();
     final existing = widget.existingBooking;
+
+    // Race-condition guard: re-check with the freshest booking snapshot
+    // just before committing, in case another booking was created after
+    // the form was opened.
+    final freshBookings =
+        ref.read(bookingControllerProvider).valueOrNull ?? [];
+    final startMin = hhmmToMin(_selectedTime.value) ?? 0;
+    final int freshEndMin;
+    if (_selectedBookingType.value == BookingType.banket &&
+        _selectedEndTime.value != null) {
+      freshEndMin = hhmmToMin(_selectedEndTime.value!) ??
+          (startMin + kAssumedStandardDurationMin);
+    } else {
+      freshEndMin = startMin + kAssumedStandardDurationMin;
+    }
+    final conflictWindow = conflictWindowFor(
+      bookings: freshBookings,
+      tableId: selectedTable.id,
+      date: dateStr,
+      startMin: startMin,
+      endMin: freshEndMin,
+      excludeBookingId: existing?.id,
+    );
+    if (conflictWindow != null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${selectedTable.number} stoli $conflictWindow '
+            "vaqt oralig'ida allaqachon band",
+          ),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
 
     final bool success;
     if (existing != null) {
@@ -390,7 +494,12 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
           _selectedEndTime.value = null;
         }
       })
-      ..listen(floorControllerProvider, (_, __) => _tryPreFillTable());
+      ..listen(floorControllerProvider, (_, __) => _tryPreFillTable())
+      ..listen(bookATableDateControllerProvider, (_, __) => _recomputeBusy())
+      ..listen<AsyncValue<List<BookingEntity>>>(
+        bookingControllerProvider,
+        (_, __) => _recomputeBusy(),
+      );
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -486,7 +595,28 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                         selectedTable: table,
                         onTableSelected: (selected) =>
                             _selectedTable.value = selected,
+                        busyIds: _busyIds,
+                        selectedTime: _selectedTime,
+                        selectedEndTime: _selectedEndTime,
+                        selectedBookingType: _selectedBookingType,
+                        excludeBookingId: widget.existingBooking?.id,
                       ),
+                    ),
+                    ValueListenableBuilder<String?>(
+                      valueListenable: _tableConflictMsg,
+                      builder: (_, msg, __) {
+                        if (msg == null) return const SizedBox.shrink();
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 4, left: 4),
+                          child: Text(
+                            msg,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.error,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     ValueListenableBuilder<BookingType>(
                       valueListenable: _selectedBookingType,
@@ -567,13 +697,25 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
 }
 
 class _TableSelector extends ConsumerWidget {
-  const _TableSelector({
+  // ValueNotifier fields prevent a const constructor.
+  // ignore: prefer_const_constructors_in_immutables
+  _TableSelector({
     required this.selectedTable,
     required this.onTableSelected,
+    required this.busyIds,
+    required this.selectedTime,
+    required this.selectedEndTime,
+    required this.selectedBookingType,
+    this.excludeBookingId,
   });
 
   final FloorEntity? selectedTable;
   final ValueChanged<FloorEntity?> onTableSelected;
+  final ValueNotifier<Set<String>> busyIds;
+  final ValueNotifier<String> selectedTime;
+  final ValueNotifier<String?> selectedEndTime;
+  final ValueNotifier<BookingType> selectedBookingType;
+  final String? excludeBookingId;
 
   InputDecoration _decoration() => InputDecoration(
         filled: true,
@@ -600,6 +742,10 @@ class _TableSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final floorsAsync = ref.watch(floorControllerProvider);
+    final bookings =
+        ref.watch(bookingControllerProvider).valueOrNull ?? const <BookingEntity>[];
+    final dateState = ref.watch(bookATableDateControllerProvider);
+    final date = DateFormat('yyyy-MM-dd').format(dateState.selectedDate);
 
     final tables = floorsAsync.valueOrNull;
     final isFirstLoad = tables == null && floorsAsync.isLoading;
@@ -621,20 +767,71 @@ class _TableSelector extends ConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        child: DropdownButton<FloorEntity>(
-          value: selectedTable,
-          isExpanded: true,
-          underline: const SizedBox.shrink(),
-          hint: const Text('Stol tanlang'),
-          items: items
-              .map(
-                (t) => DropdownMenuItem<FloorEntity>(
+        child: ValueListenableBuilder<Set<String>>(
+          valueListenable: busyIds,
+          builder: (context, busy, _) {
+            final startMin = hhmmToMin(selectedTime.value);
+            final int? endMin;
+            if (startMin != null) {
+              if (selectedBookingType.value == BookingType.banket &&
+                  selectedEndTime.value != null) {
+                endMin = hhmmToMin(selectedEndTime.value!) ??
+                    (startMin + kAssumedStandardDurationMin);
+              } else {
+                endMin = startMin + kAssumedStandardDurationMin;
+              }
+            } else {
+              endMin = null;
+            }
+
+            return DropdownButton<FloorEntity>(
+              value: selectedTable,
+              isExpanded: true,
+              underline: const SizedBox.shrink(),
+              hint: const Text('Stol tanlang'),
+              itemHeight: null,
+              items: items.map((t) {
+                final isBusy = busy.contains(t.id);
+                final window = (isBusy && startMin != null && endMin != null)
+                    ? conflictWindowFor(
+                        bookings: bookings,
+                        tableId: t.id,
+                        date: date,
+                        startMin: startMin,
+                        endMin: endMin,
+                        excludeBookingId: excludeBookingId,
+                      )
+                    : null;
+                return DropdownMenuItem<FloorEntity>(
                   value: t,
-                  child: Text('${t.number} (${t.capacity} kishi)'),
-                ),
-              )
-              .toList(),
-          onChanged: onTableSelected,
+                  enabled: !isBusy,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${t.number} (${t.capacity} kishi)',
+                        style: TextStyle(
+                          color: isBusy
+                              ? Theme.of(context).disabledColor
+                              : null,
+                        ),
+                      ),
+                      if (isBusy && window != null)
+                        Text(
+                          'Band: $window',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.error,
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: onTableSelected,
+            );
+          },
         ),
       ),
     );

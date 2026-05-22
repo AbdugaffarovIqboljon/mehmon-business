@@ -162,6 +162,20 @@ class _DetailsBody extends ConsumerWidget {
     return (int.tryParse(p[0]) ?? 0) * 60 + (int.tryParse(p[1]) ?? 0);
   }
 
+  static _RowStatus _rowStatus(
+    BookingEntity b,
+    BookingEntity? current,
+    int nowMin,
+  ) {
+    if (b.id == current?.id) return _RowStatus.active;
+    final parts = b.timeSlot.split(':');
+    if (parts.length < 2) return _RowStatus.past;
+    final h = int.tryParse(parts[0]);
+    final m = int.tryParse(parts[1]);
+    if (h == null || m == null) return _RowStatus.past;
+    return (h * 60 + m) > nowMin ? _RowStatus.upcoming : _RowStatus.past;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allBookings =
@@ -191,41 +205,41 @@ class _DetailsBody extends ConsumerWidget {
       return nowMin >= start && nowMin < end;
     });
 
-    final clientUpcomingBookings = todayTableBookings.where((b) {
-      final parts = b.timeSlot.split(':');
-      if (parts.length < 2) return false;
-      final h = int.tryParse(parts[0]);
-      final m = int.tryParse(parts[1]);
-      if (h == null || m == null) return false;
-      final start = h * 60 + m;
-      return start > nowMin;
-    }).toList();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (clientCurrentBooking != null)
-          _OccupiedCard(booking: clientCurrentBooking)
+          const _OccupiedBanner()
         else
           const _FreeCard(),
-        if (clientUpcomingBookings.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.lg),
-          const Text('Bugungi bronlar', style: AppTextStyles.titleMedium),
-          const SizedBox(height: AppSpacing.sm),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: clientUpcomingBookings.length,
-            separatorBuilder: (_, __) =>
-                const Divider(height: 1, color: AppColors.divider),
-            itemBuilder: (_, i) => _UpcomingRow(booking: clientUpcomingBookings[i]),
-          ),
-        ] else if (clientCurrentBooking == null) ...[
+        if (todayTableBookings.isEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           const Text(
             "Bugun bron yo'q",
             style: AppTextStyles.bodyMedium,
             textAlign: TextAlign.center,
+          ),
+        ] else ...[
+          const SizedBox(height: AppSpacing.lg),
+          if (todayTableBookings.length >= 2) ...[
+            const Text('Bugungi bronlar', style: AppTextStyles.titleMedium),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          Column(
+            children: [
+              for (int i = 0; i < todayTableBookings.length; i++) ...[
+                if (i > 0)
+                  const Divider(height: 1, color: AppColors.divider),
+                _BookingRow(
+                  booking: todayTableBookings[i],
+                  rowStatus: _rowStatus(
+                    todayTableBookings[i],
+                    clientCurrentBooking,
+                    nowMin,
+                  ),
+                ),
+              ],
+            ],
           ),
         ],
       ],
@@ -233,81 +247,78 @@ class _DetailsBody extends ConsumerWidget {
   }
 }
 
-class _OccupiedCard extends StatelessWidget {
-  const _OccupiedCard({required this.booking});
+enum _RowStatus { active, upcoming, past }
 
-  final BookingEntity booking;
+class _OccupiedBanner extends StatelessWidget {
+  const _OccupiedBanner();
 
   @override
   Widget build(BuildContext context) {
-    final endLabel = booking.endTime != null
-        ? '${booking.timeSlot} → ${booking.endTime}'
-        : booking.timeSlot;
-
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sm,
-              vertical: AppSpacing.xxs,
-            ),
-            decoration: BoxDecoration(
+            width: 10,
+            height: 10,
+            decoration: const BoxDecoration(
               color: AppColors.error,
-              borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-            ),
-            child: const Text(
-              'Hozir band',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+              shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              const Icon(
-                Icons.person_outline,
-                size: 18,
-                color: AppColors.textPrimary,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: Text(
-                  booking.guestName,
-                  style: AppTextStyles.titleMedium,
-                ),
-              ),
-              Text(
-                '${booking.numberOfGuests} kishi',
-                style: AppTextStyles.bodyMedium,
-              ),
-            ],
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            'Stol band',
+            style: AppTextStyles.titleMedium.copyWith(
+              color: AppColors.error,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-          const SizedBox(height: AppSpacing.xs),
-          Row(
-            children: [
-              const Icon(
-                Icons.access_time,
-                size: 16,
-                color: AppColors.textSecondary,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(endLabel, style: AppTextStyles.bodyMedium),
-            ],
+        ],
+      ),
+    );
+  }
+}
+
+class _BookingRow extends StatelessWidget {
+  const _BookingRow({required this.booking, required this.rowStatus});
+
+  final BookingEntity booking;
+  final _RowStatus rowStatus;
+
+  @override
+  Widget build(BuildContext context) {
+    final timeRange = '${booking.timeSlot}–${booking.endTime ?? '?'}';
+    final name =
+        booking.guestName.trim().isEmpty ? 'Mehmon' : booking.guestName;
+    final dotColor = switch (rowStatus) {
+      _RowStatus.active => AppColors.error,
+      _RowStatus.upcoming => AppColors.warning,
+      _RowStatus.past => AppColors.textSecondary,
+    };
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: dotColor,
+              shape: BoxShape.circle,
+            ),
           ),
-          if (booking.notes != null && booking.notes!.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(booking.notes!, style: AppTextStyles.bodySmall),
-          ],
+          const SizedBox(width: 8),
+          Text(timeRange, style: AppTextStyles.labelLarge),
+          const Spacer(),
+          Text(name, style: AppTextStyles.bodyLarge),
+          const Spacer(),
+          Text('${booking.numberOfGuests} kishi', style: AppTextStyles.bodyMedium),
         ],
       ),
     );
@@ -345,33 +356,6 @@ class _FreeCard extends StatelessWidget {
   }
 }
 
-class _UpcomingRow extends StatelessWidget {
-  const _UpcomingRow({required this.booking});
-
-  final BookingEntity booking;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 72,
-            child: Text(booking.timeSlot, style: AppTextStyles.labelLarge),
-          ),
-          Expanded(
-            child: Text(booking.guestName, style: AppTextStyles.bodyLarge),
-          ),
-          Text(
-            '${booking.numberOfGuests} kishi',
-            style: AppTextStyles.bodyMedium,
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // ── Loading / Error ─────────────────────────────────────────────────────
 
