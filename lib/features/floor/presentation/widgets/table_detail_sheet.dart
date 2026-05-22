@@ -1,9 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
+import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
+import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/domain/entities/table_details_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
@@ -105,7 +108,7 @@ class TableDetailSheet extends ConsumerWidget {
                 message: err.toString(),
                 onRetry: () => ref.invalidate(tableDetailsProvider(tableId)),
               ),
-              data: (details) => _DetailsBody(details: details),
+              data: (details) => _DetailsBody(details: details, tableId: tableId),
             ),
             const SizedBox(height: AppSpacing.lg),
             _ActionButtons(
@@ -148,61 +151,76 @@ class _Header extends StatelessWidget {
 
 // ── Body States ─────────────────────────────────────────────────────────
 
-class _DetailsBody extends StatelessWidget {
-  const _DetailsBody({required this.details});
+class _DetailsBody extends ConsumerWidget {
+  const _DetailsBody({required this.details, required this.tableId});
 
   final TableDetailsEntity details;
+  final String tableId;
 
-  // endTime < 06:00 is treated as a next-day booking (crosses midnight).
-  // Same-day bookings get a 30min grace window after endTime.
-  static bool _isCurrentlyActive(TableCurrentBookingEntity booking) {
-    if (booking.endTime == null) return true;
-    try {
-      final now = TimeOfDay.now();
-      final nowMin = now.hour * 60 + now.minute;
-      final parts = booking.endTime!.split(':');
-      final endHour = int.parse(parts[0]);
-      final endMin = int.parse(parts[1]);
-      final endTotalMin = endHour * 60 + endMin;
-
-      if (endHour < 6) {
-        return nowMin <= endTotalMin;
-      }
-      return nowMin <= endTotalMin + 30;
-    } on Object {
-      return true;
-    }
+  static int _parseEnd(String endTime) {
+    final p = endTime.split(':');
+    return (int.tryParse(p[0]) ?? 0) * 60 + (int.tryParse(p[1]) ?? 0);
   }
 
   @override
-  Widget build(BuildContext context) {
-    final rawCurrent = details.currentBooking;
-    final activeCurrent =
-        (rawCurrent != null && _isCurrentlyActive(rawCurrent))
-            ? rawCurrent
-            : null;
-    final upcoming = details.upcomingBookings;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allBookings =
+        ref.watch(bookingControllerProvider).valueOrNull ?? const <BookingEntity>[];
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final todayTableBookings = allBookings.where((b) {
+      if (b.status == 'cancelled') return false;
+      if (b.tableInfo?.id != tableId) return false;
+      final parsed = DateTime.tryParse(b.date)?.toLocal();
+      if (parsed == null) return false;
+      return DateTime(parsed.year, parsed.month, parsed.day) == today;
+    }).toList()
+      ..sort((a, b) => a.timeSlot.compareTo(b.timeSlot));
+
+    final nowMin = TimeOfDay.now().hour * 60 + TimeOfDay.now().minute;
+
+    final clientCurrentBooking = todayTableBookings.firstWhereOrNull((b) {
+      final parts = b.timeSlot.split(':');
+      if (parts.length < 2) return false;
+      final h = int.tryParse(parts[0]);
+      final m = int.tryParse(parts[1]);
+      if (h == null || m == null) return false;
+      final start = h * 60 + m;
+      final end = b.endTime != null ? _parseEnd(b.endTime!) : start + 120;
+      return nowMin >= start && nowMin < end;
+    });
+
+    final clientUpcomingBookings = todayTableBookings.where((b) {
+      final parts = b.timeSlot.split(':');
+      if (parts.length < 2) return false;
+      final h = int.tryParse(parts[0]);
+      final m = int.tryParse(parts[1]);
+      if (h == null || m == null) return false;
+      final start = h * 60 + m;
+      return start > nowMin;
+    }).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (activeCurrent != null)
-          _OccupiedCard(booking: activeCurrent)
+        if (clientCurrentBooking != null)
+          _OccupiedCard(booking: clientCurrentBooking)
         else
           const _FreeCard(),
-        if (upcoming.isNotEmpty) ...[
+        if (clientUpcomingBookings.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.lg),
           const Text('Bugungi bronlar', style: AppTextStyles.titleMedium),
           const SizedBox(height: AppSpacing.sm),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: upcoming.length,
+            itemCount: clientUpcomingBookings.length,
             separatorBuilder: (_, __) =>
                 const Divider(height: 1, color: AppColors.divider),
-            itemBuilder: (_, i) => _UpcomingRow(booking: upcoming[i]),
+            itemBuilder: (_, i) => _UpcomingRow(booking: clientUpcomingBookings[i]),
           ),
-        ] else if (activeCurrent == null) ...[
+        ] else if (clientCurrentBooking == null) ...[
           const SizedBox(height: AppSpacing.md),
           const Text(
             "Bugun bron yo'q",
@@ -218,7 +236,7 @@ class _DetailsBody extends StatelessWidget {
 class _OccupiedCard extends StatelessWidget {
   const _OccupiedCard({required this.booking});
 
-  final TableCurrentBookingEntity booking;
+  final BookingEntity booking;
 
   @override
   Widget build(BuildContext context) {
@@ -330,7 +348,7 @@ class _FreeCard extends StatelessWidget {
 class _UpcomingRow extends StatelessWidget {
   const _UpcomingRow({required this.booking});
 
-  final TableUpcomingBookingEntity booking;
+  final BookingEntity booking;
 
   @override
   Widget build(BuildContext context) {

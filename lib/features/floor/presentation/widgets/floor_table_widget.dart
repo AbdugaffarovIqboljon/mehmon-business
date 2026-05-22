@@ -29,6 +29,7 @@ class FloorTableWidget extends StatelessWidget {
 
   static Color? _colorForStatus(String status) => switch (status) {
         'available' => AppColors.success,
+        'reserved' => AppColors.warning,
         'occupied' => AppColors.error,
         _ => AppColors.disabled,
       };

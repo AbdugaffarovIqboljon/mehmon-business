@@ -724,6 +724,26 @@ String _computeStatusAtTime({
       return 'occupied';
     }
   }
+
+  // Pass 2 — no active booking; check if a future booking exists today.
+  for (final b in bookings) {
+    if (b.status == 'cancelled') continue;
+    if (b.tableInfo?.id != tableId) continue;
+
+    final parsedDate = DateTime.tryParse(b.date)?.toLocal();
+    if (parsedDate == null) continue;
+    final bookingDay =
+        DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
+    if (bookingDay != today) continue;
+
+    final startParts = b.timeSlot.split(':');
+    if (startParts.length < 2) continue;
+    final startMin = (int.tryParse(startParts[0]) ?? 0) * 60 +
+        (int.tryParse(startParts[1]) ?? 0);
+
+    if (startMin > selectedMin) return 'reserved';
+  }
+
   return 'available';
 }
 

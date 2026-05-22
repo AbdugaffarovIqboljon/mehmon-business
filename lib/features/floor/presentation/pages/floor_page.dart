@@ -131,6 +131,11 @@ class _FloorPageState extends ConsumerState<FloorPage>
     _selectedMinuteNotifier.value = minute;
   }
 
+  void _onLivePressed() {
+    _selectedMinuteNotifier.value = _currentMinute;
+    _snapToNow();
+  }
+
   // ── Edit mode ────────────────────────────────────────────────────────────
 
   void _enterEditMode() {
@@ -254,6 +259,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
             onTimeChanged: _onTimeChanged,
             onMenuTap: _openDrawer,
             onTimeTap: _snapToNow,
+            onLivePressed: _onLivePressed,
           ),
           Expanded(
             child: tablesAsync.when(

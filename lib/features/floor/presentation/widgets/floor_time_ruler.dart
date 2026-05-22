@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,10 +11,9 @@ import 'package:mehmon/features/floor/presentation/controllers/floor_controller.
 /// Between each pair of full-hour marks there are two evenly spaced short ticks
 /// (at +20 min and +40 min), matching the Figma density.
 ///
-/// While the user drags, the ruler also updates
-/// [selectedTimelineProvider] so that downstream widgets (e.g. the floor
-/// canvas) can render locally computed status for the scrubbed time. The
-/// provider is reset to `null` (live mode) 5 seconds after the user releases.
+/// While the user drags, the ruler updates [selectedTimelineProvider] so that
+/// downstream widgets (e.g. the floor canvas) can render status for the
+/// scrubbed time. The provider stays set until the user taps the Live chip.
 class FloorTimeRuler extends ConsumerStatefulWidget {
   const FloorTimeRuler({
     required this.minuteNotifier,
@@ -40,18 +37,12 @@ class _FloorTimeRulerState extends ConsumerState<FloorTimeRuler> {
   /// Accumulated horizontal drag offset in logical pixels.
   double _dragOffset = 0;
 
-  /// Pending timer that flips the timeline back to live mode after a
-  /// short idle period following the user's last drag.
-  Timer? _resetTimer;
-
   // ── Layout constants ────────────────────────────────────────────────────
   /// Logical pixels per minute — controls overall ruler density.
   static const double _minuteWidth = 1.4;
 
   static const int _minMinute = 0;
   static const int _maxMinute = 24 * 60;
-
-  static const Duration _liveResetDelay = Duration(seconds: 5);
 
   void _syncToProvider(int minute) {
     ref.read(selectedTimelineProvider.notifier).state =
@@ -72,7 +63,6 @@ class _FloorTimeRulerState extends ConsumerState<FloorTimeRuler> {
     _dragOffset += minuteDelta * _minuteWidth;
 
     if (newMinute != currentMinute) {
-      _resetTimer?.cancel();
       widget.onTimeChanged(newMinute);
       _syncToProvider(newMinute);
     }
@@ -80,17 +70,6 @@ class _FloorTimeRulerState extends ConsumerState<FloorTimeRuler> {
 
   void _onHorizontalDragEnd(DragEndDetails _) {
     _dragOffset = 0;
-    _resetTimer?.cancel();
-    _resetTimer = Timer(_liveResetDelay, () {
-      if (!mounted) return;
-      ref.read(selectedTimelineProvider.notifier).state = null;
-    });
-  }
-
-  @override
-  void dispose() {
-    _resetTimer?.cancel();
-    super.dispose();
   }
 
   @override
