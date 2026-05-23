@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/config/env.dart';
@@ -14,7 +15,8 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final prefs = await SharedPreferences.getInstance();
 
   // ── Sentry ──────────────────────────────────────────────────────────
@@ -69,21 +71,26 @@ class MehmonApp extends ConsumerStatefulWidget {
 
 class _MehmonAppState extends ConsumerState<MehmonApp> {
   late final ValueNotifier<bool> _authStateListenable;
+  late final ValueNotifier<bool> _authLoadedListenable;
   late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
     _authStateListenable = ValueNotifier<bool>(false);
+    _authLoadedListenable = ValueNotifier<bool>(false);
     _router = appRouter(
       authStateListenable: _authStateListenable,
     );
+    _authLoadedListenable.addListener(_router.refresh);
   }
 
   @override
   void dispose() {
+    _authLoadedListenable.removeListener(_router.refresh);
     _router.dispose();
     _authStateListenable.dispose();
+    _authLoadedListenable.dispose();
     super.dispose();
   }
 
@@ -93,7 +100,16 @@ class _MehmonAppState extends ConsumerState<MehmonApp> {
     final currentLocale = ref.watch(localeProvider);
     final isAuthenticated = authState.asData?.value != null;
     if (_authStateListenable.value != isAuthenticated) {
+      debugPrint('🔔 LISTENABLE | isAuthenticated=$isAuthenticated | '
+          'prev=${_authStateListenable.value}');
       _authStateListenable.value = isAuthenticated;
+    }
+
+    // Fire once when auth loading completes — covers the
+    // AsyncLoading→AsyncData(null) case where isAuthenticated
+    // stays false and _authStateListenable never fires.
+    if (!authState.isLoading && !_authLoadedListenable.value) {
+      _authLoadedListenable.value = true;
     }
 
     return MaterialApp.router(

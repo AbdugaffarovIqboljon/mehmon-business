@@ -1,6 +1,7 @@
 /// Centralized route name and path constants.
 abstract final class RouteNames {
   // ── Onboarding / Auth ──────────────────────────────────────────────
+  static const String splash = 'splash';
   static const String languageSelect = 'language-select';
   static const String onboarding = 'onboarding';
   static const String login = 'login';
@@ -28,6 +29,7 @@ abstract final class RouteNames {
 /// Path constants corresponding to [RouteNames].
 abstract final class RoutePaths {
   // ── Onboarding / Auth ──────────────────────────────────────────────
+  static const String splash = '/splash';
   static const String languageSelect = '/language-select';
   static const String onboarding = '/onboarding';
   static const String login = '/login';

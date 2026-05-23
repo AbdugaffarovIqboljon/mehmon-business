@@ -13,6 +13,7 @@ import 'package:mehmon/features/auth/presentation/pages/login_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/register_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/restaurant_profile_page.dart';
 import 'package:mehmon/features/auth/presentation/pages/restaurant_setup_page.dart';
+import 'package:mehmon/features/auth/presentation/pages/splash_page.dart';
 import 'package:mehmon/features/bookings/presentation/pages/bookings_page.dart';
 import 'package:mehmon/features/floor/presentation/pages/chronology_page.dart';
 import 'package:mehmon/features/floor/presentation/pages/dashboard_page.dart';
@@ -68,7 +69,7 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
   final profileRefresh = _ProfileRefreshNotifier();
 
   return GoRouter(
-    initialLocation: RoutePaths.languageSelect,
+    initialLocation: RoutePaths.splash,
     debugLogDiagnostics: true,
     refreshListenable: Listenable.merge([authStateListenable, profileRefresh]),
 
@@ -77,12 +78,20 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
 
       final container = ProviderScope.containerOf(context, listen: false);
       final authState = container.read(authControllerProvider);
+      final location = state.matchedLocation;
 
-      // While auth is restoring from disk — stay put, avoid flash redirects.
-      if (authState.isLoading) return null;
+      debugPrint('🔀 REDIRECT | location=$location | '
+          'isLoading=${authState.isLoading} | '
+          'isAuth=${authState.asData?.value != null}');
+
+      // While auth is restoring from disk — park on the neutral splash route
+      // (visually identical to the native splash) to avoid flashing
+      // language-select / login / etc. before we know where to go.
+      if (authState.isLoading) {
+        return location == RoutePaths.splash ? null : RoutePaths.splash;
+      }
 
       final isAuthenticated = authState.valueOrNull != null;
-      final location = state.matchedLocation;
 
       final prefs = container.read(sharedPreferencesProvider);
       final hasLang = prefs.getBool(kHasSelectedLanguage) ?? false;
@@ -161,11 +170,24 @@ GoRouter appRouter({required ValueListenable<bool> authStateListenable}) {
       };
       if (guestOnly.contains(location)) return RoutePaths.floor;
 
+      // H. Auth resolved and still parked on splash — route to destination.
+      if (location == RoutePaths.splash) {
+        if (!hasLang) return RoutePaths.languageSelect;
+        if (!hasOnboarding) return RoutePaths.onboarding;
+        if (!isAuthenticated) return RoutePaths.login;
+        return RoutePaths.floor;
+      }
+
       return null;
     },
 
     routes: [
       // ── Auth Routes ──────────────────────────────────────────────
+      GoRoute(
+        name: RouteNames.splash,
+        path: RoutePaths.splash,
+        builder: (context, state) => const SplashPage(),
+      ),
       GoRoute(
         name: RouteNames.languageSelect,
         path: RoutePaths.languageSelect,
