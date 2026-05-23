@@ -1,3 +1,4 @@
+import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/core/errors/failure.dart';
 import 'package:mehmon/core/errors/result.dart';
 import 'package:mehmon/features/bookings/data/datasources/booking_remote_data_source.dart';
@@ -46,6 +47,10 @@ class BookingRepositoryImpl implements BookingRepository {
         notes: notes,
       );
       return Success(_toEntity(model));
+    } on TableConflictException catch (e, st) {
+      return Err(
+        TableConflictFailure(conflictWindow: e.conflictWindow, stackTrace: st),
+      );
     } on Exception catch (e, st) {
       return Err(ServerFailure(message: e.toString(), stackTrace: st));
     }

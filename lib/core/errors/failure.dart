@@ -43,3 +43,14 @@ class UnknownFailure extends Failure {
     super.stackTrace,
   });
 }
+
+/// 409 TABLE_CONFLICT: the requested slot overlaps an existing booking.
+class TableConflictFailure extends Failure {
+  const TableConflictFailure({
+    required this.conflictWindow,
+    super.stackTrace,
+  }) : super(message: 'TABLE_CONFLICT');
+
+  /// Human-readable window, e.g. "18:00–20:00".
+  final String conflictWindow;
+}

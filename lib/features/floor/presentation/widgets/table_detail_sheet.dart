@@ -8,7 +8,6 @@ import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
-import 'package:mehmon/features/floor/domain/entities/table_details_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/features/floor/presentation/widgets/table_form_sheet.dart';
 
@@ -84,8 +83,6 @@ class TableDetailSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final detailsAsync = ref.watch(tableDetailsProvider(tableId));
-
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
@@ -102,14 +99,7 @@ class TableDetailSheet extends ConsumerWidget {
             const SizedBox(height: AppSpacing.md),
             _Header(tableNumber: tableNumber),
             const SizedBox(height: AppSpacing.lg),
-            detailsAsync.when(
-              loading: () => const _LoadingSkeleton(),
-              error: (err, _) => _ErrorView(
-                message: err.toString(),
-                onRetry: () => ref.invalidate(tableDetailsProvider(tableId)),
-              ),
-              data: (details) => _DetailsBody(details: details, tableId: tableId),
-            ),
+            _DetailsBody(tableId: tableId),
             const SizedBox(height: AppSpacing.lg),
             _ActionButtons(
               onEdit: () => _openEdit(context, ref),
@@ -152,9 +142,8 @@ class _Header extends StatelessWidget {
 // ── Body States ─────────────────────────────────────────────────────────
 
 class _DetailsBody extends ConsumerWidget {
-  const _DetailsBody({required this.details, required this.tableId});
+  const _DetailsBody({required this.tableId});
 
-  final TableDetailsEntity details;
   final String tableId;
 
   static int _parseEnd(String endTime) {
@@ -356,69 +345,6 @@ class _FreeCard extends StatelessWidget {
   }
 }
 
-
-// ── Loading / Error ─────────────────────────────────────────────────────
-
-class _LoadingSkeleton extends StatelessWidget {
-  const _LoadingSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _SkeletonRow(height: 64),
-        SizedBox(height: AppSpacing.sm),
-        _SkeletonRow(height: 40),
-        SizedBox(height: AppSpacing.sm),
-        _SkeletonRow(height: 40),
-      ],
-    );
-  }
-}
-
-class _SkeletonRow extends StatelessWidget {
-  const _SkeletonRow({required this.height});
-
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-      ),
-    );
-  }
-}
-
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          "Ma'lumotlarni yuklab bo'lmadi",
-          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        TextButton.icon(
-          onPressed: onRetry,
-          icon: const Icon(Icons.refresh),
-          label: const Text('Qayta urinish'),
-        ),
-      ],
-    );
-  }
-}
 
 // ── Actions ─────────────────────────────────────────────────────────────
 

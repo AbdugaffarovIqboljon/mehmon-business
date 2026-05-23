@@ -2,8 +2,6 @@ import 'package:mehmon/core/errors/result.dart';
 import 'package:mehmon/features/floor/domain/entities/activity_log_entity.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/domain/entities/shift_entity.dart';
-import 'package:mehmon/features/floor/domain/entities/table_details_entity.dart';
-
 abstract class FloorRepository {
   Future<Result<List<FloorEntity>>> getTables();
 
@@ -28,8 +26,6 @@ abstract class FloorRepository {
     double y, {
     double? rotation,
   });
-
-  Future<Result<TableDetailsEntity>> getTableDetails(String id);
 
   Future<Result<List<ActivityLogEntity>>> getActivityLog();
 

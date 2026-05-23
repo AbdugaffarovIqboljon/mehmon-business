@@ -216,6 +216,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     _lastPhoneValue = _phoneController.text;
     _recomputeBusy();
     _selectedTime.addListener(_recomputeBusy);
+    _selectedTime.addListener(_onStartTimeChanged);
     _selectedEndTime.addListener(_recomputeBusy);
     _selectedBookingType.addListener(_recomputeBusy);
     _selectedTable.addListener(() {
@@ -248,11 +249,19 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     }
   }
 
+  void _onStartTimeChanged() {
+    final end = _selectedEndTime.value;
+    if (end != null && end.compareTo(_selectedTime.value) <= 0) {
+      _selectedEndTime.value = null;
+    }
+  }
+
   @override
   void dispose() {
     _guestNameController.dispose();
     _phoneController.dispose();
     _notesController.dispose();
+    _selectedTime.removeListener(_onStartTimeChanged);
     _selectedTime.removeListener(_recomputeBusy);
     _selectedEndTime.removeListener(_recomputeBusy);
     _selectedBookingType.removeListener(_recomputeBusy);
@@ -371,7 +380,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
 
     final dateState = ref.read(bookATableDateControllerProvider);
     final dateStr = DateFormat('yyyy-MM-dd').format(dateState.selectedDate);
-    final endTime = bookingType == BookingType.banket ? endTimeValue : null;
+    final endTime = endTimeValue;
     final notes = _notesController.text.trim().isEmpty
         ? null
         : _notesController.text.trim();
@@ -458,8 +467,19 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
         ),
       );
     } else {
+      final conflictWindow = ref
+          .read(bookingControllerProvider.notifier)
+          .lastConflictWindow;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Xatolik yuz berdi')),
+        SnackBar(
+          content: Text(
+            conflictWindow != null
+                ? "Bu vaqt oralig'ida ($conflictWindow) stol allaqachon band"
+                : 'Xatolik yuz berdi',
+          ),
+          backgroundColor:
+              conflictWindow != null ? AppColors.error : null,
+        ),
       );
     }
   }
@@ -618,32 +638,32 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                         );
                       },
                     ),
-                    ValueListenableBuilder<BookingType>(
-                      valueListenable: _selectedBookingType,
-                      builder: (_, type, __) {
-                        if (type != BookingType.banket) {
-                          return const SizedBox.shrink();
-                        }
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: AppSpacing.xxl),
-                            Text('Tugash vaqti', style: headlineBold),
-                            const SizedBox(height: AppSpacing.md),
-                            ValueListenableBuilder<String?>(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: AppSpacing.xxl),
+                        Text('Tugash vaqti', style: headlineBold),
+                        const SizedBox(height: AppSpacing.md),
+                        ValueListenableBuilder<String>(
+                          valueListenable: _selectedTime,
+                          builder: (_, startTime, __) {
+                            final validEndTimes = timeSlots
+                                .where((t) => t.compareTo(startTime) > 0)
+                                .toList();
+                            return ValueListenableBuilder<String?>(
                               valueListenable: _selectedEndTime,
                               builder: (_, end, __) => _EndTimeSelector(
-                                times: timeSlots,
+                                times: validEndTimes,
                                 selectedTime: end,
                                 onTimeSelected: (String t) {
                                   _selectedEndTime.value =
                                       _selectedEndTime.value == t ? null : t;
                                 },
                               ),
-                            ),
-                          ],
-                        );
-                      },
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     const SizedBox(height: AppSpacing.xxl),
                     BookingDateSelector(

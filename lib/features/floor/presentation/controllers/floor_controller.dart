@@ -10,7 +10,6 @@ import 'package:mehmon/features/floor/data/repositories/floor_repository_impl.da
 import 'package:mehmon/features/floor/domain/entities/activity_log_entity.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/domain/entities/shift_entity.dart';
-import 'package:mehmon/features/floor/domain/entities/table_details_entity.dart';
 import 'package:mehmon/features/floor/domain/repositories/floor_repository.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────
@@ -60,16 +59,6 @@ final shiftsControllerProvider =
     AsyncNotifierProvider<ShiftsController, List<ShiftEntity>>(
       ShiftsController.new,
     );
-
-final tableDetailsProvider = FutureProvider.autoDispose
-    .family<TableDetailsEntity, String>((ref, tableId) async {
-  final repo = ref.read(floorRepositoryProvider);
-  final result = await repo.getTableDetails(tableId);
-  return result.when(
-    success: (details) => details,
-    error: (f) => throw Exception(f.message),
-  );
-});
 
 // ── Controller ────────────────────────────────────────────────────────────
 

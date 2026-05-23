@@ -81,6 +81,19 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
       );
       return BookingModel.fromJson(response.data! as Map<String, dynamic>);
     } on DioException catch (e) {
+      if (e.response?.statusCode == 409 &&
+          e.response?.data is Map<String, dynamic>) {
+        final body = e.response!.data as Map<String, dynamic>;
+        if (body['code'] == 'TABLE_CONFLICT') {
+          final conflicting =
+              body['conflictingBooking'] as Map<String, dynamic>?;
+          if (conflicting != null) {
+            throw TableConflictException(
+              '${conflicting['timeSlot']}–${conflicting['endTime']}',
+            );
+          }
+        }
+      }
       throw ApiException.fromDioException(e);
     }
   }

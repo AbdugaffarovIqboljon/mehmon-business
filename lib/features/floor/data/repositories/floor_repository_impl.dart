@@ -5,11 +5,9 @@ import 'package:mehmon/features/floor/data/datasources/floor_remote_data_source.
 import 'package:mehmon/features/floor/data/models/activity_log_model.dart';
 import 'package:mehmon/features/floor/data/models/floor_model.dart';
 import 'package:mehmon/features/floor/data/models/shift_model.dart';
-import 'package:mehmon/features/floor/data/models/table_details_model.dart';
 import 'package:mehmon/features/floor/domain/entities/activity_log_entity.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/domain/entities/shift_entity.dart';
-import 'package:mehmon/features/floor/domain/entities/table_details_entity.dart';
 import 'package:mehmon/features/floor/domain/repositories/floor_repository.dart';
 
 class FloorRepositoryImpl implements FloorRepository {
@@ -106,18 +104,6 @@ class FloorRepositoryImpl implements FloorRepository {
     try {
       await _dataSource.updateTablePosition(id, x, y, rotation: rotation);
       return const Success(null);
-    } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Result<TableDetailsEntity>> getTableDetails(String id) async {
-    try {
-      final model = await _dataSource.getTableDetails(id);
-      return Success(model.toEntity());
     } on ApiException catch (e) {
       return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on Object catch (e) {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:mehmon/core/errors/failure.dart';
 import 'package:mehmon/core/networking/dio_client.dart';
 import 'package:mehmon/features/bookings/data/datasources/booking_remote_data_source.dart';
 import 'package:mehmon/features/bookings/data/repositories/booking_repository_impl.dart';
@@ -27,6 +28,10 @@ final bookingControllerProvider =
 // ── Controller ────────────────────────────────────────────────────────────
 
 class BookingController extends AsyncNotifier<List<BookingEntity>> {
+  /// Set when the last createBooking call failed with TABLE_CONFLICT.
+  /// Cleared on the next createBooking attempt.
+  String? lastConflictWindow;
+
   @override
   FutureOr<List<BookingEntity>> build() => _loadBookings();
 
@@ -54,6 +59,7 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
     String? bookingType,
     String? notes,
   }) async {
+    lastConflictWindow = null;
     final result = await ref.read(bookingRepositoryProvider).createBooking(
           guestName: guestName,
           phone: phone,
@@ -69,12 +75,15 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
       success: (entity) {
         final current = state.valueOrNull ?? [];
         state = AsyncData([...current, entity]);
-        ref
-          ..invalidate(floorControllerProvider)
-          ..invalidate(tableDetailsProvider);
+        ref.invalidate(floorControllerProvider);
         return true;
       },
-      error: (_) => false,
+      error: (f) {
+        if (f is TableConflictFailure) {
+          lastConflictWindow = f.conflictWindow;
+        }
+        return false;
+      },
     );
   }
 
@@ -111,7 +120,6 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
           for (final b in current)
             if (b.id == entity.id) entity else b,
         ]);
-        ref.invalidate(tableDetailsProvider);
         return true;
       },
       error: (_) => false,
@@ -125,7 +133,6 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
       success: (_) {
         final current = state.valueOrNull ?? [];
         state = AsyncData(current.where((b) => b.id != id).toList());
-        ref.invalidate(tableDetailsProvider);
         return true;
       },
       error: (_) => false,

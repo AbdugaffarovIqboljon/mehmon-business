@@ -4,7 +4,6 @@ import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/features/floor/data/models/activity_log_model.dart';
 import 'package:mehmon/features/floor/data/models/floor_model.dart';
 import 'package:mehmon/features/floor/data/models/shift_model.dart';
-import 'package:mehmon/features/floor/data/models/table_details_model.dart';
 
 abstract class FloorRemoteDataSource {
   Future<List<FloorModel>> getTables();
@@ -30,8 +29,6 @@ abstract class FloorRemoteDataSource {
     double y, {
     double? rotation,
   });
-
-  Future<TableDetailsModel> getTableDetails(String id);
 
   Future<List<ActivityLogModel>> getActivityLog();
 
@@ -147,18 +144,6 @@ class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
           if (rotation != null) 'rotation': rotation,
         },
       );
-    } on DioException catch (e) {
-      throw ApiException.fromDioException(e);
-    }
-  }
-
-  @override
-  Future<TableDetailsModel> getTableDetails(String id) async {
-    try {
-      final response = await _dio.get<dynamic>(
-        ApiConstants.tableDetailsById(id),
-      );
-      return TableDetailsModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
