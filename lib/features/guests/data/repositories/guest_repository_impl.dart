@@ -44,9 +44,9 @@ class GuestRepositoryImpl implements GuestRepository {
       final models = await _dataSource.getGuests();
       return Success(models.map(_toEntity).toList());
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -56,9 +56,9 @@ class GuestRepositoryImpl implements GuestRepository {
       final models = await _dataSource.getGuestsInHall();
       return Success(models.map(_toEntity).toList());
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -68,9 +68,9 @@ class GuestRepositoryImpl implements GuestRepository {
       final model = await _dataSource.getGuestById(id: id);
       return Success(_toEntity(model));
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -92,9 +92,9 @@ class GuestRepositoryImpl implements GuestRepository {
       );
       return Success(_toEntity(model));
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -118,9 +118,9 @@ class GuestRepositoryImpl implements GuestRepository {
       );
       return Success(_toEntity(model));
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -130,9 +130,9 @@ class GuestRepositoryImpl implements GuestRepository {
       final message = await _dataSource.deleteGuest(id: id);
       return Success(message);
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 }

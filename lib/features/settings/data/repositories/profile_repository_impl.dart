@@ -33,9 +33,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     try {
       return Success(_toEntity(await _dataSource.getProfile()));
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -70,9 +70,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
         ),
       );
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -81,9 +81,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     try {
       return Success(await _dataSource.logout());
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 }

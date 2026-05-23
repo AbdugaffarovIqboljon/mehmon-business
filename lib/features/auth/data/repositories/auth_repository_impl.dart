@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/core/errors/failure.dart';
 import 'package:mehmon/core/errors/result.dart';
@@ -43,14 +44,12 @@ class AuthRepositoryImpl implements AuthRepository {
           role: model.user.role,
         ),
       ));
-    } on ApiException catch (e, st) {
-      return Err(ServerFailure(
-        message: e.message,
-        statusCode: e.statusCode,
-        stackTrace: st,
-      ));
-    } on Exception catch (e, st) {
-      return Err(UnknownFailure(message: e.toString(), stackTrace: st));
+    } on DioException catch (e) {
+      return Err(ApiException.fromDioException(e).toFailure());
+    } on ApiException catch (e) {
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -85,14 +84,12 @@ class AuthRepositoryImpl implements AuthRepository {
           role: model.user.role,
         ),
       ));
-    } on ApiException catch (e, st) {
-      return Err(ServerFailure(
-        message: e.message,
-        statusCode: e.statusCode,
-        stackTrace: st,
-      ));
-    } on Exception catch (e, st) {
-      return Err(UnknownFailure(message: e.toString(), stackTrace: st));
+    } on DioException catch (e) {
+      return Err(ApiException.fromDioException(e).toFailure());
+    } on ApiException catch (e) {
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 

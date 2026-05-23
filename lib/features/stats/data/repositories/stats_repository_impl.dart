@@ -26,9 +26,9 @@ class StatsRepositoryImpl implements StatsRepository {
         ),
       );
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Exception catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -56,9 +56,9 @@ class StatsRepositoryImpl implements StatsRepository {
         ),
       );
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Exception catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 }

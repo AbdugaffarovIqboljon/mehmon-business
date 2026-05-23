@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
+import 'package:mehmon/core/widgets/app_error_view.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/stats/presentation/controllers/stats_controller.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
@@ -17,12 +18,10 @@ class StatsPage extends ConsumerWidget {
       title: AppLocalizations.of(context)!.statsTitle,
       body: statsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error:
-            (error, _) => Center(
-              child: Text(
-                AppLocalizations.of(context)!.statsError(error.toString()),
-              ),
-            ),
+        error: (error, _) => AppErrorView(
+          error: error,
+          onRetry: () => ref.invalidate(summaryControllerProvider),
+        ),
         data:
             (stats) => stats == null
                 ? Center(

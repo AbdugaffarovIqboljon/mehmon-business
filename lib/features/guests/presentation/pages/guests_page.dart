@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/routing/route_names.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/core/widgets/app_error_view.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/guests/presentation/controllers/guest_controller.dart';
 import 'package:mehmon/features/guests/presentation/widgets/guest_card.dart';
@@ -76,16 +77,12 @@ class _GuestsBody extends ConsumerWidget {
           Expanded(
             child: guestsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) {
-                return _GuestsErrorState(
-                  error: error,
-                  onRetry: isInHall
-                      ? ref
-                            .read(inHallGuestsControllerProvider.notifier)
-                            .refresh
-                      : ref.read(guestControllerProvider.notifier).refresh,
-                );
-              },
+              error: (error, _) => AppErrorView(
+                error: error,
+                onRetry: isInHall
+                    ? ref.read(inHallGuestsControllerProvider.notifier).refresh
+                    : ref.read(guestControllerProvider.notifier).refresh,
+              ),
               data: (guests) {
                 if (guests.isEmpty) {
                   return _GuestsEmptyState(
@@ -161,45 +158,6 @@ class _GuestsEmptyState extends StatelessWidget {
                 context,
               ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
               textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _GuestsErrorState extends StatelessWidget {
-  const _GuestsErrorState({required this.error, required this.onRetry});
-
-  final Object error;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.failedToLoadGuests,
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              '$error',
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            FilledButton(
-              onPressed: onRetry,
-              child: Text(AppLocalizations.of(context)!.retryBtn),
             ),
           ],
         ),

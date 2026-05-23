@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/core/widgets/app_error_view.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/floor/domain/entities/activity_log_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
@@ -92,10 +93,11 @@ class _ChronologyPageState extends ConsumerState<ChronologyPage> {
           Expanded(
             child: asyncLogs.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => _ChronologyError(
-                message: error.toString(),
-                onRetry: () =>
-                    ref.read(activityLogControllerProvider.notifier).fetchActivityLog(),
+              error: (error, _) => AppErrorView(
+                error: error,
+                onRetry: () {
+                  ref.read(activityLogControllerProvider.notifier).fetchActivityLog();
+                },
               ),
               data: (logs) => _ChronologyList(
                 logs: logs,
@@ -235,42 +237,6 @@ class _ChronologyList extends StatelessWidget {
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     return '$day.$month.${date.year}';
-  }
-}
-
-class _ChronologyError extends StatelessWidget {
-  const _ChronologyError({required this.message, required this.onRetry});
-
-  final String message;
-  final Future<void> Function() onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 48,
-              color: AppColors.textSecondary,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            FilledButton(onPressed: onRetry, child: const Text('Retry')),
-          ],
-        ),
-      ),
-    );
   }
 }
 

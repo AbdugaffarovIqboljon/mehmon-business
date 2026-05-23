@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
+import 'package:mehmon/core/widgets/app_error_view.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/features/floor/presentation/models/floor_drawer_destination.dart';
@@ -265,7 +266,10 @@ class _FloorPageState extends ConsumerState<FloorPage>
             child: tablesAsync.when(
               loading: () =>
                   const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text(e.toString())),
+              error: (e, _) => AppErrorView(
+                error: e,
+                onRetry: () => ref.invalidate(floorControllerProvider),
+              ),
               data: (tables) => FloorMapCanvas(tables: tables),
             ),
           ),

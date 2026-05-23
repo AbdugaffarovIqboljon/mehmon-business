@@ -39,7 +39,7 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
     final result = await ref.read(bookingRepositoryProvider).getBookings();
     return result.when(
       success: (list) => list,
-      error: (f) => throw Exception(f.message),
+      error: (f) => throw f,
     );
   }
 

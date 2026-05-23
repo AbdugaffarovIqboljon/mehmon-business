@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/core/errors/failure.dart';
 import 'package:mehmon/core/errors/result.dart';
@@ -17,8 +18,12 @@ class BookingRepositoryImpl implements BookingRepository {
     try {
       final models = await _remoteDataSource.getBookings();
       return Success(models.map(_toEntity).toList());
-    } on Exception catch (e, st) {
-      return Err(ServerFailure(message: e.toString(), stackTrace: st));
+    } on DioException catch (e) {
+      return Err(ApiException.fromDioException(e).toFailure());
+    } on ApiException catch (e) {
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -51,8 +56,12 @@ class BookingRepositoryImpl implements BookingRepository {
       return Err(
         TableConflictFailure(conflictWindow: e.conflictWindow, stackTrace: st),
       );
-    } on Exception catch (e, st) {
-      return Err(ServerFailure(message: e.toString(), stackTrace: st));
+    } on DioException catch (e) {
+      return Err(ApiException.fromDioException(e).toFailure());
+    } on ApiException catch (e) {
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -85,8 +94,12 @@ class BookingRepositoryImpl implements BookingRepository {
         notes: notes,
       );
       return Success(_toEntity(model));
-    } on Exception catch (e, st) {
-      return Err(ServerFailure(message: e.toString(), stackTrace: st));
+    } on DioException catch (e) {
+      return Err(ApiException.fromDioException(e).toFailure());
+    } on ApiException catch (e) {
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -95,8 +108,12 @@ class BookingRepositoryImpl implements BookingRepository {
     try {
       final message = await _remoteDataSource.deleteBooking(id: id);
       return Success(message);
-    } on Exception catch (e, st) {
-      return Err(ServerFailure(message: e.toString(), stackTrace: st));
+    } on DioException catch (e) {
+      return Err(ApiException.fromDioException(e).toFailure());
+    } on ApiException catch (e) {
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 

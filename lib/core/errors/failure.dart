@@ -1,9 +1,40 @@
 /// Base failure type for the application.
-sealed class Failure {
+sealed class Failure implements Exception {
   const Failure({required this.message, this.stackTrace});
 
   final String message;
   final StackTrace? stackTrace;
+
+  String get userMessage => switch (this) {
+        NetworkFailure() => "Internet aloqasi yo'q",
+        TableConflictFailure(:final conflictWindow) =>
+          'Bu vaqtda stol band: $conflictWindow',
+        ServerFailure(:final statusCode, :final message) => switch (statusCode) {
+            null => _isTechnical(message) ? 'Xatolik yuz berdi' : message,
+            401 => 'Sessiya tugadi. Qayta kiring',
+            403 => "Bu amalni bajarishga ruxsat yo'q",
+            404 => "Ma'lumot topilmadi",
+            >= 500 => "Serverda xatolik. Biroz kutib urinib ko'ring",
+            _ => _isTechnical(message) ? 'Xatolik yuz berdi' : message,
+          },
+        CacheFailure() => 'Mahalliy xatolik',
+        UnknownFailure() => 'Kutilmagan xatolik',
+      };
+
+  static bool _isTechnical(String? message) {
+    if (message == null) return true;
+    const technicalPrefixes = [
+      'noInternet',
+      'timeout',
+      'serverError',
+      'unknown',
+      'cancelled',
+      'Exception',
+      'DioException',
+      'SocketException',
+    ];
+    return technicalPrefixes.any((p) => message.startsWith(p));
+  }
 
   @override
   String toString() => 'Failure: $message';

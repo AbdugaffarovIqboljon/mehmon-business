@@ -34,9 +34,9 @@ class FloorRepositoryImpl implements FloorRepository {
       final models = await _dataSource.getTables();
       return Success(models.map(_toEntity).toList());
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -54,9 +54,9 @@ class FloorRepositoryImpl implements FloorRepository {
       );
       return Success(_toEntity(model));
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -76,9 +76,9 @@ class FloorRepositoryImpl implements FloorRepository {
       );
       return Success(_toEntity(model));
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -88,9 +88,9 @@ class FloorRepositoryImpl implements FloorRepository {
       final message = await _dataSource.deleteTable(id: id);
       return Success(message);
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -105,9 +105,9 @@ class FloorRepositoryImpl implements FloorRepository {
       await _dataSource.updateTablePosition(id, x, y, rotation: rotation);
       return const Success(null);
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -117,9 +117,9 @@ class FloorRepositoryImpl implements FloorRepository {
       final models = await _dataSource.getActivityLog();
       return Success(models.map((m) => m.toEntity()).toList());
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -129,9 +129,9 @@ class FloorRepositoryImpl implements FloorRepository {
       final models = await _dataSource.getShifts();
       return Success(models.map((m) => m.toEntity()).toList());
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -155,9 +155,9 @@ class FloorRepositoryImpl implements FloorRepository {
       );
       return Success(model.toEntity());
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -183,9 +183,9 @@ class FloorRepositoryImpl implements FloorRepository {
       );
       return Success(model.toEntity());
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 
@@ -195,9 +195,9 @@ class FloorRepositoryImpl implements FloorRepository {
       await _dataSource.deleteShift(id);
       return const Success(null);
     } on ApiException catch (e) {
-      return Err(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on Object catch (e) {
-      return Err(UnknownFailure(message: e.toString()));
+      return Err(e.toFailure());
+    } on Object {
+      return const Err(UnknownFailure());
     }
   }
 }

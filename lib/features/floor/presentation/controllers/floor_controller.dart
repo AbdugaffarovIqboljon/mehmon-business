@@ -86,7 +86,7 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
     final result = await repo.getTables();
     return result.when(
       success: (floors) => floors,
-      error: (f) => throw Exception(f.message),
+      error: (f) => throw f,
     );
   }
 
@@ -212,7 +212,7 @@ class ActivityLogController extends AsyncNotifier<List<ActivityLogEntity>> {
     final result = await _repo.getActivityLog();
     return result.when(
       success: (logs) => logs,
-      error: (f) => throw Exception(f.message),
+      error: (f) => throw f,
     );
   }
 
@@ -237,7 +237,7 @@ class ShiftsController extends AsyncNotifier<List<ShiftEntity>> {
     final result = await _repo.getShifts();
     return result.when(
       success: (shifts) => shifts,
-      error: (f) => throw Exception(f.message),
+      error: (f) => throw f,
     );
   }
 

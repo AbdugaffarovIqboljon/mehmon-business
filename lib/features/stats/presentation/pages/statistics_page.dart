@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
+import 'package:mehmon/core/widgets/app_error_view.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/stats/domain/entities/stats_entity.dart';
 import 'package:mehmon/features/stats/presentation/controllers/stats_controller.dart';
@@ -168,15 +169,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                 ),
               ),
             ),
-            error: (e, _) => Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Text(
-                e.toString(),
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.error,
-                ),
-              ),
-            ),
+            error: (e, _) => AppErrorView(error: e, compact: true),
             data: (summary) {
               if (summary == null) return const SizedBox.shrink();
               return GridView.count(
@@ -238,10 +231,9 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
           else if (reportsAsync.hasError)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-              child: Center(
-                child: Text(
-                  l10n.statsError(reportsAsync.error.toString()),
-                ),
+              child: AppErrorView(
+                error: reportsAsync.error!,
+                compact: true,
               ),
             )
           else if (report == null || report.bookings.isEmpty)

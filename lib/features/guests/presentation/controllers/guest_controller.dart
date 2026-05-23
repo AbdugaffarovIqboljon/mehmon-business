@@ -54,7 +54,7 @@ class GuestController extends AsyncNotifier<List<GuestEntity>> {
     final result = await ref.read(guestRepositoryProvider).getGuests();
     return result.when(
       success: (list) => list,
-      error: (f) => throw Exception(f.message),
+      error: (f) => throw f,
     );
   }
 
@@ -134,7 +134,7 @@ class InHallGuestsController extends AsyncNotifier<List<GuestEntity>> {
     final result = await ref.read(guestRepositoryProvider).getGuestsInHall();
     return result.when(
       success: (list) => list,
-      error: (f) => throw Exception(f.message),
+      error: (f) => throw f,
     );
   }
 
@@ -153,7 +153,7 @@ class GuestDetailNotifier
     final result = await ref.read(guestRepositoryProvider).getGuestById(id: id);
     return result.when(
       success: (entity) => entity,
-      error: (f) => throw Exception(f.message),
+      error: (f) => throw f,
     );
   }
 }

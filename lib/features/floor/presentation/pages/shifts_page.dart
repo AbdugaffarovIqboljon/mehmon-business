@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
+import 'package:mehmon/core/widgets/app_error_view.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
 import 'package:mehmon/features/floor/domain/entities/shift_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
@@ -76,10 +77,11 @@ class ShiftsPage extends ConsumerWidget {
       ),
       body: asyncShifts.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => _ShiftsError(
-          message: error.toString(),
-          onRetry: () =>
-              ref.read(shiftsControllerProvider.notifier).fetchShifts(),
+        error: (error, _) => AppErrorView(
+          error: error,
+          onRetry: () {
+            ref.read(shiftsControllerProvider.notifier).fetchShifts();
+          },
         ),
         data: (shifts) {
           if (shifts.isEmpty) {
@@ -126,40 +128,6 @@ class ShiftsPage extends ConsumerWidget {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _ShiftsError extends StatelessWidget {
-  const _ShiftsError({required this.message, required this.onRetry});
-
-  final String message;
-  final Future<void> Function() onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 48,
-              color: AppColors.textSecondary,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            FilledButton(onPressed: onRetry, child: const Text('Retry')),
-          ],
-        ),
       ),
     );
   }

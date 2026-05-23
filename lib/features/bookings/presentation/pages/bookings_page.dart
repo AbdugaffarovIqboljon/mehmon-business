@@ -2,8 +2,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
+import 'package:mehmon/core/widgets/app_error_view.dart';
 import 'package:mehmon/core/widgets/app_scaffold.dart';
-import 'package:mehmon/core/widgets/primary_button.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/booking_view_controller.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/book_a_table_sheet.dart';
@@ -12,7 +12,6 @@ import 'package:mehmon/features/bookings/presentation/widgets/booking_date_strip
 import 'package:mehmon/features/bookings/presentation/widgets/booking_list_section.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_month_calendar.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/bookings_fab.dart';
-import 'package:mehmon/l10n/app_localizations.dart';
 
 class BookingsPage extends StatelessWidget {
   const BookingsPage({super.key});
@@ -154,7 +153,7 @@ class _BookingsListSection extends ConsumerWidget {
 
     return bookingsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => _BookingListError(
+      error: (error, _) => AppErrorView(
         error: error,
         onRetry: ref.read(bookingControllerProvider.notifier).refresh,
       ),
@@ -169,42 +168,6 @@ class _BookingsListSection extends ConsumerWidget {
           topPadding: isCalendarExpanded ? AppSpacing.sm : AppSpacing.xs,
         );
       },
-    );
-  }
-}
-
-class _BookingListError extends StatelessWidget {
-  const _BookingListError({required this.error, required this.onRetry});
-
-  final Object error;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.failedToLoadBookings,
-            style: Theme.of(context).textTheme.titleLarge,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            '$error',
-            style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          PrimaryButton(
-            label: AppLocalizations.of(context)!.retryBtn,
-            onPressed: onRetry,
-            expand: false,
-          ),
-        ],
-      ),
     );
   }
 }
