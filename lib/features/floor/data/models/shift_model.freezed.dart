@@ -214,6 +214,7 @@ mixin _$ShiftModel {
   String get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'notes')
   String? get notes => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _assignedTablesFromJson)
   List<AssignedTableModel> get assignedTables =>
       throw _privateConstructorUsedError;
 
@@ -243,6 +244,7 @@ abstract class $ShiftModelCopyWith<$Res> {
     @JsonKey(name: 'restaurantId') String restaurantId,
     @JsonKey(name: 'createdAt') String createdAt,
     @JsonKey(name: 'notes') String? notes,
+    @JsonKey(fromJson: _assignedTablesFromJson)
     List<AssignedTableModel> assignedTables,
   });
 }
@@ -334,6 +336,7 @@ abstract class _$$ShiftModelImplCopyWith<$Res>
     @JsonKey(name: 'restaurantId') String restaurantId,
     @JsonKey(name: 'createdAt') String createdAt,
     @JsonKey(name: 'notes') String? notes,
+    @JsonKey(fromJson: _assignedTablesFromJson)
     List<AssignedTableModel> assignedTables,
   });
 }
@@ -417,6 +420,7 @@ class _$ShiftModelImpl implements _ShiftModel {
     @JsonKey(name: 'restaurantId') required this.restaurantId,
     @JsonKey(name: 'createdAt') required this.createdAt,
     @JsonKey(name: 'notes') this.notes,
+    @JsonKey(fromJson: _assignedTablesFromJson)
     final List<AssignedTableModel> assignedTables = const [],
   }) : _assignedTables = assignedTables;
 
@@ -449,7 +453,7 @@ class _$ShiftModelImpl implements _ShiftModel {
   final String? notes;
   final List<AssignedTableModel> _assignedTables;
   @override
-  @JsonKey()
+  @JsonKey(fromJson: _assignedTablesFromJson)
   List<AssignedTableModel> get assignedTables {
     if (_assignedTables is EqualUnmodifiableListView) return _assignedTables;
     // ignore: implicit_dynamic_type
@@ -523,6 +527,7 @@ abstract class _ShiftModel implements ShiftModel {
     @JsonKey(name: 'restaurantId') required final String restaurantId,
     @JsonKey(name: 'createdAt') required final String createdAt,
     @JsonKey(name: 'notes') final String? notes,
+    @JsonKey(fromJson: _assignedTablesFromJson)
     final List<AssignedTableModel> assignedTables,
   }) = _$ShiftModelImpl;
 
@@ -554,6 +559,7 @@ abstract class _ShiftModel implements ShiftModel {
   @JsonKey(name: 'notes')
   String? get notes;
   @override
+  @JsonKey(fromJson: _assignedTablesFromJson)
   List<AssignedTableModel> get assignedTables;
 
   /// Create a copy of ShiftModel

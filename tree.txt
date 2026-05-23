@@ -84,8 +84,10 @@ lib
 │   │   │   ├── entities
 │   │   │   │   ├── booking_entity.dart
 │   │   │   │   └── booking_entity.freezed.dart
-│   │   │   └── repositories
-│   │   │       └── booking_repository.dart
+│   │   │   ├── repositories
+│   │   │   │   └── booking_repository.dart
+│   │   │   └── services
+│   │   │       └── booking_conflict_resolver.dart
 │   │   └── presentation
 │   │       ├── controllers
 │   │       │   ├── book_a_table_date_controller.dart
@@ -125,10 +127,7 @@ lib
 │   │   │   │   ├── floor_model.g.dart
 │   │   │   │   ├── shift_model.dart
 │   │   │   │   ├── shift_model.freezed.dart
-│   │   │   │   ├── shift_model.g.dart
-│   │   │   │   ├── table_details_model.dart
-│   │   │   │   ├── table_details_model.freezed.dart
-│   │   │   │   └── table_details_model.g.dart
+│   │   │   │   └── shift_model.g.dart
 │   │   │   └── repositories
 │   │   │       └── floor_repository_impl.dart
 │   │   ├── domain
@@ -138,9 +137,7 @@ lib
 │   │   │   │   ├── floor_entity.dart
 │   │   │   │   ├── floor_entity.freezed.dart
 │   │   │   │   ├── shift_entity.dart
-│   │   │   │   ├── shift_entity.freezed.dart
-│   │   │   │   ├── table_details_entity.dart
-│   │   │   │   └── table_details_entity.freezed.dart
+│   │   │   │   └── shift_entity.freezed.dart
 │   │   │   └── repositories
 │   │   │       └── floor_repository.dart
 │   │   └── presentation

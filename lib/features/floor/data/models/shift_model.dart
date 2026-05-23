@@ -4,6 +4,21 @@ import 'package:mehmon/features/floor/domain/entities/shift_entity.dart';
 part 'shift_model.freezed.dart';
 part 'shift_model.g.dart';
 
+AssignedTableModel? _assignedTableFromJson(Object? value) {
+  if (value == null) return null;
+  if (value is String) return AssignedTableModel(id: value, number: '');
+  if (value is Map<String, dynamic>) return AssignedTableModel.fromJson(value);
+  return null;
+}
+
+List<AssignedTableModel> _assignedTablesFromJson(dynamic value) {
+  if (value is! List) return const [];
+  return value
+      .map<AssignedTableModel?>(_assignedTableFromJson)
+      .whereType<AssignedTableModel>()
+      .toList();
+}
+
 @freezed
 abstract class AssignedTableModel with _$AssignedTableModel {
   const factory AssignedTableModel({
@@ -26,6 +41,7 @@ abstract class ShiftModel with _$ShiftModel {
     @JsonKey(name: 'restaurantId') required String restaurantId,
     @JsonKey(name: 'createdAt') required String createdAt,
     @JsonKey(name: 'notes') String? notes,
+    @JsonKey(fromJson: _assignedTablesFromJson)
     @Default([]) List<AssignedTableModel> assignedTables,
   }) = _ShiftModel;
 

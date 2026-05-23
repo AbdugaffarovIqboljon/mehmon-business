@@ -27,13 +27,9 @@ _$ShiftModelImpl _$$ShiftModelImplFromJson(Map<String, dynamic> json) =>
       restaurantId: json['restaurantId'] as String,
       createdAt: json['createdAt'] as String,
       notes: json['notes'] as String?,
-      assignedTables:
-          (json['assignedTables'] as List<dynamic>?)
-              ?.map(
-                (e) => AssignedTableModel.fromJson(e as Map<String, dynamic>),
-              )
-              .toList() ??
-          const [],
+      assignedTables: json['assignedTables'] == null
+          ? const []
+          : _assignedTablesFromJson(json['assignedTables']),
     );
 
 Map<String, dynamic> _$$ShiftModelImplToJson(_$ShiftModelImpl instance) =>

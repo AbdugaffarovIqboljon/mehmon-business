@@ -254,22 +254,26 @@ class ShiftsController extends AsyncNotifier<List<ShiftEntity>> {
     String? notes,
     List<String>? assignedTables,
   }) async {
-    final result = await _repo.createShift(
-      staffName: staffName,
-      startTime: startTime,
-      endTime: endTime,
-      date: date,
-      notes: notes,
-      assignedTables: assignedTables,
-    );
-    return result.when(
-      success: (entity) {
-        final current = state.valueOrNull ?? [];
-        state = AsyncData([entity, ...current]);
-        return true;
-      },
-      error: (_) => false,
-    );
+    try {
+      final result = await _repo.createShift(
+        staffName: staffName,
+        startTime: startTime,
+        endTime: endTime,
+        date: date,
+        notes: notes,
+        assignedTables: assignedTables,
+      );
+      return result.when(
+        success: (entity) {
+          final current = state.valueOrNull ?? [];
+          state = AsyncData([entity, ...current]);
+          return true;
+        },
+        error: (_) => false,
+      );
+    } on Exception catch (_) {
+      return false;
+    }
   }
 
   Future<bool> editShift(
@@ -281,26 +285,30 @@ class ShiftsController extends AsyncNotifier<List<ShiftEntity>> {
     String? notes,
     List<String>? assignedTables,
   }) async {
-    final result = await _repo.editShift(
-      id,
-      staffName: staffName,
-      startTime: startTime,
-      endTime: endTime,
-      date: date,
-      notes: notes,
-      assignedTables: assignedTables,
-    );
-    return result.when(
-      success: (updated) {
-        final current = state.valueOrNull ?? [];
-        state = AsyncData([
-          for (final s in current)
-            if (s.id == updated.id) updated else s,
-        ]);
-        return true;
-      },
-      error: (_) => false,
-    );
+    try {
+      final result = await _repo.editShift(
+        id,
+        staffName: staffName,
+        startTime: startTime,
+        endTime: endTime,
+        date: date,
+        notes: notes,
+        assignedTables: assignedTables,
+      );
+      return result.when(
+        success: (updated) {
+          final current = state.valueOrNull ?? [];
+          state = AsyncData([
+            for (final s in current)
+              if (s.id == updated.id) updated else s,
+          ]);
+          return true;
+        },
+        error: (_) => false,
+      );
+    } on Exception catch (_) {
+      return false;
+    }
   }
 
   Future<bool> removeShift(String id) async {
