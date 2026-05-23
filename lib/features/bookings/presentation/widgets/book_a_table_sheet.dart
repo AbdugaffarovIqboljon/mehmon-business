@@ -215,8 +215,8 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     }
     _lastPhoneValue = _phoneController.text;
     _recomputeBusy();
-    _selectedTime.addListener(_recomputeBusy);
-    _selectedTime.addListener(_onStartTimeChanged);
+    _selectedTime..addListener(_recomputeBusy)
+    ..addListener(_onStartTimeChanged);
     _selectedEndTime.addListener(_recomputeBusy);
     _selectedBookingType.addListener(_recomputeBusy);
     _selectedTable.addListener(() {
@@ -261,8 +261,8 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     _guestNameController.dispose();
     _phoneController.dispose();
     _notesController.dispose();
-    _selectedTime.removeListener(_onStartTimeChanged);
-    _selectedTime.removeListener(_recomputeBusy);
+    _selectedTime..removeListener(_onStartTimeChanged)
+    ..removeListener(_recomputeBusy);
     _selectedEndTime.removeListener(_recomputeBusy);
     _selectedBookingType.removeListener(_recomputeBusy);
     _guestCount.dispose();

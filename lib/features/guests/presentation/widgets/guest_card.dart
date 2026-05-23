@@ -75,13 +75,6 @@ class GuestCard extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.xs),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.more_vert),
-                    color: AppColors.textPrimary,
-                    splashRadius: 20,
-                  ),
                 ],
               ),
               if (!isInHall) ...[
