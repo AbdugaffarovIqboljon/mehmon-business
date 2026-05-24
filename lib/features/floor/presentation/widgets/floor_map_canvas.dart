@@ -35,16 +35,17 @@ class FloorMapCanvas extends ConsumerStatefulWidget {
 }
 
 class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
-  static const double kCanvasWidth = 2000;
-  static const double kCanvasHeight = 2000;
+  static const double kCanvasWidth = 4000;
+  static const double kCanvasHeight = 4000;
   static const double kTableSize = 100;
   static const double _kFitPadding = 60;
 
   static const int _gridColumns = 3;
   static const double _gridSpacing = 140;
-  static const double _gridMargin = 20;
   static const double _tableSmall = 100;
   static const double _tableLarge = 140;
+
+  static const double _kLegacyOriginThreshold = 300;
 
   static const double _kDragThreshold = 12;
 
@@ -57,6 +58,7 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
   final Map<int, bool> _isDraggingByPointer = {};
   int? _activePanPointerId;
   bool _hasFit = false;
+  final Set<String> _migratedTableIds = {};
 
   @override
   void initState() {
@@ -118,17 +120,36 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     final col = index % _gridColumns;
     final row = index ~/ _gridColumns;
     return Offset(
-      col * _gridSpacing + _gridMargin,
-      row * _gridSpacing + _gridMargin,
+      kCanvasWidth / 2 + (col - 1) * _gridSpacing,
+      kCanvasHeight / 2 + (row - 1) * _gridSpacing,
     );
   }
 
   Offset _initialPositionFor(FloorEntity entity, int index, double tableW) {
-    final hasPosition = entity.x != 0 || entity.y != 0;
-    // Existing positions are shown as-is (backend may emit negative values).
-    // Only auto-layout fallbacks are clamped into the canvas.
-    if (hasPosition) return _clampToCanvas(Offset(entity.x, entity.y), tableW);
-    return _clampToCanvas(_autoLayoutPosition(index), tableW);
+    return _resolvedPositionFor(entity, index);
+  }
+
+  Offset _resolvedPositionFor(FloorEntity entity, int index) {
+    final tableW = _tableWidthFor(entity);
+    if (entity.x <= _kLegacyOriginThreshold ||
+        entity.y <= _kLegacyOriginThreshold) {
+      final resolved = _clampToCanvas(_autoLayoutPosition(index), tableW);
+      if (!_migratedTableIds.contains(entity.id)) {
+        _migratedTableIds.add(entity.id);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          unawaited(
+            ref.read(floorControllerProvider.notifier).updateTablePosition(
+              entity.id,
+              resolved.dx,
+              resolved.dy,
+            ),
+          );
+        });
+      }
+      return resolved;
+    }
+    return _clampToCanvas(Offset(entity.x, entity.y), tableW);
   }
 
   Offset _clampToCanvas(Offset o, double tableW) {
@@ -143,14 +164,15 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
   }
 
   void _fitToContent(BoxConstraints viewport) {
-    if (_positionNotifiers.isEmpty) return;
+    final entities = widget.tables ?? const <FloorEntity>[];
+    if (entities.isEmpty) return;
 
     var minX = double.infinity;
     var minY = double.infinity;
     var maxX = double.negativeInfinity;
     var maxY = double.negativeInfinity;
-    for (final n in _positionNotifiers.values) {
-      final p = n.value;
+    for (var i = 0; i < entities.length; i++) {
+      final p = _resolvedPositionFor(entities[i], i);
       if (p.dx < minX) minX = p.dx;
       if (p.dy < minY) minY = p.dy;
       final right = p.dx + kTableSize;
@@ -553,15 +575,6 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     List<BookingEntity> bookings,
   ) {
     final t = selectedTime ?? TimeOfDay.fromDateTime(DateTime.now());
-    if (bookings.any((b) =>
-        b.tableInfo?.id == entity.id &&
-        DateTime.tryParse(b.date)?.toLocal().day == DateTime.now().day)) {
-      debugPrint(
-        '🎯 TODAY MATCH | '
-        'table.number=${entity.number} | '
-        'entity.id=${entity.id}',
-      );
-    }
     return _computeStatusAtTime(
       tableId: entity.id,
       bookings: bookings,
@@ -686,31 +699,12 @@ String _computeStatusAtTime({
     if (b.status == 'cancelled') continue;
 
     final bTableId = b.tableInfo?.id;
-    debugPrint(
-      '🔍 BOOKING DEBUG | '
-      'booking.id=${b.id} | '
-      'b.tableInfo=${b.tableInfo?.id ?? "NULL"} | '
-      'entity.id=$tableId | '
-      'match=${b.tableInfo?.id == tableId} | '
-      'b.date=${b.date} | '
-      'b.status=${b.status}',
-    );
     if (bTableId != tableId) continue;
 
     final parsedDate = DateTime.tryParse(b.date)?.toLocal();
     if (parsedDate == null) continue;
     final bookingDay = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
     if (bookingDay != today) continue;
-
-    debugPrint(
-      '⏰ TIME CHECK | '
-      'booking.id=${b.id} | '
-      'timeSlot=${b.timeSlot} | '
-      'endTime=${b.endTime} | '
-      'selectedMin=$selectedMin | '
-      'bTableId=$bTableId | '
-      'tableId=$tableId',
-    );
 
     final startParts = b.timeSlot.split(':');
     if (startParts.length < 2) continue;

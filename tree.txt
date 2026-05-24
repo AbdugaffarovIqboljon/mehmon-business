@@ -30,6 +30,7 @@ lib
 │   │   ├── app_text_styles.dart
 │   │   └── app_theme.dart
 │   └── widgets
+│       ├── app_error_view.dart
 │       ├── app_scaffold.dart
 │       ├── app_text_field.dart
 │       ├── calendar_wrapper.dart
@@ -61,7 +62,8 @@ lib
 │   │       │   ├── login_page.dart
 │   │       │   ├── register_page.dart
 │   │       │   ├── restaurant_profile_page.dart
-│   │       │   └── restaurant_setup_page.dart
+│   │       │   ├── restaurant_setup_page.dart
+│   │       │   └── splash_page.dart
 │   │       └── widgets
 │   │           ├── auth_form_section.dart
 │   │           ├── auth_selection_field.dart
