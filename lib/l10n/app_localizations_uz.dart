@@ -43,7 +43,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get nameValidationError => 'Ismingizni kiriting';
 
   @override
-  String get phoneLabel => 'Telefon raqamingiz';
+  String get phoneLabel => 'Telefon raqam';
 
   @override
   String get phoneHint => '+998 93 123 45 67';

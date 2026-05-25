@@ -11,7 +11,7 @@
   "nameLabel": "Ismingiz",
   "nameHint": "Ismingizni kiriting",
   "nameValidationError": "Ismingizni kiriting",
-  "phoneLabel": "Telefon raqamingiz",
+  "phoneLabel": "Telefon raqam",
   "phoneHint": "+998 93 123 45 67",
   "phoneValidationError": "Telefon raqamingizni kiriting",
   "phoneInvalidError": "Telefon raqamni to'liq kiriting",
