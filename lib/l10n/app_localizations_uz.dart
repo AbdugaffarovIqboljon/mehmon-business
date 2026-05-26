@@ -127,7 +127,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get tabFloor => 'Zal';
 
   @override
-  String get tabBookings => 'Band qilingan';
+  String get tabBookings => 'Bronlar';
 
   @override
   String get tabGuests => 'Mehmonlar';
