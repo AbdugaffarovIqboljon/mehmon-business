@@ -12,7 +12,7 @@
   "introSubtitle": "Table statuses, visits - everything\nunder control.",
   "loginTitle": "Log in",
   "nameLabel": "Name",
-  "nameHint": "Enter your name",
+  "nameHint": "Enter name",
   "nameValidationError": "Enter your name",
   "phoneLabel": "Phone number",
   "phoneHint": "+998 93 123 45 67",

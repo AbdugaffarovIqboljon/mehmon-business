@@ -12,6 +12,9 @@ abstract class FloorRemoteDataSource {
     required String number,
     required int capacity,
     required String location,
+    required double x,
+    required double y,
+    double rotation = 0,
   });
 
   Future<FloorModel> updateTable({
@@ -78,6 +81,9 @@ class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
     required String number,
     required int capacity,
     required String location,
+    required double x,
+    required double y,
+    double rotation = 0,
   }) async {
     try {
       final response = await _dio.post<dynamic>(
@@ -86,6 +92,9 @@ class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
           'number': number,
           'capacity': capacity,
           'location': location,
+          'x': x,
+          'y': y,
+          'rotation': rotation,
         },
       );
       return FloorModel.fromJson(response.data as Map<String, dynamic>);

@@ -157,7 +157,7 @@ abstract class AppLocalizations {
   /// No description provided for @nameHint.
   ///
   /// In en, this message translates to:
-  /// **'Enter your name'**
+  /// **'Enter name'**
   String get nameHint;
 
   /// No description provided for @nameValidationError.

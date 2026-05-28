@@ -96,24 +96,52 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
     state = await AsyncValue.guard(() => _fetchFloors(repo));
   }
 
+  // Canvas-space center used as spawn when the floor is empty. Mirrors the
+  // canvas's 4000×4000 surface (kCanvasWidth/kCanvasHeight in floor_map_canvas).
+  static const Offset _kDefaultSpawn = Offset(2000, 2000);
+
   Future<bool> createTable({
     required String number,
     required int capacity,
     required String location,
   }) async {
+    final snapshot = state.valueOrNull ?? const <FloorEntity>[];
+    final spawn = _spawnPositionFor(snapshot);
     final result = await ref.read(floorRepositoryProvider).createTable(
           number: number,
           capacity: capacity,
           location: location,
+          x: spawn.dx,
+          y: spawn.dy,
         );
     return result.when(
       success: (entity) {
-        final current = state.valueOrNull ?? [];
-        state = AsyncData([...current, entity]);
+        final latest = state.valueOrNull ?? snapshot;
+        if (latest.any((t) => t.id == entity.id)) {
+          state = AsyncData(latest);
+        } else {
+          state = AsyncData([...latest, entity]);
+        }
         return true;
       },
       error: (_) => false,
     );
+  }
+
+  Offset _spawnPositionFor(List<FloorEntity> tables) {
+    if (tables.isEmpty) return _kDefaultSpawn;
+    var sumX = 0.0;
+    var sumY = 0.0;
+    for (final t in tables) {
+      sumX += t.x;
+      sumY += t.y;
+    }
+    final n = tables.length;
+    final cx = sumX / n;
+    final cy = sumY / n;
+    final spawn = Offset(cx + 40, cy + 40);
+    if (!spawn.dx.isFinite || !spawn.dy.isFinite) return _kDefaultSpawn;
+    return spawn;
   }
 
   Future<bool> updateTable({

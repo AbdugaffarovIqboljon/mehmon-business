@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -264,6 +263,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
           ),
           Expanded(
             child: tablesAsync.when(
+              skipLoadingOnReload: true,
               loading: () =>
                   const Center(child: CircularProgressIndicator()),
               error: (e, _) => AppErrorView(

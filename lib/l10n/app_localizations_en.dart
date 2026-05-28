@@ -37,7 +37,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nameLabel => 'Name';
 
   @override
-  String get nameHint => 'Enter your name';
+  String get nameHint => 'Enter name';
 
   @override
   String get nameValidationError => 'Enter your name';

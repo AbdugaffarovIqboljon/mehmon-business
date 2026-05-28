@@ -37,7 +37,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get nameLabel => 'Ismingiz';
 
   @override
-  String get nameHint => 'Ismingizni kiriting';
+  String get nameHint => 'Ism kiriting';
 
   @override
   String get nameValidationError => 'Ismingizni kiriting';

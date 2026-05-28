@@ -79,12 +79,6 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     for (final id in stale) {
       _positionNotifiers.remove(id)?.dispose();
     }
-    final oldIds = (oldWidget.tables ?? const <FloorEntity>[])
-        .map((e) => e.id)
-        .toSet();
-    if (liveIds.difference(oldIds).isNotEmpty) {
-      _hasFit = false;
-    }
   }
 
   @override

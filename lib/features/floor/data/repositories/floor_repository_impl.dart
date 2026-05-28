@@ -45,12 +45,18 @@ class FloorRepositoryImpl implements FloorRepository {
     required String number,
     required int capacity,
     required String location,
+    required double x,
+    required double y,
+    double rotation = 0,
   }) async {
     try {
       final model = await _dataSource.createTable(
         number: number,
         capacity: capacity,
         location: location,
+        x: x,
+        y: y,
+        rotation: rotation,
       );
       return Success(_toEntity(model));
     } on ApiException catch (e) {

@@ -9,6 +9,9 @@ abstract class FloorRepository {
     required String number,
     required int capacity,
     required String location,
+    required double x,
+    required double y,
+    double rotation = 0,
   });
 
   Future<Result<FloorEntity>> updateTable({
