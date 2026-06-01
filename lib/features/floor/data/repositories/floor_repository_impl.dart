@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:mehmon/core/errors/api_exception.dart';
 import 'package:mehmon/core/errors/failure.dart';
 import 'package:mehmon/core/errors/result.dart';
@@ -35,7 +37,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return Success(models.map(_toEntity).toList());
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }
@@ -61,7 +64,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return Success(_toEntity(model));
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }
@@ -83,7 +87,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return Success(_toEntity(model));
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }
@@ -95,7 +100,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return Success(message);
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }
@@ -112,7 +118,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return const Success(null);
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }
@@ -124,7 +131,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return Success(models.map((m) => m.toEntity()).toList());
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }
@@ -136,7 +144,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return Success(models.map((m) => m.toEntity()).toList());
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }
@@ -162,7 +171,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return Success(model.toEntity());
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }
@@ -190,7 +200,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return Success(model.toEntity());
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }
@@ -202,7 +213,8 @@ class FloorRepositoryImpl implements FloorRepository {
       return const Success(null);
     } on ApiException catch (e) {
       return Err(e.toFailure());
-    } on Object {
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
       return const Err(UnknownFailure());
     }
   }

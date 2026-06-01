@@ -42,6 +42,13 @@ final selectedTimelineProvider = StateProvider<TimeOfDay?>((ref) => null);
 /// opening the detail sheet.
 final floorEditModeProvider = StateProvider<bool>((ref) => false);
 
+/// Currently selected zone filter on the floor page.
+///
+/// `null` means "Barchasi" (show every zone). Filtering is performed
+/// client-side over the already-fetched tables — the tables API is never
+/// re-queried per zone.
+final selectedZoneProvider = StateProvider<String?>((ref) => null);
+
 /// Per-table in-flight position changes awaiting "Saqlash" in edit mode.
 final pendingPositionsProvider =
     StateProvider<Map<String, Offset>>((ref) => {});

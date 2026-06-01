@@ -10,11 +10,11 @@ abstract class FloorModel with _$FloorModel {
     required String number,
     required int capacity,
     required String status,
-    required String location,
+    @JsonKey(name: 'location') String? location,
     @Default(0.0) double x,
     @Default(0.0) double y,
     @Default(0.0) double rotation,
-    String? zone,
+    @JsonKey(name: 'zone') String? zone,
   }) = _FloorModel;
 
   factory FloorModel.fromJson(Map<String, dynamic> json) =>

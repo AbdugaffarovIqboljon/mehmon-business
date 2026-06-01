@@ -55,7 +55,8 @@ class FloorTableConfig {
   /// Fractional width of the table relative to canvas width.
   final double width;
 
-  /// Optional status indicator color: green=available, red=occupied, purple=other.
+  /// Optional status indicator color: green=available, orange=booked,
+  /// blue=occupied, grey=other.
   final Color? statusColor;
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -80,8 +81,9 @@ class FloorTableConfig {
 
   static Color _statusColorFor(String status) => switch (status) {
         'available' => Colors.green,
-        'occupied' => Colors.red,
-        _ => Colors.purple,
+        'booked' => Colors.orange,
+        'occupied' => Colors.blue,
+        _ => Colors.grey,
       };
 
   static String _assetFor(FloorEntity entity, int index) {

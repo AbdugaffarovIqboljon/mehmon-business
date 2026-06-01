@@ -12,7 +12,7 @@ _$FloorModelImpl _$$FloorModelImplFromJson(Map<String, dynamic> json) =>
       number: json['number'] as String,
       capacity: (json['capacity'] as num).toInt(),
       status: json['status'] as String,
-      location: json['location'] as String,
+      location: json['location'] as String?,
       x: (json['x'] as num?)?.toDouble() ?? 0.0,
       y: (json['y'] as num?)?.toDouble() ?? 0.0,
       rotation: (json['rotation'] as num?)?.toDouble() ?? 0.0,

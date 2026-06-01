@@ -26,10 +26,12 @@ mixin _$FloorModel {
   String get number => throw _privateConstructorUsedError;
   int get capacity => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
-  String get location => throw _privateConstructorUsedError;
+  @JsonKey(name: 'location')
+  String? get location => throw _privateConstructorUsedError;
   double get x => throw _privateConstructorUsedError;
   double get y => throw _privateConstructorUsedError;
   double get rotation => throw _privateConstructorUsedError;
+  @JsonKey(name: 'zone')
   String? get zone => throw _privateConstructorUsedError;
 
   /// Serializes this FloorModel to a JSON map.
@@ -54,11 +56,11 @@ abstract class $FloorModelCopyWith<$Res> {
     String number,
     int capacity,
     String status,
-    String location,
+    @JsonKey(name: 'location') String? location,
     double x,
     double y,
     double rotation,
-    String? zone,
+    @JsonKey(name: 'zone') String? zone,
   });
 }
 
@@ -81,7 +83,7 @@ class _$FloorModelCopyWithImpl<$Res, $Val extends FloorModel>
     Object? number = null,
     Object? capacity = null,
     Object? status = null,
-    Object? location = null,
+    Object? location = freezed,
     Object? x = null,
     Object? y = null,
     Object? rotation = null,
@@ -105,10 +107,10 @@ class _$FloorModelCopyWithImpl<$Res, $Val extends FloorModel>
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as String,
-            location: null == location
+            location: freezed == location
                 ? _value.location
                 : location // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             x: null == x
                 ? _value.x
                 : x // ignore: cast_nullable_to_non_nullable
@@ -145,11 +147,11 @@ abstract class _$$FloorModelImplCopyWith<$Res>
     String number,
     int capacity,
     String status,
-    String location,
+    @JsonKey(name: 'location') String? location,
     double x,
     double y,
     double rotation,
-    String? zone,
+    @JsonKey(name: 'zone') String? zone,
   });
 }
 
@@ -171,7 +173,7 @@ class __$$FloorModelImplCopyWithImpl<$Res>
     Object? number = null,
     Object? capacity = null,
     Object? status = null,
-    Object? location = null,
+    Object? location = freezed,
     Object? x = null,
     Object? y = null,
     Object? rotation = null,
@@ -195,10 +197,10 @@ class __$$FloorModelImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as String,
-        location: null == location
+        location: freezed == location
             ? _value.location
             : location // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         x: null == x
             ? _value.x
             : x // ignore: cast_nullable_to_non_nullable
@@ -228,11 +230,11 @@ class _$FloorModelImpl implements _FloorModel {
     required this.number,
     required this.capacity,
     required this.status,
-    required this.location,
+    @JsonKey(name: 'location') this.location,
     this.x = 0.0,
     this.y = 0.0,
     this.rotation = 0.0,
-    this.zone,
+    @JsonKey(name: 'zone') this.zone,
   });
 
   factory _$FloorModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -248,7 +250,8 @@ class _$FloorModelImpl implements _FloorModel {
   @override
   final String status;
   @override
-  final String location;
+  @JsonKey(name: 'location')
+  final String? location;
   @override
   @JsonKey()
   final double x;
@@ -259,6 +262,7 @@ class _$FloorModelImpl implements _FloorModel {
   @JsonKey()
   final double rotation;
   @override
+  @JsonKey(name: 'zone')
   final String? zone;
 
   @override
@@ -320,11 +324,11 @@ abstract class _FloorModel implements FloorModel {
     required final String number,
     required final int capacity,
     required final String status,
-    required final String location,
+    @JsonKey(name: 'location') final String? location,
     final double x,
     final double y,
     final double rotation,
-    final String? zone,
+    @JsonKey(name: 'zone') final String? zone,
   }) = _$FloorModelImpl;
 
   factory _FloorModel.fromJson(Map<String, dynamic> json) =
@@ -340,7 +344,8 @@ abstract class _FloorModel implements FloorModel {
   @override
   String get status;
   @override
-  String get location;
+  @JsonKey(name: 'location')
+  String? get location;
   @override
   double get x;
   @override
@@ -348,6 +353,7 @@ abstract class _FloorModel implements FloorModel {
   @override
   double get rotation;
   @override
+  @JsonKey(name: 'zone')
   String? get zone;
 
   /// Create a copy of FloorModel

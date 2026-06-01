@@ -229,13 +229,7 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
   double _tableWidthFor(FloorEntity entity) =>
       entity.capacity >= 5 ? _tableLarge : _tableSmall;
 
-  String? _labelFor(FloorEntity entity) {
-    final zone = entity.zone?.trim();
-    if (zone != null && zone.isNotEmpty) return zone;
-    final loc = entity.location.trim();
-    if (loc.isNotEmpty) return loc;
-    return null;
-  }
+  String? _labelFor(FloorEntity entity) => entity.effectiveLocation;
 
   // Gesture flow:
   // 1-finger on empty canvas → InteractiveViewer pan (smooth, inertia)
@@ -738,7 +732,7 @@ String _computeStatusAtTime({
     final startMin = (int.tryParse(startParts[0]) ?? 0) * 60 +
         (int.tryParse(startParts[1]) ?? 0);
 
-    if (startMin > selectedMin) return 'reserved';
+    if (startMin > selectedMin) return 'booked';
   }
 
   return 'available';

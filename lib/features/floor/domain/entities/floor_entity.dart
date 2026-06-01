@@ -9,7 +9,7 @@ abstract class FloorEntity with _$FloorEntity {
     required String number,
     required int capacity,
     required String status,
-    required String location,
+    String? location,
     String? tableType,
     @Default(0.0) double x,
     @Default(0.0) double y,
@@ -34,4 +34,16 @@ extension FloorEntityX on FloorEntity {
 
   bool get isAvailable => status == 'available';
   bool get isOccupied => status == 'occupied';
+
+  /// Zone label used for grouping and filtering on the floor map. Prefers
+  /// the explicit [zone], falling back to [location]. Returns `null` when
+  /// neither carries a usable value so callers can treat the table as
+  /// "unzoned" and leave it out of the filter chips.
+  String? get effectiveLocation {
+    final z = zone?.trim();
+    if (z != null && z.isNotEmpty) return z;
+    final l = location?.trim();
+    if (l != null && l.isNotEmpty) return l;
+    return null;
+  }
 }

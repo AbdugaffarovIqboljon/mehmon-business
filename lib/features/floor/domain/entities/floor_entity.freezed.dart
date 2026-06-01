@@ -21,7 +21,7 @@ mixin _$FloorEntity {
   String get number => throw _privateConstructorUsedError;
   int get capacity => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
-  String get location => throw _privateConstructorUsedError;
+  String? get location => throw _privateConstructorUsedError;
   String? get tableType => throw _privateConstructorUsedError;
   double get x => throw _privateConstructorUsedError;
   double get y => throw _privateConstructorUsedError;
@@ -47,7 +47,7 @@ abstract class $FloorEntityCopyWith<$Res> {
     String number,
     int capacity,
     String status,
-    String location,
+    String? location,
     String? tableType,
     double x,
     double y,
@@ -75,7 +75,7 @@ class _$FloorEntityCopyWithImpl<$Res, $Val extends FloorEntity>
     Object? number = null,
     Object? capacity = null,
     Object? status = null,
-    Object? location = null,
+    Object? location = freezed,
     Object? tableType = freezed,
     Object? x = null,
     Object? y = null,
@@ -100,10 +100,10 @@ class _$FloorEntityCopyWithImpl<$Res, $Val extends FloorEntity>
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as String,
-            location: null == location
+            location: freezed == location
                 ? _value.location
                 : location // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             tableType: freezed == tableType
                 ? _value.tableType
                 : tableType // ignore: cast_nullable_to_non_nullable
@@ -144,7 +144,7 @@ abstract class _$$FloorEntityImplCopyWith<$Res>
     String number,
     int capacity,
     String status,
-    String location,
+    String? location,
     String? tableType,
     double x,
     double y,
@@ -171,7 +171,7 @@ class __$$FloorEntityImplCopyWithImpl<$Res>
     Object? number = null,
     Object? capacity = null,
     Object? status = null,
-    Object? location = null,
+    Object? location = freezed,
     Object? tableType = freezed,
     Object? x = null,
     Object? y = null,
@@ -196,10 +196,10 @@ class __$$FloorEntityImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as String,
-        location: null == location
+        location: freezed == location
             ? _value.location
             : location // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         tableType: freezed == tableType
             ? _value.tableType
             : tableType // ignore: cast_nullable_to_non_nullable
@@ -233,7 +233,7 @@ class _$FloorEntityImpl implements _FloorEntity {
     required this.number,
     required this.capacity,
     required this.status,
-    required this.location,
+    this.location,
     this.tableType,
     this.x = 0.0,
     this.y = 0.0,
@@ -250,7 +250,7 @@ class _$FloorEntityImpl implements _FloorEntity {
   @override
   final String status;
   @override
-  final String location;
+  final String? location;
   @override
   final String? tableType;
   @override
@@ -321,7 +321,7 @@ abstract class _FloorEntity implements FloorEntity {
     required final String number,
     required final int capacity,
     required final String status,
-    required final String location,
+    final String? location,
     final String? tableType,
     final double x,
     final double y,
@@ -338,7 +338,7 @@ abstract class _FloorEntity implements FloorEntity {
   @override
   String get status;
   @override
-  String get location;
+  String? get location;
   @override
   String? get tableType;
   @override

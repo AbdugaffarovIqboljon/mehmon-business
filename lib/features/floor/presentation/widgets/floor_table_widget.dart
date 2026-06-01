@@ -19,19 +19,19 @@ class FloorTableWidget extends StatelessWidget {
 
   final FloorTableConfig config;
 
-  /// Optional status string ("available" | "occupied" | ...) that overrides
-  /// [FloorTableConfig.statusColor]. When non-null, the dot color is
-  /// resolved from [AppColors] instead of the config.
+  /// Optional status string ("available" | "booked" | "occupied") that
+  /// overrides [FloorTableConfig.statusColor]. When non-null, the dot color
+  /// is resolved from [AppColors] instead of the config.
   final String? displayStatus;
 
   final ValueListenable<String?>? selectedNotifier;
   final VoidCallback? onTap;
 
   static Color? _colorForStatus(String status) => switch (status) {
-        'available' => AppColors.success,
-        'reserved' => AppColors.warning,
-        'occupied' => AppColors.error,
-        _ => AppColors.disabled,
+        'available' => AppColors.success, // green
+        'booked' => AppColors.warning, // orange — 15 min before booking
+        'occupied' => AppColors.info, // blue — guest has arrived
+        _ => AppColors.disabled, // grey — unknown/defensive
       };
 
   @override

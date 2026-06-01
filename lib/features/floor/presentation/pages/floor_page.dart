@@ -11,6 +11,7 @@ import 'package:mehmon/features/floor/presentation/widgets/floor_drawer.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_map_canvas.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_timeline_header.dart';
 import 'package:mehmon/features/floor/presentation/widgets/table_form_sheet.dart';
+import 'package:mehmon/features/floor/presentation/widgets/zone_filter_dropdown.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
 /// Main floor page showing the restaurant hall layout with an
@@ -231,6 +232,16 @@ class _FloorPageState extends ConsumerState<FloorPage>
   @override
   Widget build(BuildContext context) {
     final tablesAsync = ref.watch(floorControllerProvider);
+    final selectedZone = ref.watch(selectedZoneProvider);
+    final isEditing = ref.watch(floorEditModeProvider);
+
+    // Leaving edit mode clears any active zone filter so the next session
+    // starts on "Barchasi" rather than a stale, narrowed view.
+    ref.listen<bool>(floorEditModeProvider, (prev, next) {
+      if ((prev ?? false) && !next) {
+        ref.read(selectedZoneProvider.notifier).state = null;
+      }
+    });
 
     return Scaffold(
       key: _scaffoldKey,
@@ -265,7 +276,32 @@ class _FloorPageState extends ConsumerState<FloorPage>
                 error: e,
                 onRetry: () => ref.invalidate(floorControllerProvider),
               ),
-              data: (tables) => FloorMapCanvas(tables: tables),
+              data: (tables) {
+                // Zones drive the filter chips dynamically — no hardcoded
+                // names. Sorted for a stable chip order across rebuilds.
+                final zones = tables
+                    .map((t) => t.effectiveLocation)
+                    .whereType<String>()
+                    .toSet()
+                    .toList()
+                  ..sort();
+
+                final filteredTables = selectedZone == null
+                    ? tables
+                    : tables
+                        .where((t) => t.effectiveLocation == selectedZone)
+                        .toList();
+
+                return Column(
+                  children: [
+                    ZoneFilterDropdown(
+                      zones: zones,
+                      isDisabled: isEditing,
+                    ),
+                    Expanded(child: FloorMapCanvas(tables: filteredTables)),
+                  ],
+                );
+              },
             ),
           ),
         ],
