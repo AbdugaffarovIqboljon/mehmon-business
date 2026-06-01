@@ -102,13 +102,26 @@ class FloorTableWidget extends StatelessWidget {
         ),
         if (config.label != null)
           Positioned(
-            child: Text(
-              config.label!,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-                shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
+            left: 4,
+            right: 4,
+            child: Center(
+              child: Text(
+                config.label!,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 6,
+                      color: Colors.black87,
+                      offset: Offset(0, 1),
+                    ),
+                    Shadow(blurRadius: 3, color: Colors.black54),
+                  ],
+                ),
               ),
             ),
           ),
@@ -126,22 +139,6 @@ class FloorTableWidget extends StatelessWidget {
               ),
             ),
           ),
-        // Directional marker at the "top" of the table. Rotates with the
-        // parent Transform.rotate so 45°/90° rotations become visible on
-        // otherwise rotationally-symmetric assets.
-        Align(
-          alignment: Alignment.topCenter,
-          child: Container(
-            margin: const EdgeInsets.only(top: 4),
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.primary, width: 1.5),
-            ),
-          ),
-        ),
       ],
     );
   }
