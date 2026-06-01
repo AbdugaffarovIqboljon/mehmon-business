@@ -290,19 +290,6 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     final pos = notifier.value;
     _debounceTimers.remove(entity.id)?.cancel();
 
-    if (ref.read(floorEditModeProvider)) {
-      // Buffer; "Saqlash" will flush both position and rotation in one PUT.
-      final pending = ref.read(pendingPositionsProvider);
-      ref.read(pendingPositionsProvider.notifier).state = {
-        ...pending,
-        entity.id: pos,
-      };
-      _dragStartByPointer.remove(key);
-      _isDraggingByPointer.remove(key);
-      _activePanPointerId = null;
-      return;
-    }
-
     final oldPosition = _dragStartPositions[entity.id] ?? pos;
     _dragStartByPointer.remove(key);
     _isDraggingByPointer.remove(key);
@@ -461,37 +448,44 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
               _fitToContent(constraints);
             }
           });
-          return InteractiveViewer(
-            transformationController: _transformController,
-            boundaryMargin: const EdgeInsets.all(double.infinity),
-            minScale: 0.4,
-            maxScale: 2,
-            constrained: false,
-            onInteractionEnd: (_) {
-              final clamped = _clampedMatrix(
-                _transformController.value,
-                constraints,
+          return ValueListenableBuilder<String?>(
+            valueListenable: _selectedTableNotifier,
+            builder: (_, selectedId, __) {
+              final isTableActive = isEditing && selectedId != null;
+              return InteractiveViewer(
+                transformationController: _transformController,
+                boundaryMargin: const EdgeInsets.all(double.infinity),
+                minScale: 0.4,
+                maxScale: 2,
+                constrained: false,
+                panEnabled: !isTableActive,
+                onInteractionEnd: (_) {
+                  final clamped = _clampedMatrix(
+                    _transformController.value,
+                    constraints,
+                  );
+                  if (clamped != _transformController.value) {
+                    _transformController.value = clamped;
+                  }
+                },
+                child: SizedBox(
+                  width: kCanvasWidth,
+                  height: kCanvasHeight,
+                  child: Stack(
+                    children: [
+                      for (var i = 0; i < entities.length; i++)
+                        _buildTable(
+                          entities[i],
+                          i,
+                          _statusFor(entities[i], selectedTime, bookings),
+                          isEditing: isEditing,
+                          pendingRotation: pendingRotations[entities[i].id],
+                        ),
+                    ],
+                  ),
+                ),
               );
-              if (clamped != _transformController.value) {
-                _transformController.value = clamped;
-              }
             },
-            child: SizedBox(
-              width: kCanvasWidth,
-              height: kCanvasHeight,
-              child: Stack(
-                children: [
-                  for (var i = 0; i < entities.length; i++)
-                    _buildTable(
-                      entities[i],
-                      i,
-                      _statusFor(entities[i], selectedTime, bookings),
-                      isEditing: isEditing,
-                      pendingRotation: pendingRotations[entities[i].id],
-                    ),
-                ],
-              ),
-            ),
           );
         },
       ),
@@ -519,17 +513,26 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     return ValueListenableBuilder<Offset>(
       key: ValueKey<String>(entity.id),
       valueListenable: notifier,
-      builder: (_, pos, child) => Positioned(
-        left: pos.dx,
-        top: pos.dy,
-        width: tableW,
-        child: child!,
-      ),
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onPanStart: (d) => _onPanStart(entity, notifier, d),
-        onPanUpdate: (d) => _onPanUpdate(notifier, tableW, d),
-        onPanEnd: (_) => _onPanEnd(entity, notifier),
+      builder: (_, pos, __) => ValueListenableBuilder<String?>(
+        valueListenable: _selectedTableNotifier,
+        builder: (_, selectedId, child) {
+          final isDraggable = isEditing && selectedId == entity.id;
+          return Positioned(
+            left: pos.dx,
+            top: pos.dy,
+            width: tableW,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onPanStart:
+                  isDraggable ? (d) => _onPanStart(entity, notifier, d) : null,
+              onPanUpdate:
+                  isDraggable ? (d) => _onPanUpdate(notifier, tableW, d) : null,
+              onPanEnd:
+                  isDraggable ? (_) => _onPanEnd(entity, notifier) : null,
+              child: child!,
+            ),
+          );
+        },
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

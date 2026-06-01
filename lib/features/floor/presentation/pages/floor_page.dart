@@ -149,14 +149,11 @@ class _FloorPageState extends ConsumerState<FloorPage>
       ..read(floorEditModeProvider.notifier).state = false;
   }
 
-  /// Flushes pending position + rotation changes back to the server. Each
-  /// changed table gets a SINGLE PUT carrying x, y, and (if rotated) the
-  /// new rotation, so we never split layout edits across two requests.
+  /// Flushes pending rotation changes back to the server. Positions are
+  /// already persisted per-drag via _confirmAndSave in the canvas.
   Future<void> _saveAllPositions() async {
-    final pendingPos = ref.read(pendingPositionsProvider);
     final pendingRot = ref.read(pendingRotationsProvider);
-    final allIds = {...pendingPos.keys, ...pendingRot.keys};
-    if (allIds.isEmpty) {
+    if (pendingRot.isEmpty) {
       ref.read(floorEditModeProvider.notifier).state = false;
       return;
     }
@@ -166,20 +163,18 @@ class _FloorPageState extends ConsumerState<FloorPage>
     final byId = {for (final t in tables) t.id: t};
 
     final controller = ref.read(floorControllerProvider.notifier);
-    for (final id in allIds) {
+    for (final id in pendingRot.keys) {
       final entity = byId[id];
       if (entity == null) continue;
-      final pos = pendingPos[id];
       await controller.updateTablePosition(
         id,
-        pos?.dx ?? entity.x,
-        pos?.dy ?? entity.y,
+        entity.x,
+        entity.y,
         rotation: pendingRot[id],
       );
     }
 
     ref
-      ..read(pendingPositionsProvider.notifier).state = {}
       ..read(pendingRotationsProvider.notifier).state = {}
       ..read(floorEditModeProvider.notifier).state = false;
   }
