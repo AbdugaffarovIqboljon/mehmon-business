@@ -40,20 +40,21 @@ class ShiftsPage extends ConsumerWidget {
     WidgetRef ref,
     ShiftEntity shift,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("O'chirishni tasdiqlang"),
-        content: Text("${shift.staffName} smenasini o'chirasizmi?"),
+        title: Text(l10n.floor_confirm_delete_title),
+        content: Text(l10n.floor_confirm_delete_shift(shift.staffName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Bekor qilish'),
+            child: Text(l10n.floor_cancel_btn),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text("O'chirish"),
+            child: Text(l10n.floor_delete_btn),
           ),
         ],
       ),
@@ -92,11 +93,11 @@ class ShiftsPage extends ConsumerWidget {
                 physics: const BouncingScrollPhysics(
                   parent: AlwaysScrollableScrollPhysics(),
                 ),
-                children: const [
-                  SizedBox(height: 120),
+                children: [
+                  const SizedBox(height: 120),
                   Center(
                     child: Text(
-                      "Smenalar yo'q",
+                      l10n.floor_no_shifts,
                       style: AppTextStyles.bodyMedium,
                     ),
                   ),

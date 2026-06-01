@@ -113,5 +113,85 @@
   "segmentAllGuests": "Все гости",
   "segmentGuestsInHall": "Гости в зале",
   "logout": "Выйти",
-  "support": "Поддержка"
+  "support": "Поддержка",
+  "floor_cancel_btn": "Отмена",
+  "floor_delete_btn": "Удалить",
+  "floor_edit_btn": "Редактировать",
+  "floor_close_tooltip": "Закрыть",
+  "floor_delete_table_title": "Удалить стол",
+  "floor_confirm_delete_title": "Подтвердить удаление",
+  "floor_delete_error": "Не удалось удалить",
+  "floor_save_error": "Не удалось сохранить",
+  "floor_table_occupied": "Стол занят",
+  "floor_table_free": "Стол свободен",
+  "floor_table_booked_soon": "Скоро будет занят",
+  "floor_all_zones": "Все",
+  "floor_no_tables_added": "Столов ещё нет",
+  "floor_confirm_move_table": "Сохранить стол на новом месте?",
+  "floor_no_bookings_today": "Сегодня нет броней",
+  "floor_today_bookings": "Сегодняшние брони",
+  "floor_edit_table_title": "Редактировать стол",
+  "floor_new_table_title": "Новый стол",
+  "floor_table_number_label": "Номер стола",
+  "floor_capacity_label": "Вместимость",
+  "floor_location_label": "Расположение (необязательно)",
+  "floor_location_hint": "Главный зал, Терраса...",
+  "floor_zone_label": "Зона",
+  "floor_zone_hint": "Выберите зону",
+  "floor_required_field": "Обязательно",
+  "floor_positive_number_error": "Введите положительное число",
+  "floor_no_shifts": "Нет смен",
+  "floor_edit_shift_title": "Редактировать смену",
+  "floor_new_shift_title": "Добавить новую смену",
+  "floor_staff_name_label": "Имя сотрудника",
+  "floor_date_label": "Дата",
+  "floor_start_time_label": "Начало",
+  "floor_end_time_label": "Конец",
+  "floor_notes_label": "Заметки (необязательно)",
+  "floor_select_date_time": "Выберите дату и время",
+  "floor_tables_loading": "Загрузка столов...",
+  "floor_no_tables_available": "Столов нет",
+  "floor_tables_optional": "Столы (необязательно)",
+  "floor_restaurant_fallback": "Ресторан",
+  "floor_filter_all": "Все",
+  "floor_filter_reservations": "Бронирования",
+  "floor_filter_updates": "Обновления",
+  "floor_filter_cancellations": "Отмены",
+  "floor_event_guest_label": "Гость:",
+  "floor_event_table_label": "Стол:",
+  "floor_confirm_delete_table": "Удалить стол \"{number}\"?",
+  "@floor_confirm_delete_table": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_confirm_delete_shift": "Удалить смену {name}?",
+  "@floor_confirm_delete_shift": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "floor_table_number": "Стол {number}",
+  "@floor_table_number": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_table_title": "Стол {number}",
+  "@floor_table_title": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_guests_kishi": "{count} гостей",
+  "@floor_guests_kishi": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "floor_table_capacity_label": "{number} · {capacity} гостей",
+  "@floor_table_capacity_label": {
+    "placeholders": {
+      "number": { "type": "String" },
+      "capacity": { "type": "int" }
+    }
+  },
+  "floor_reservation_number": "№{number}",
+  "@floor_reservation_number": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_event_guest_count": "{count} гостей",
+  "@floor_event_guest_count": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

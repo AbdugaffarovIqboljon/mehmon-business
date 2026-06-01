@@ -951,6 +951,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Support'**
   String get support;
+
+  /// No description provided for @floor_cancel_btn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get floor_cancel_btn;
+
+  /// No description provided for @floor_delete_btn.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get floor_delete_btn;
+
+  /// No description provided for @floor_edit_btn.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get floor_edit_btn;
+
+  /// No description provided for @floor_close_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get floor_close_tooltip;
+
+  /// No description provided for @floor_delete_table_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete table'**
+  String get floor_delete_table_title;
+
+  /// No description provided for @floor_confirm_delete_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm delete'**
+  String get floor_confirm_delete_title;
+
+  /// No description provided for @floor_delete_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete'**
+  String get floor_delete_error;
+
+  /// No description provided for @floor_save_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save'**
+  String get floor_save_error;
+
+  /// No description provided for @floor_table_occupied.
+  ///
+  /// In en, this message translates to:
+  /// **'Table occupied'**
+  String get floor_table_occupied;
+
+  /// No description provided for @floor_table_free.
+  ///
+  /// In en, this message translates to:
+  /// **'Table free'**
+  String get floor_table_free;
+
+  /// No description provided for @floor_table_booked_soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking soon'**
+  String get floor_table_booked_soon;
+
+  /// No description provided for @floor_all_zones.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get floor_all_zones;
+
+  /// No description provided for @floor_no_tables_added.
+  ///
+  /// In en, this message translates to:
+  /// **'No tables added yet'**
+  String get floor_no_tables_added;
+
+  /// No description provided for @floor_confirm_move_table.
+  ///
+  /// In en, this message translates to:
+  /// **'Save table to new position?'**
+  String get floor_confirm_move_table;
+
+  /// No description provided for @floor_no_bookings_today.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings today'**
+  String get floor_no_bookings_today;
+
+  /// No description provided for @floor_today_bookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s bookings'**
+  String get floor_today_bookings;
+
+  /// No description provided for @floor_edit_table_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit table'**
+  String get floor_edit_table_title;
+
+  /// No description provided for @floor_new_table_title.
+  ///
+  /// In en, this message translates to:
+  /// **'New table'**
+  String get floor_new_table_title;
+
+  /// No description provided for @floor_table_number_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Table number'**
+  String get floor_table_number_label;
+
+  /// No description provided for @floor_capacity_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity'**
+  String get floor_capacity_label;
+
+  /// No description provided for @floor_location_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Location (optional)'**
+  String get floor_location_label;
+
+  /// No description provided for @floor_location_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Main hall, Terrace...'**
+  String get floor_location_hint;
+
+  /// No description provided for @floor_zone_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Zone'**
+  String get floor_zone_label;
+
+  /// No description provided for @floor_zone_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select zone'**
+  String get floor_zone_hint;
+
+  /// No description provided for @floor_required_field.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get floor_required_field;
+
+  /// No description provided for @floor_positive_number_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a positive number'**
+  String get floor_positive_number_error;
+
+  /// No description provided for @floor_no_shifts.
+  ///
+  /// In en, this message translates to:
+  /// **'No shifts'**
+  String get floor_no_shifts;
+
+  /// No description provided for @floor_edit_shift_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit shift'**
+  String get floor_edit_shift_title;
+
+  /// No description provided for @floor_new_shift_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new shift'**
+  String get floor_new_shift_title;
+
+  /// No description provided for @floor_staff_name_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff name'**
+  String get floor_staff_name_label;
+
+  /// No description provided for @floor_date_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get floor_date_label;
+
+  /// No description provided for @floor_start_time_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get floor_start_time_label;
+
+  /// No description provided for @floor_end_time_label.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get floor_end_time_label;
+
+  /// No description provided for @floor_notes_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get floor_notes_label;
+
+  /// No description provided for @floor_select_date_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date and time'**
+  String get floor_select_date_time;
+
+  /// No description provided for @floor_tables_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading tables...'**
+  String get floor_tables_loading;
+
+  /// No description provided for @floor_no_tables_available.
+  ///
+  /// In en, this message translates to:
+  /// **'No tables available'**
+  String get floor_no_tables_available;
+
+  /// No description provided for @floor_tables_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Tables (optional)'**
+  String get floor_tables_optional;
+
+  /// No description provided for @floor_restaurant_fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurant'**
+  String get floor_restaurant_fallback;
+
+  /// No description provided for @floor_filter_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get floor_filter_all;
+
+  /// No description provided for @floor_filter_reservations.
+  ///
+  /// In en, this message translates to:
+  /// **'Reservations'**
+  String get floor_filter_reservations;
+
+  /// No description provided for @floor_filter_updates.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates'**
+  String get floor_filter_updates;
+
+  /// No description provided for @floor_filter_cancellations.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellations'**
+  String get floor_filter_cancellations;
+
+  /// No description provided for @floor_event_guest_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest:'**
+  String get floor_event_guest_label;
+
+  /// No description provided for @floor_event_table_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Table:'**
+  String get floor_event_table_label;
+
+  /// No description provided for @floor_confirm_delete_table.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete table \"{number}\"?'**
+  String floor_confirm_delete_table(String number);
+
+  /// No description provided for @floor_confirm_delete_shift.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}\'s shift?'**
+  String floor_confirm_delete_shift(String name);
+
+  /// No description provided for @floor_table_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Table {number}'**
+  String floor_table_number(String number);
+
+  /// No description provided for @floor_table_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Table {number}'**
+  String floor_table_title(String number);
+
+  /// No description provided for @floor_guests_kishi.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} guests'**
+  String floor_guests_kishi(int count);
+
+  /// No description provided for @floor_table_capacity_label.
+  ///
+  /// In en, this message translates to:
+  /// **'{number} · {capacity} guests'**
+  String floor_table_capacity_label(String number, int capacity);
+
+  /// No description provided for @floor_reservation_number.
+  ///
+  /// In en, this message translates to:
+  /// **'No.{number}'**
+  String floor_reservation_number(String number);
+
+  /// No description provided for @floor_event_guest_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} guests'**
+  String floor_event_guest_count(int count);
 }
 
 class _AppLocalizationsDelegate

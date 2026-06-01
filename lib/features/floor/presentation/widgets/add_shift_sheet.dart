@@ -9,6 +9,7 @@ import 'package:mehmon/core/widgets/primary_button.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/domain/entities/shift_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class AddShiftSheet extends ConsumerStatefulWidget {
   const AddShiftSheet({this.existingShift, super.key});
@@ -111,12 +112,13 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
 
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
+    final l10n = AppLocalizations.of(context)!;
     final date = _date.value;
     final start = _startTime.value;
     final end = _endTime.value;
     if (date == null || start == null || end == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sana va vaqtni tanlang')),
+        SnackBar(content: Text(l10n.floor_select_date_time)),
       );
       return;
     }
@@ -151,13 +153,14 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
       Navigator.of(context).pop();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saqlashda xatolik yuz berdi')),
+        SnackBar(content: Text(l10n.floor_save_error)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final viewInsets = MediaQuery.of(context).viewInsets.bottom;
 
     return Padding(
@@ -180,21 +183,21 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
                   const _Handle(),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    _isEdit ? 'Smenani tahrirlash' : "Yangi smena qo'shish",
+                    _isEdit ? l10n.floor_edit_shift_title : l10n.floor_new_shift_title,
                     style: AppTextStyles.titleLarge,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppTextField(
                     controller: _staffNameCtrl,
-                    label: 'Xodim ismi',
+                    label: l10n.floor_staff_name_label,
                     validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'Majburiy' : null,
+                        (v == null || v.trim().isEmpty) ? l10n.floor_required_field : null,
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: AppSpacing.md),
                   _PickerField(
-                    label: 'Sana',
+                    label: l10n.floor_date_label,
                     icon: Icons.calendar_today_outlined,
                     listenable: _date,
                     formatter: (v) => v == null ? null : _formatDate(v),
@@ -205,7 +208,7 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
                     children: [
                       Expanded(
                         child: _PickerField(
-                          label: 'Boshlanish',
+                          label: l10n.floor_start_time_label,
                           icon: Icons.access_time,
                           listenable: _startTime,
                           formatter: (v) =>
@@ -216,7 +219,7 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
                       const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: _PickerField(
-                          label: 'Tugash',
+                          label: l10n.floor_end_time_label,
                           icon: Icons.access_time,
                           listenable: _endTime,
                           formatter: (v) =>
@@ -229,7 +232,7 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: _notesCtrl,
-                    label: 'Izoh (ixtiyoriy)',
+                    label: l10n.floor_notes_label,
                     maxLines: 3,
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -240,7 +243,7 @@ class _AddShiftSheetState extends ConsumerState<AddShiftSheet> {
                   ValueListenableBuilder<bool>(
                     valueListenable: _submitting,
                     builder: (_, submitting, __) => PrimaryButton(
-                      label: 'Saqlash',
+                      label: l10n.saveBtn,
                       isLoading: submitting,
                       onPressed: submitting ? null : _submit,
                     ),
@@ -262,6 +265,7 @@ class _TablesSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final floorAsync = ref.watch(floorControllerProvider);
     final tables = floorAsync.valueOrNull;
 
@@ -269,7 +273,7 @@ class _TablesSelector extends ConsumerWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
         child: Text(
-          'Stollar yuklanmoqda...',
+          l10n.floor_tables_loading,
           style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
         ),
       );
@@ -279,7 +283,7 @@ class _TablesSelector extends ConsumerWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
         child: Text(
-          'Stollar mavjud emas',
+          l10n.floor_no_tables_available,
           style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
         ),
       );
@@ -288,8 +292,8 @@ class _TablesSelector extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Stollar (ixtiyoriy)',
+        Text(
+          l10n.floor_tables_optional,
           style: AppTextStyles.labelLarge,
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -301,7 +305,7 @@ class _TablesSelector extends ConsumerWidget {
             children: [
               for (final table in tables)
                 FilterChip(
-                  label: Text('Stol ${table.displayNumber}'),
+                  label: Text(l10n.floor_table_number(table.displayNumber)),
                   selected: selected.contains(table.id),
                   onSelected: (val) {
                     final next = [...selected];

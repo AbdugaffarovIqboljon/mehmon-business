@@ -15,11 +15,11 @@ import 'package:mehmon/l10n/app_localizations.dart';
 enum ChronologyFilterType { all, reservations, updates, cancellations }
 
 extension ChronologyFilterTypeX on ChronologyFilterType {
-  String get label => switch (this) {
-    ChronologyFilterType.all => 'All',
-    ChronologyFilterType.reservations => 'Reservations',
-    ChronologyFilterType.updates => 'Updates',
-    ChronologyFilterType.cancellations => 'Cancellations',
+  String label(AppLocalizations l10n) => switch (this) {
+    ChronologyFilterType.all => l10n.floor_filter_all,
+    ChronologyFilterType.reservations => l10n.floor_filter_reservations,
+    ChronologyFilterType.updates => l10n.floor_filter_updates,
+    ChronologyFilterType.cancellations => l10n.floor_filter_cancellations,
   };
 }
 
@@ -60,13 +60,14 @@ class _ChronologyPageState extends ConsumerState<ChronologyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final labels = ChronologyFilterType.values
-        .map((item) => item.label)
+        .map((item) => item.label(l10n))
         .toList();
     final asyncLogs = ref.watch(activityLogControllerProvider);
 
     return AppScaffold(
-      title: AppLocalizations.of(context)!.chronologyTitle,
+      title: l10n.chronologyTitle,
       body: Column(
         children: [
           const SizedBox(height: AppSpacing.xs),
@@ -75,10 +76,10 @@ class _ChronologyPageState extends ConsumerState<ChronologyPage> {
             builder: (context, selectedFilter, _) {
               return ChronologyFilterTabs(
                 tabs: labels,
-                selectedTab: selectedFilter.label,
+                selectedTab: selectedFilter.label(l10n),
                 onSelected: (label) {
                   final matchedFilter = ChronologyFilterType.values.firstWhere(
-                    (item) => item.label == label,
+                    (item) => item.label(l10n) == label,
                     orElse: () => ChronologyFilterType.all,
                   );
                   if (matchedFilter == selectedFilter) {

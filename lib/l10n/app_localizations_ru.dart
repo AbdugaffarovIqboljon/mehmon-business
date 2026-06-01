@@ -446,4 +446,179 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get support => 'Поддержка';
+
+  @override
+  String get floor_cancel_btn => 'Отмена';
+
+  @override
+  String get floor_delete_btn => 'Удалить';
+
+  @override
+  String get floor_edit_btn => 'Редактировать';
+
+  @override
+  String get floor_close_tooltip => 'Закрыть';
+
+  @override
+  String get floor_delete_table_title => 'Удалить стол';
+
+  @override
+  String get floor_confirm_delete_title => 'Подтвердить удаление';
+
+  @override
+  String get floor_delete_error => 'Не удалось удалить';
+
+  @override
+  String get floor_save_error => 'Не удалось сохранить';
+
+  @override
+  String get floor_table_occupied => 'Стол занят';
+
+  @override
+  String get floor_table_free => 'Стол свободен';
+
+  @override
+  String get floor_table_booked_soon => 'Скоро будет занят';
+
+  @override
+  String get floor_all_zones => 'Все';
+
+  @override
+  String get floor_no_tables_added => 'Столов ещё нет';
+
+  @override
+  String get floor_confirm_move_table => 'Сохранить стол на новом месте?';
+
+  @override
+  String get floor_no_bookings_today => 'Сегодня нет броней';
+
+  @override
+  String get floor_today_bookings => 'Сегодняшние брони';
+
+  @override
+  String get floor_edit_table_title => 'Редактировать стол';
+
+  @override
+  String get floor_new_table_title => 'Новый стол';
+
+  @override
+  String get floor_table_number_label => 'Номер стола';
+
+  @override
+  String get floor_capacity_label => 'Вместимость';
+
+  @override
+  String get floor_location_label => 'Расположение (необязательно)';
+
+  @override
+  String get floor_location_hint => 'Главный зал, Терраса...';
+
+  @override
+  String get floor_zone_label => 'Зона';
+
+  @override
+  String get floor_zone_hint => 'Выберите зону';
+
+  @override
+  String get floor_required_field => 'Обязательно';
+
+  @override
+  String get floor_positive_number_error => 'Введите положительное число';
+
+  @override
+  String get floor_no_shifts => 'Нет смен';
+
+  @override
+  String get floor_edit_shift_title => 'Редактировать смену';
+
+  @override
+  String get floor_new_shift_title => 'Добавить новую смену';
+
+  @override
+  String get floor_staff_name_label => 'Имя сотрудника';
+
+  @override
+  String get floor_date_label => 'Дата';
+
+  @override
+  String get floor_start_time_label => 'Начало';
+
+  @override
+  String get floor_end_time_label => 'Конец';
+
+  @override
+  String get floor_notes_label => 'Заметки (необязательно)';
+
+  @override
+  String get floor_select_date_time => 'Выберите дату и время';
+
+  @override
+  String get floor_tables_loading => 'Загрузка столов...';
+
+  @override
+  String get floor_no_tables_available => 'Столов нет';
+
+  @override
+  String get floor_tables_optional => 'Столы (необязательно)';
+
+  @override
+  String get floor_restaurant_fallback => 'Ресторан';
+
+  @override
+  String get floor_filter_all => 'Все';
+
+  @override
+  String get floor_filter_reservations => 'Бронирования';
+
+  @override
+  String get floor_filter_updates => 'Обновления';
+
+  @override
+  String get floor_filter_cancellations => 'Отмены';
+
+  @override
+  String get floor_event_guest_label => 'Гость:';
+
+  @override
+  String get floor_event_table_label => 'Стол:';
+
+  @override
+  String floor_confirm_delete_table(String number) {
+    return 'Удалить стол \"$number\"?';
+  }
+
+  @override
+  String floor_confirm_delete_shift(String name) {
+    return 'Удалить смену $name?';
+  }
+
+  @override
+  String floor_table_number(String number) {
+    return 'Стол $number';
+  }
+
+  @override
+  String floor_table_title(String number) {
+    return 'Стол $number';
+  }
+
+  @override
+  String floor_guests_kishi(int count) {
+    return '$count гостей';
+  }
+
+  @override
+  String floor_table_capacity_label(String number, int capacity) {
+    return '$number · $capacity гостей';
+  }
+
+  @override
+  String floor_reservation_number(String number) {
+    return '№$number';
+  }
+
+  @override
+  String floor_event_guest_count(int count) {
+    return '$count гостей';
+  }
 }

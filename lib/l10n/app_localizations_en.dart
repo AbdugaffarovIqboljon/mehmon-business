@@ -447,4 +447,179 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get support => 'Support';
+
+  @override
+  String get floor_cancel_btn => 'Cancel';
+
+  @override
+  String get floor_delete_btn => 'Delete';
+
+  @override
+  String get floor_edit_btn => 'Edit';
+
+  @override
+  String get floor_close_tooltip => 'Close';
+
+  @override
+  String get floor_delete_table_title => 'Delete table';
+
+  @override
+  String get floor_confirm_delete_title => 'Confirm delete';
+
+  @override
+  String get floor_delete_error => 'Failed to delete';
+
+  @override
+  String get floor_save_error => 'Failed to save';
+
+  @override
+  String get floor_table_occupied => 'Table occupied';
+
+  @override
+  String get floor_table_free => 'Table free';
+
+  @override
+  String get floor_table_booked_soon => 'Booking soon';
+
+  @override
+  String get floor_all_zones => 'All';
+
+  @override
+  String get floor_no_tables_added => 'No tables added yet';
+
+  @override
+  String get floor_confirm_move_table => 'Save table to new position?';
+
+  @override
+  String get floor_no_bookings_today => 'No bookings today';
+
+  @override
+  String get floor_today_bookings => 'Today\'s bookings';
+
+  @override
+  String get floor_edit_table_title => 'Edit table';
+
+  @override
+  String get floor_new_table_title => 'New table';
+
+  @override
+  String get floor_table_number_label => 'Table number';
+
+  @override
+  String get floor_capacity_label => 'Capacity';
+
+  @override
+  String get floor_location_label => 'Location (optional)';
+
+  @override
+  String get floor_location_hint => 'Main hall, Terrace...';
+
+  @override
+  String get floor_zone_label => 'Zone';
+
+  @override
+  String get floor_zone_hint => 'Select zone';
+
+  @override
+  String get floor_required_field => 'Required';
+
+  @override
+  String get floor_positive_number_error => 'Enter a positive number';
+
+  @override
+  String get floor_no_shifts => 'No shifts';
+
+  @override
+  String get floor_edit_shift_title => 'Edit shift';
+
+  @override
+  String get floor_new_shift_title => 'Add new shift';
+
+  @override
+  String get floor_staff_name_label => 'Staff name';
+
+  @override
+  String get floor_date_label => 'Date';
+
+  @override
+  String get floor_start_time_label => 'Start';
+
+  @override
+  String get floor_end_time_label => 'End';
+
+  @override
+  String get floor_notes_label => 'Notes (optional)';
+
+  @override
+  String get floor_select_date_time => 'Select date and time';
+
+  @override
+  String get floor_tables_loading => 'Loading tables...';
+
+  @override
+  String get floor_no_tables_available => 'No tables available';
+
+  @override
+  String get floor_tables_optional => 'Tables (optional)';
+
+  @override
+  String get floor_restaurant_fallback => 'Restaurant';
+
+  @override
+  String get floor_filter_all => 'All';
+
+  @override
+  String get floor_filter_reservations => 'Reservations';
+
+  @override
+  String get floor_filter_updates => 'Updates';
+
+  @override
+  String get floor_filter_cancellations => 'Cancellations';
+
+  @override
+  String get floor_event_guest_label => 'Guest:';
+
+  @override
+  String get floor_event_table_label => 'Table:';
+
+  @override
+  String floor_confirm_delete_table(String number) {
+    return 'Delete table \"$number\"?';
+  }
+
+  @override
+  String floor_confirm_delete_shift(String name) {
+    return 'Delete $name\'s shift?';
+  }
+
+  @override
+  String floor_table_number(String number) {
+    return 'Table $number';
+  }
+
+  @override
+  String floor_table_title(String number) {
+    return 'Table $number';
+  }
+
+  @override
+  String floor_guests_kishi(int count) {
+    return '$count guests';
+  }
+
+  @override
+  String floor_table_capacity_label(String number, int capacity) {
+    return '$number · $capacity guests';
+  }
+
+  @override
+  String floor_reservation_number(String number) {
+    return 'No.$number';
+  }
+
+  @override
+  String floor_event_guest_count(int count) {
+    return '$count guests';
+  }
 }

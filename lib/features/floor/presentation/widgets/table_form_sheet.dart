@@ -10,6 +10,7 @@ import 'package:mehmon/core/widgets/primary_button.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/features/settings/presentation/controllers/profile_controller.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class TableFormSheet extends ConsumerStatefulWidget {
   const TableFormSheet({super.key, this.existingTable});
@@ -54,6 +55,7 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
 
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
+    final l10n = AppLocalizations.of(context)!;
 
     final number = _numberCtrl.text.trim();
     final capacity = int.parse(_capacityCtrl.text.trim());
@@ -87,13 +89,14 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
       Navigator.of(context).pop();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saqlashda xatolik yuz berdi')),
+        SnackBar(content: Text(l10n.floor_save_error)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final viewInsets = MediaQuery.of(context).viewInsets.bottom;
     final zones =
         ref.watch(profileControllerProvider).valueOrNull?.zones ?? const [];
@@ -124,31 +127,31 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
                 const _SheetHandle(),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  _isEdit ? 'Stolni tahrirlash' : 'Yangi stol',
+                  _isEdit ? l10n.floor_edit_table_title : l10n.floor_new_table_title,
                   style: AppTextStyles.titleLarge,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 AppTextField(
                   controller: _numberCtrl,
-                  label: 'Stol raqami',
+                  label: l10n.floor_table_number_label,
                   hint: 'T-001',
                   textInputAction: TextInputAction.next,
                   validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'Majburiy' : null,
+                      (v == null || v.trim().isEmpty) ? l10n.floor_required_field : null,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: _capacityCtrl,
-                  label: "Sig'im",
+                  label: l10n.floor_capacity_label,
                   hint: '4',
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   textInputAction: TextInputAction.next,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Majburiy';
+                    if (v == null || v.trim().isEmpty) return l10n.floor_required_field;
                     final n = int.tryParse(v.trim());
-                    if (n == null || n < 1) return 'Musbat son kiriting';
+                    if (n == null || n < 1) return l10n.floor_positive_number_error;
                     return null;
                   },
                 ),
@@ -156,15 +159,15 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
                 if (zones.isEmpty)
                   AppTextField(
                     controller: _locationCtrl,
-                    label: 'Joylashuv (ixtiyoriy)',
-                    hint: 'Asosiy zal, Terassa...',
+                    label: l10n.floor_location_label,
+                    hint: l10n.floor_location_hint,
                   )
                 else
                   DropdownButtonFormField<String>(
                     initialValue: dropdownValue,
-                    decoration: const InputDecoration(
-                      labelText: 'Zona',
-                      hintText: 'Zona tanlang',
+                    decoration: InputDecoration(
+                      labelText: l10n.floor_zone_label,
+                      hintText: l10n.floor_zone_hint,
                     ),
                     items: [
                       for (final z in zones)
@@ -174,13 +177,13 @@ class _TableFormSheetState extends ConsumerState<TableFormSheet> {
                       setState(() => _selectedZone = value);
                     },
                     validator: (value) =>
-                        (value == null || value.isEmpty) ? 'Majburiy' : null,
+                        (value == null || value.isEmpty) ? l10n.floor_required_field : null,
                   ),
                 const SizedBox(height: AppSpacing.xl),
                 ValueListenableBuilder<bool>(
                   valueListenable: _isLoading,
                   builder: (_, loading, __) => PrimaryButton(
-                    label: 'Saqlash',
+                    label: l10n.saveBtn,
                     isLoading: loading,
                     onPressed: loading ? null : _submit,
                   ),

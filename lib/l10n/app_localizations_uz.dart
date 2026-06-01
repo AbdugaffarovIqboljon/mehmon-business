@@ -449,4 +449,179 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get support => 'Qo\'llab-quvvatlash';
+
+  @override
+  String get floor_cancel_btn => 'Bekor qilish';
+
+  @override
+  String get floor_delete_btn => 'O\'chirish';
+
+  @override
+  String get floor_edit_btn => 'Tahrirlash';
+
+  @override
+  String get floor_close_tooltip => 'Yopish';
+
+  @override
+  String get floor_delete_table_title => 'Stolni o\'chirish';
+
+  @override
+  String get floor_confirm_delete_title => 'O\'chirishni tasdiqlang';
+
+  @override
+  String get floor_delete_error => 'O\'chirishda xatolik yuz berdi';
+
+  @override
+  String get floor_save_error => 'Saqlashda xatolik yuz berdi';
+
+  @override
+  String get floor_table_occupied => 'Stol band';
+
+  @override
+  String get floor_table_free => 'Stol bo\'sh';
+
+  @override
+  String get floor_table_booked_soon => 'Tez orada band bo\'ladi';
+
+  @override
+  String get floor_all_zones => 'Barchasi';
+
+  @override
+  String get floor_no_tables_added => 'Hali stollar qo\'shilmagan';
+
+  @override
+  String get floor_confirm_move_table => 'Stolni yangi joyga saqlaysizmi?';
+
+  @override
+  String get floor_no_bookings_today => 'Bugun bron yo\'q';
+
+  @override
+  String get floor_today_bookings => 'Bugungi bronlar';
+
+  @override
+  String get floor_edit_table_title => 'Stolni tahrirlash';
+
+  @override
+  String get floor_new_table_title => 'Yangi stol';
+
+  @override
+  String get floor_table_number_label => 'Stol raqami';
+
+  @override
+  String get floor_capacity_label => 'Sig\'im';
+
+  @override
+  String get floor_location_label => 'Joylashuv (ixtiyoriy)';
+
+  @override
+  String get floor_location_hint => 'Asosiy zal, Terassa...';
+
+  @override
+  String get floor_zone_label => 'Zona';
+
+  @override
+  String get floor_zone_hint => 'Zona tanlang';
+
+  @override
+  String get floor_required_field => 'Majburiy';
+
+  @override
+  String get floor_positive_number_error => 'Musbat son kiriting';
+
+  @override
+  String get floor_no_shifts => 'Smenalar yo\'q';
+
+  @override
+  String get floor_edit_shift_title => 'Smenani tahrirlash';
+
+  @override
+  String get floor_new_shift_title => 'Yangi smena qo\'shish';
+
+  @override
+  String get floor_staff_name_label => 'Xodim ismi';
+
+  @override
+  String get floor_date_label => 'Sana';
+
+  @override
+  String get floor_start_time_label => 'Boshlanish';
+
+  @override
+  String get floor_end_time_label => 'Tugash';
+
+  @override
+  String get floor_notes_label => 'Izoh (ixtiyoriy)';
+
+  @override
+  String get floor_select_date_time => 'Sana va vaqtni tanlang';
+
+  @override
+  String get floor_tables_loading => 'Stollar yuklanmoqda...';
+
+  @override
+  String get floor_no_tables_available => 'Stollar mavjud emas';
+
+  @override
+  String get floor_tables_optional => 'Stollar (ixtiyoriy)';
+
+  @override
+  String get floor_restaurant_fallback => 'Restoran';
+
+  @override
+  String get floor_filter_all => 'Barchasi';
+
+  @override
+  String get floor_filter_reservations => 'Bronlar';
+
+  @override
+  String get floor_filter_updates => 'Yangilanishlar';
+
+  @override
+  String get floor_filter_cancellations => 'Bekor qilinganlar';
+
+  @override
+  String get floor_event_guest_label => 'Mehmon:';
+
+  @override
+  String get floor_event_table_label => 'Stol:';
+
+  @override
+  String floor_confirm_delete_table(String number) {
+    return '\"$number\" stolini o\'chirishni tasdiqlaysizmi?';
+  }
+
+  @override
+  String floor_confirm_delete_shift(String name) {
+    return '$name smenasini o\'chirasizmi?';
+  }
+
+  @override
+  String floor_table_number(String number) {
+    return 'Stol $number';
+  }
+
+  @override
+  String floor_table_title(String number) {
+    return 'Stol $number';
+  }
+
+  @override
+  String floor_guests_kishi(int count) {
+    return '$count kishi';
+  }
+
+  @override
+  String floor_table_capacity_label(String number, int capacity) {
+    return '$number · $capacity kishi';
+  }
+
+  @override
+  String floor_reservation_number(String number) {
+    return 'No.$number';
+  }
+
+  @override
+  String floor_event_guest_count(int count) {
+    return '$count mehmon';
+  }
 }

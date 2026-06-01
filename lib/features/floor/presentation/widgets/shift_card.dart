@@ -3,6 +3,7 @@ import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/features/floor/domain/entities/shift_entity.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class ShiftCard extends StatelessWidget {
   const ShiftCard({
@@ -18,6 +19,7 @@ class ShiftCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final hasNotes = shift.notes != null && shift.notes!.trim().isNotEmpty;
     final hasTables = shift.assignedTables.isNotEmpty;
 
@@ -100,7 +102,7 @@ class ShiftCard extends StatelessWidget {
                                 BorderRadius.circular(AppSpacing.radiusFull),
                           ),
                           child: Text(
-                            'Stol ${table.number}',
+                            l10n.floor_table_number(table.number),
                             style: AppTextStyles.bodySmall.copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,
@@ -121,7 +123,7 @@ class ShiftCard extends StatelessWidget {
                   Icons.edit_outlined,
                   color: AppColors.textSecondary,
                 ),
-                tooltip: 'Edit',
+                tooltip: l10n.floor_edit_btn,
               ),
               IconButton(
                 onPressed: onDelete,
@@ -129,7 +131,7 @@ class ShiftCard extends StatelessWidget {
                   Icons.delete_outline,
                   color: AppColors.error,
                 ),
-                tooltip: 'Delete',
+                tooltip: l10n.floor_delete_btn,
               ),
             ],
           ),

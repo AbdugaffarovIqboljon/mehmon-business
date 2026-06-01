@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/floor/presentation/widgets/chronology_event_icon.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class ChronologyEventCard extends StatelessWidget {
   const ChronologyEventCard({
@@ -25,6 +26,7 @@ class ChronologyEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
       color: AppColors.textPrimary,
       fontSize: 18,
@@ -79,7 +81,7 @@ class ChronologyEventCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      Text('No.$reservationNumber', style: numberStyle),
+                      Text(l10n.floor_reservation_number(reservationNumber.toString()), style: numberStyle),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -87,9 +89,9 @@ class ChronologyEventCard extends StatelessWidget {
                     TextSpan(
                       style: bodyStyle,
                       children: [
-                        const TextSpan(
-                          text: 'Guest: ',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        TextSpan(
+                          text: l10n.floor_event_guest_label,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         TextSpan(text: guestName),
                       ],
@@ -105,9 +107,9 @@ class ChronologyEventCard extends StatelessWidget {
                           TextSpan(
                             style: bodyStyle,
                             children: [
-                              const TextSpan(
-                                text: 'Table: ',
-                                style: TextStyle(fontWeight: FontWeight.w600),
+                              TextSpan(
+                                text: l10n.floor_event_table_label,
+                                style: const TextStyle(fontWeight: FontWeight.w600),
                               ),
                               TextSpan(text: '$table'),
                             ],
@@ -119,7 +121,7 @@ class ChronologyEventCard extends StatelessWidget {
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
-                          '$guestCount guests',
+                          l10n.floor_event_guest_count(guestCount),
                           style: bodyStyle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

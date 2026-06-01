@@ -113,5 +113,85 @@
   "segmentAllGuests": "Barcha mehmonlar",
   "segmentGuestsInHall": "Zaldagi mehmonlar",
   "logout": "Chiqish",
-  "support": "Qo'llab-quvvatlash"
+  "support": "Qo'llab-quvvatlash",
+  "floor_cancel_btn": "Bekor qilish",
+  "floor_delete_btn": "O'chirish",
+  "floor_edit_btn": "Tahrirlash",
+  "floor_close_tooltip": "Yopish",
+  "floor_delete_table_title": "Stolni o'chirish",
+  "floor_confirm_delete_title": "O'chirishni tasdiqlang",
+  "floor_delete_error": "O'chirishda xatolik yuz berdi",
+  "floor_save_error": "Saqlashda xatolik yuz berdi",
+  "floor_table_occupied": "Stol band",
+  "floor_table_free": "Stol bo'sh",
+  "floor_table_booked_soon": "Tez orada band bo'ladi",
+  "floor_all_zones": "Barchasi",
+  "floor_no_tables_added": "Hali stollar qo'shilmagan",
+  "floor_confirm_move_table": "Stolni yangi joyga saqlaysizmi?",
+  "floor_no_bookings_today": "Bugun bron yo'q",
+  "floor_today_bookings": "Bugungi bronlar",
+  "floor_edit_table_title": "Stolni tahrirlash",
+  "floor_new_table_title": "Yangi stol",
+  "floor_table_number_label": "Stol raqami",
+  "floor_capacity_label": "Sig'im",
+  "floor_location_label": "Joylashuv (ixtiyoriy)",
+  "floor_location_hint": "Asosiy zal, Terassa...",
+  "floor_zone_label": "Zona",
+  "floor_zone_hint": "Zona tanlang",
+  "floor_required_field": "Majburiy",
+  "floor_positive_number_error": "Musbat son kiriting",
+  "floor_no_shifts": "Smenalar yo'q",
+  "floor_edit_shift_title": "Smenani tahrirlash",
+  "floor_new_shift_title": "Yangi smena qo'shish",
+  "floor_staff_name_label": "Xodim ismi",
+  "floor_date_label": "Sana",
+  "floor_start_time_label": "Boshlanish",
+  "floor_end_time_label": "Tugash",
+  "floor_notes_label": "Izoh (ixtiyoriy)",
+  "floor_select_date_time": "Sana va vaqtni tanlang",
+  "floor_tables_loading": "Stollar yuklanmoqda...",
+  "floor_no_tables_available": "Stollar mavjud emas",
+  "floor_tables_optional": "Stollar (ixtiyoriy)",
+  "floor_restaurant_fallback": "Restoran",
+  "floor_filter_all": "Barchasi",
+  "floor_filter_reservations": "Bronlar",
+  "floor_filter_updates": "Yangilanishlar",
+  "floor_filter_cancellations": "Bekor qilinganlar",
+  "floor_event_guest_label": "Mehmon:",
+  "floor_event_table_label": "Stol:",
+  "floor_confirm_delete_table": "\"{number}\" stolini o'chirishni tasdiqlaysizmi?",
+  "@floor_confirm_delete_table": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_confirm_delete_shift": "{name} smenasini o'chirasizmi?",
+  "@floor_confirm_delete_shift": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "floor_table_number": "Stol {number}",
+  "@floor_table_number": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_table_title": "Stol {number}",
+  "@floor_table_title": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_guests_kishi": "{count} kishi",
+  "@floor_guests_kishi": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "floor_table_capacity_label": "{number} · {capacity} kishi",
+  "@floor_table_capacity_label": {
+    "placeholders": {
+      "number": { "type": "String" },
+      "capacity": { "type": "int" }
+    }
+  },
+  "floor_reservation_number": "No.{number}",
+  "@floor_reservation_number": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_event_guest_count": "{count} mehmon",
+  "@floor_event_guest_count": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

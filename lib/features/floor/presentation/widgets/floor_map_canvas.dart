@@ -13,6 +13,7 @@ import 'package:mehmon/features/floor/presentation/controllers/floor_controller.
 import 'package:mehmon/features/floor/presentation/models/floor_table_config.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_table_widget.dart';
 import 'package:mehmon/features/floor/presentation/widgets/table_detail_sheet.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 /// Floor map canvas: pan/zoomable 2000×2000 surface with absolute pixel-
 /// positioned tables on a [Stack].
@@ -288,11 +289,13 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     _dragStartByPointer.remove(key);
     _isDraggingByPointer.remove(key);
     _activePanPointerId = null;
-    unawaited(_confirmAndSave(context, entity, oldPosition, pos, notifier));
+    final l10n = AppLocalizations.of(context)!;
+    unawaited(_confirmAndSave(context, l10n, entity, oldPosition, pos, notifier));
   }
 
   Future<void> _confirmAndSave(
     BuildContext context,
+    AppLocalizations l10n,
     FloorEntity entity,
     Offset oldPosition,
     Offset newPosition,
@@ -313,7 +316,7 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Stolni yangi joyga saqlaysizmi?',
+                l10n.floor_confirm_move_table,
                 style: AppTextStyles.titleMedium.copyWith(
                   color: scheme.onSurface,
                 ),
@@ -330,7 +333,7 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       onPressed: () => Navigator.pop(sheetCtx, false),
-                      child: const Text('Bekor qilish'),
+                      child: Text(l10n.floor_cancel_btn),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -342,7 +345,7 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       onPressed: () => Navigator.pop(sheetCtx, true),
-                      child: const Text('Saqlash'),
+                      child: Text(l10n.saveBtn),
                     ),
                   ),
                 ],
@@ -391,6 +394,7 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final entities = widget.tables ?? const <FloorEntity>[];
 
     // When edit mode exits (Saqlash or Bekor), drop drag-time visuals back
@@ -404,20 +408,20 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     });
 
     if (entities.isEmpty) {
-      return const ColoredBox(
+      return ColoredBox(
         color: AppColors.floorCanvasBg,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              const Icon(
                 Icons.table_restaurant_outlined,
                 size: 64,
                 color: AppColors.textHint,
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
-                "Hali stollar qo'shilmagan",
+                l10n.floor_no_tables_added,
                 style: AppTextStyles.bodyMedium,
               ),
             ],
@@ -523,7 +527,7 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
                   isDraggable ? (d) => _onPanUpdate(notifier, tableW, d) : null,
               onPanEnd:
                   isDraggable ? (_) => _onPanEnd(entity, notifier) : null,
-              child: child!,
+              child: child,
             ),
           );
         },

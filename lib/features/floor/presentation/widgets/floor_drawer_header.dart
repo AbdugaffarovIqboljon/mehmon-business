@@ -4,25 +4,27 @@ import 'package:mehmon/core/constants/app_spacing.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/features/settings/presentation/controllers/profile_controller.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class FloorDrawerHeader extends ConsumerWidget {
   const FloorDrawerHeader({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final profileAsync = ref.watch(profileControllerProvider);
 
     return profileAsync.when(
       loading: () => const _DrawerHeaderSkeleton(),
-      error: (_, __) => const _DrawerHeaderContent(name: 'Restoran', imageUrl: null),
+      error: (_, __) => _DrawerHeaderContent(name: l10n.floor_restaurant_fallback, imageUrl: null),
       data: (profile) => _DrawerHeaderContent(
         name: profile == null
-            ? 'Restoran'
+            ? l10n.floor_restaurant_fallback
             : profile.cafeName.isNotEmpty
                 ? profile.cafeName
                 : profile.name.isNotEmpty
                     ? profile.name
-                    : 'Restoran',
+                    : l10n.floor_restaurant_fallback,
         imageUrl: profile?.imageUrl,
       ),
     );

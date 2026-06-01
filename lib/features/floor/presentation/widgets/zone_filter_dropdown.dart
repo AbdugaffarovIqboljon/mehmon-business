@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 // Sentinel replaces null so PopupMenuButton<String> always fires onSelected.
 const String _kAllZones = '__all__';
@@ -19,6 +20,7 @@ class ZoneFilterDropdown extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedZone = ref.watch(selectedZoneProvider);
 
     return Align(
@@ -41,7 +43,7 @@ class ZoneFilterDropdown extends ConsumerWidget {
                 (value == current) ? null : value;
           },
           itemBuilder: (ctx) => [
-            _buildMenuItem('Barchasi', _kAllZones,
+            _buildMenuItem(l10n.floor_all_zones, _kAllZones,
                 isSelected: selectedZone == null,),
             const PopupMenuDivider(height: 1),
             ...zones.map(
@@ -49,7 +51,7 @@ class ZoneFilterDropdown extends ConsumerWidget {
             ),
           ],
           child: _DropdownTrigger(
-            label: selectedZone ?? 'Barchasi',
+            label: selectedZone ?? l10n.floor_all_zones,
             isActive: selectedZone != null,
             isDisabled: isDisabled,
           ),

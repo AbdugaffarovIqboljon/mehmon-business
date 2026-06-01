@@ -7,6 +7,7 @@ import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/features/floor/presentation/widgets/table_form_sheet.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class TableOptionsSheet extends ConsumerStatefulWidget {
   const TableOptionsSheet({required this.table, super.key});
@@ -30,22 +31,21 @@ class _TableOptionsSheetState extends ConsumerState<TableOptionsSheet> {
   }
 
   Future<void> _confirmDelete() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Stolni o'chirish"),
-        content: Text(
-          '"${widget.table.number}" stolini o\'chirishni tasdiqlaysizmi?',
-        ),
+        title: Text(l10n.floor_delete_table_title),
+        content: Text(l10n.floor_confirm_delete_table(widget.table.number)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Bekor qilish'),
+            child: Text(l10n.floor_cancel_btn),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text("O'chirish"),
+            child: Text(l10n.floor_delete_btn),
           ),
         ],
       ),
@@ -65,13 +65,14 @@ class _TableOptionsSheetState extends ConsumerState<TableOptionsSheet> {
       Navigator.of(context).pop();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("O'chirishda xatolik yuz berdi")),
+        SnackBar(content: Text(l10n.floor_delete_error)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -84,7 +85,8 @@ class _TableOptionsSheetState extends ConsumerState<TableOptionsSheet> {
             const _SheetHandle(),
             const SizedBox(height: AppSpacing.md),
             Text(
-              '${widget.table.number} · ${widget.table.capacity} kishi',
+              l10n.floor_table_capacity_label(
+                  widget.table.number, widget.table.capacity),
               style: AppTextStyles.titleMedium,
               textAlign: TextAlign.center,
             ),
@@ -92,7 +94,7 @@ class _TableOptionsSheetState extends ConsumerState<TableOptionsSheet> {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.edit_outlined),
-              title: const Text('Tahrirlash'),
+              title: Text(l10n.floor_edit_btn),
               onTap: _openEdit,
             ),
             ListTile(
@@ -106,9 +108,9 @@ class _TableOptionsSheetState extends ConsumerState<TableOptionsSheet> {
                       ),
                     )
                   : const Icon(Icons.delete_outline, color: AppColors.error),
-              title: const Text(
-                "O'chirish",
-                style: TextStyle(color: AppColors.error),
+              title: Text(
+                l10n.floor_delete_btn,
+                style: const TextStyle(color: AppColors.error),
               ),
               onTap: _isDeleting ? null : _confirmDelete,
             ),

@@ -146,5 +146,85 @@
   "segmentAllGuests": "All Guests",
   "segmentGuestsInHall": "Guests in Hall",
   "logout": "Logout",
-  "support": "Support"
+  "support": "Support",
+  "floor_cancel_btn": "Cancel",
+  "floor_delete_btn": "Delete",
+  "floor_edit_btn": "Edit",
+  "floor_close_tooltip": "Close",
+  "floor_delete_table_title": "Delete table",
+  "floor_confirm_delete_title": "Confirm delete",
+  "floor_delete_error": "Failed to delete",
+  "floor_save_error": "Failed to save",
+  "floor_table_occupied": "Table occupied",
+  "floor_table_free": "Table free",
+  "floor_table_booked_soon": "Booking soon",
+  "floor_all_zones": "All",
+  "floor_no_tables_added": "No tables added yet",
+  "floor_confirm_move_table": "Save table to new position?",
+  "floor_no_bookings_today": "No bookings today",
+  "floor_today_bookings": "Today's bookings",
+  "floor_edit_table_title": "Edit table",
+  "floor_new_table_title": "New table",
+  "floor_table_number_label": "Table number",
+  "floor_capacity_label": "Capacity",
+  "floor_location_label": "Location (optional)",
+  "floor_location_hint": "Main hall, Terrace...",
+  "floor_zone_label": "Zone",
+  "floor_zone_hint": "Select zone",
+  "floor_required_field": "Required",
+  "floor_positive_number_error": "Enter a positive number",
+  "floor_no_shifts": "No shifts",
+  "floor_edit_shift_title": "Edit shift",
+  "floor_new_shift_title": "Add new shift",
+  "floor_staff_name_label": "Staff name",
+  "floor_date_label": "Date",
+  "floor_start_time_label": "Start",
+  "floor_end_time_label": "End",
+  "floor_notes_label": "Notes (optional)",
+  "floor_select_date_time": "Select date and time",
+  "floor_tables_loading": "Loading tables...",
+  "floor_no_tables_available": "No tables available",
+  "floor_tables_optional": "Tables (optional)",
+  "floor_restaurant_fallback": "Restaurant",
+  "floor_filter_all": "All",
+  "floor_filter_reservations": "Reservations",
+  "floor_filter_updates": "Updates",
+  "floor_filter_cancellations": "Cancellations",
+  "floor_event_guest_label": "Guest:",
+  "floor_event_table_label": "Table:",
+  "floor_confirm_delete_table": "Delete table \"{number}\"?",
+  "@floor_confirm_delete_table": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_confirm_delete_shift": "Delete {name}'s shift?",
+  "@floor_confirm_delete_shift": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "floor_table_number": "Table {number}",
+  "@floor_table_number": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_table_title": "Table {number}",
+  "@floor_table_title": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_guests_kishi": "{count} guests",
+  "@floor_guests_kishi": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "floor_table_capacity_label": "{number} · {capacity} guests",
+  "@floor_table_capacity_label": {
+    "placeholders": {
+      "number": { "type": "String" },
+      "capacity": { "type": "int" }
+    }
+  },
+  "floor_reservation_number": "No.{number}",
+  "@floor_reservation_number": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "floor_event_guest_count": "{count} guests",
+  "@floor_event_guest_count": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

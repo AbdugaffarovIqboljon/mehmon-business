@@ -181,6 +181,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
   }
 
   Widget _buildFloatingActions() {
+    final l10n = AppLocalizations.of(context)!;
     final isEditing = ref.watch(floorEditModeProvider);
     if (isEditing) {
       return Row(
@@ -197,7 +198,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
             heroTag: 'save_edit',
             onPressed: _saveAllPositions,
             icon: const Icon(Icons.save),
-            label: const Text('Saqlash'),
+            label: Text(l10n.saveBtn),
           ),
         ],
       );

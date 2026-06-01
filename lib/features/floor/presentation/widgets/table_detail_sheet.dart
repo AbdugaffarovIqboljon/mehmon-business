@@ -10,6 +10,7 @@ import 'package:mehmon/features/bookings/presentation/controllers/booking_contro
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/features/floor/presentation/widgets/table_form_sheet.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class TableDetailSheet extends ConsumerWidget {
   const TableDetailSheet({
@@ -43,22 +44,21 @@ class TableDetailSheet extends ConsumerWidget {
   }
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Stolni o'chirish"),
-        content: Text(
-          '"$tableNumber" stolini o\'chirishni tasdiqlaysizmi?',
-        ),
+        title: Text(l10n.floor_delete_table_title),
+        content: Text(l10n.floor_confirm_delete_table(tableNumber)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Bekor qilish'),
+            child: Text(l10n.floor_cancel_btn),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text("O'chirish"),
+            child: Text(l10n.floor_delete_btn),
           ),
         ],
       ),
@@ -76,7 +76,7 @@ class TableDetailSheet extends ConsumerWidget {
       Navigator.of(context).pop();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("O'chirishda xatolik yuz berdi")),
+        SnackBar(content: Text(l10n.floor_delete_error)),
       );
     }
   }
@@ -121,18 +121,19 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: Text(
-            'Stol $tableNumber',
+            l10n.floor_table_title(tableNumber),
             style: AppTextStyles.titleLarge,
           ),
         ),
         IconButton(
           icon: const Icon(Icons.close, color: AppColors.textSecondary),
           onPressed: () => Navigator.of(context).pop(),
-          tooltip: 'Yopish',
+          tooltip: l10n.floor_close_tooltip,
         ),
       ],
     );
@@ -167,6 +168,7 @@ class _DetailsBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final allBookings =
         ref.watch(bookingControllerProvider).valueOrNull ?? const <BookingEntity>[];
 
@@ -215,15 +217,15 @@ class _DetailsBody extends ConsumerWidget {
           const _FreeCard(),
         if (todayTableBookings.isEmpty) ...[
           const SizedBox(height: AppSpacing.md),
-          const Text(
-            "Bugun bron yo'q",
+          Text(
+            l10n.floor_no_bookings_today,
             style: AppTextStyles.bodyMedium,
             textAlign: TextAlign.center,
           ),
         ] else ...[
           const SizedBox(height: AppSpacing.lg),
           if (todayTableBookings.length >= 2) ...[
-            const Text('Bugungi bronlar', style: AppTextStyles.titleMedium),
+            Text(l10n.floor_today_bookings, style: AppTextStyles.titleMedium),
             const SizedBox(height: AppSpacing.sm),
           ],
           Column(
@@ -255,6 +257,7 @@ class _OccupiedBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -273,7 +276,7 @@ class _OccupiedBanner extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.sm),
           Text(
-            'Stol band',
+            l10n.floor_table_occupied,
             style: AppTextStyles.titleMedium.copyWith(
               color: AppColors.error,
               fontWeight: FontWeight.w700,
@@ -290,6 +293,7 @@ class _BookedBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -304,7 +308,7 @@ class _BookedBanner extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.sm),
           Text(
-            "Tez orada band bo'ladi",
+            l10n.floor_table_booked_soon,
             style: AppTextStyles.titleMedium.copyWith(
               color: AppColors.warning,
               fontWeight: FontWeight.w700,
@@ -324,9 +328,10 @@ class _BookingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final timeRange = '${booking.timeSlot}–${booking.endTime ?? '?'}';
     final name =
-        booking.guestName.trim().isEmpty ? 'Mehmon' : booking.guestName;
+        booking.guestName.trim().isEmpty ? l10n.regularGuest : booking.guestName;
     final dotColor = switch (rowStatus) {
       _RowStatus.active => AppColors.error,
       _RowStatus.upcoming => AppColors.warning,
@@ -350,7 +355,7 @@ class _BookingRow extends StatelessWidget {
           const Spacer(),
           Text(name, style: AppTextStyles.bodyLarge),
           const Spacer(),
-          Text('${booking.numberOfGuests} kishi', style: AppTextStyles.bodyMedium),
+          Text(l10n.floor_guests_kishi(booking.numberOfGuests), style: AppTextStyles.bodyMedium),
         ],
       ),
     );
@@ -362,6 +367,7 @@ class _FreeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -376,7 +382,7 @@ class _FreeCard extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.sm),
           Text(
-            "Stol bo'sh",
+            l10n.floor_table_free,
             style: AppTextStyles.titleMedium.copyWith(
               color: AppColors.success,
               fontWeight: FontWeight.w700,
@@ -399,13 +405,14 @@ class _ActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: OutlinedButton.icon(
             onPressed: onEdit,
             icon: const Icon(Icons.edit_outlined),
-            label: const Text('Tahrirlash'),
+            label: Text(l10n.floor_edit_btn),
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
@@ -417,7 +424,7 @@ class _ActionButtons extends StatelessWidget {
               side: const BorderSide(color: AppColors.error),
             ),
             icon: const Icon(Icons.delete_outline),
-            label: const Text("O'chirish"),
+            label: Text(l10n.floor_delete_btn),
           ),
         ),
       ],
