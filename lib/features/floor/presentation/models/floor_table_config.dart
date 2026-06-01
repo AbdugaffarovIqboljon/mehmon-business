@@ -29,7 +29,7 @@ class FloorTableConfig {
     return FloorTableConfig(
       id: entity.id,
       label: entity.displayNumber,
-      assetPath: _assetFor(entity, index),
+      assetPath: _assetFor(entity),
       left: left,
       top: top,
       width: width,
@@ -86,15 +86,13 @@ class FloorTableConfig {
         _ => Colors.grey,
       };
 
-  static String _assetFor(FloorEntity entity, int index) {
+  static String _assetFor(FloorEntity entity) {
     final type = entity.tableType?.toLowerCase();
     if (type == 'rectangle') return _seats6;
     if (type == 'square') return _seats4;
     if (type == 'circle') return _seats3;
     if (entity.capacity >= 5) return _seats6;
-    if (entity.capacity >= 4) {
-      return index.isOdd ? _seats4r : _seats4;
-    }
+    if (entity.capacity >= 4) return _seats4;
     return _seats3;
   }
 }
@@ -103,7 +101,6 @@ class FloorTableConfig {
 
 const _seats3 = 'assets/icons/ic_table_seats_3.png';
 const _seats4 = 'assets/icons/ic_table_seats_4.png';
-const _seats4r = 'assets/icons/ic_table_seats_4_rotated.png';
 const _seats6 = 'assets/icons/ic_table_seats_6.png';
 
 // ── Floor layout matching the Figma design ────────────────────────────────
@@ -125,7 +122,7 @@ const List<FloorTableConfig> kFloorTables = [
   FloorTableConfig(
     id: '2',
     label: 'No.2',
-    assetPath: _seats4r,
+    assetPath: _seats4,
     left: 0.41,
     top: 0,
   ),
@@ -150,7 +147,7 @@ const List<FloorTableConfig> kFloorTables = [
 
   // ── Row 3: center row ─────────────────────────────────────────────────
   FloorTableConfig(id: '6', assetPath: _seats4, left: 0.06, top: 0.42),
-  FloorTableConfig(id: '7', assetPath: _seats4r, left: 0.41, top: 0.42),
+  FloorTableConfig(id: '7', assetPath: _seats4, left: 0.41, top: 0.42),
   FloorTableConfig(id: '8', assetPath: _seats4, left: 0.76, top: 0.42),
 
   // ── Row 4: wide 6-seat tables ─────────────────────────────────────────
@@ -171,6 +168,6 @@ const List<FloorTableConfig> kFloorTables = [
 
   // ── Row 5: bottom row ─────────────────────────────────────────────────
   FloorTableConfig(id: '11', assetPath: _seats4, left: 0.06, top: 0.84),
-  FloorTableConfig(id: '12', assetPath: _seats4r, left: 0.41, top: 0.84),
+  FloorTableConfig(id: '12', assetPath: _seats4, left: 0.41, top: 0.84),
   FloorTableConfig(id: '13', assetPath: _seats4, left: 0.76, top: 0.84),
 ];
