@@ -194,11 +194,23 @@ class _DetailsBody extends ConsumerWidget {
       return nowMin >= start && nowMin < end;
     });
 
+    final hasUpcomingBooking = clientCurrentBooking == null &&
+        todayTableBookings.any((b) {
+          final parts = b.timeSlot.split(':');
+          if (parts.length < 2) return false;
+          final h = int.tryParse(parts[0]);
+          final m = int.tryParse(parts[1]);
+          if (h == null || m == null) return false;
+          return (h * 60 + m) > nowMin;
+        });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (clientCurrentBooking != null)
           const _OccupiedBanner()
+        else if (hasUpcomingBooking)
+          const _BookedBanner()
         else
           const _FreeCard(),
         if (todayTableBookings.isEmpty) ...[
@@ -264,6 +276,37 @@ class _OccupiedBanner extends StatelessWidget {
             'Stol band',
             style: AppTextStyles.titleMedium.copyWith(
               color: AppColors.error,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BookedBanner extends StatelessWidget {
+  const _BookedBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.access_time,
+            color: AppColors.warning,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            "Tez orada band bo'ladi",
+            style: AppTextStyles.titleMedium.copyWith(
+              color: AppColors.warning,
               fontWeight: FontWeight.w700,
             ),
           ),

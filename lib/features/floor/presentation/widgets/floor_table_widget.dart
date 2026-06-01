@@ -99,6 +99,8 @@ class FloorTableWidget extends StatelessWidget {
           config.assetPath,
           fit: BoxFit.contain,
           filterQuality: FilterQuality.low,
+          color: dotColor?.withValues(alpha: 0.65),
+          colorBlendMode: BlendMode.srcATop,
         ),
         if (config.label != null)
           Positioned(
