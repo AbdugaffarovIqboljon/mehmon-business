@@ -293,13 +293,19 @@ class _FloorPageState extends ConsumerState<FloorPage>
                         .where((t) => t.effectiveLocation == selectedZone)
                         .toList();
 
-                return Column(
+                return Stack(
                   children: [
-                    ZoneFilterDropdown(
-                      zones: zones,
-                      isDisabled: isEditing,
+                    Positioned.fill(
+                      child: FloorMapCanvas(tables: filteredTables),
                     ),
-                    Expanded(child: FloorMapCanvas(tables: filteredTables)),
+                    Positioned(
+                      top: 8,
+                      right: 16,
+                      child: ZoneFilterDropdown(
+                        zones: zones,
+                        isDisabled: isEditing,
+                      ),
+                    ),
                   ],
                 );
               },

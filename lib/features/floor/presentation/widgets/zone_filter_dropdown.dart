@@ -23,11 +23,9 @@ class ZoneFilterDropdown extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final selectedZone = ref.watch(selectedZoneProvider);
 
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        child: PopupMenuButton<String>(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: PopupMenuButton<String>(
           enabled: !isDisabled,
           position: PopupMenuPosition.under,
           shape: RoundedRectangleBorder(
@@ -56,7 +54,6 @@ class ZoneFilterDropdown extends ConsumerWidget {
             isDisabled: isDisabled,
           ),
         ),
-      ),
     );
   }
 }
