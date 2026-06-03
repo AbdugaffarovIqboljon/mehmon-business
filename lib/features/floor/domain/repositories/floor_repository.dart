@@ -30,6 +30,8 @@ abstract class FloorRepository {
     double? rotation,
   });
 
+  Future<Result<void>> updateTableStatus(String id, String status);
+
   Future<Result<List<ActivityLogEntity>>> getActivityLog();
 
   Future<Result<List<ShiftEntity>>> getShifts();

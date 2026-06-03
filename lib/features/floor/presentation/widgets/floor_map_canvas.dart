@@ -575,11 +575,11 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     TimeOfDay? selectedTime,
     List<BookingEntity> bookings,
   ) {
-    final t = selectedTime ?? TimeOfDay.fromDateTime(DateTime.now());
+    if (selectedTime == null) return entity.status;
     return _computeStatusAtTime(
       tableId: entity.id,
       bookings: bookings,
-      time: t,
+      time: selectedTime,
     );
   }
 }
@@ -716,11 +716,12 @@ String _computeStatusAtTime({
         b.endTime != null ? _parseTimeToMin(b.endTime!) : startMin + 120;
 
     if (selectedMin >= startMin && selectedMin < endMin) {
-      return 'occupied';
+      return 'guest_arrived';
     }
   }
 
-  // Pass 2 — no active booking; check if a future booking exists today.
+  // Pass 2 — no active booking; check if a future booking starts soon.
+  const kReservedWindowMin = 20;
   for (final b in bookings) {
     if (b.status == 'cancelled') continue;
     if (b.tableInfo?.id != tableId) continue;
@@ -736,10 +737,14 @@ String _computeStatusAtTime({
     final startMin = (int.tryParse(startParts[0]) ?? 0) * 60 +
         (int.tryParse(startParts[1]) ?? 0);
 
-    if (startMin > selectedMin) return 'booked';
+    if (startMin > selectedMin &&
+        (startMin - selectedMin) <= kReservedWindowMin) {
+      return 'reserved';
+    }
+    // Booking is too far in the future; keep checking remaining bookings.
   }
 
-  return 'available';
+  return 'free';
 }
 
 int _parseTimeToMin(String hhmm) {

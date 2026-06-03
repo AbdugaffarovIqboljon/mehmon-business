@@ -38,6 +38,17 @@ class _FloorPageState extends ConsumerState<FloorPage>
   void initState() {
     super.initState();
     _selectedMinuteNotifier = ValueNotifier<int>(_currentMinute);
+    // Always enter the floor in live mode. Guards the case where a watcher
+    // kept [selectedTimelineProvider] alive past a previous scrub so it never
+    // auto-disposed; without this a stale scrub time would render time-aware
+    // (e.g. orange) status while the detail sheet shows the raw backend status.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (ref.read(selectedTimelineProvider) != null) {
+        ref.read(selectedTimelineProvider.notifier).state = null;
+        _selectedMinuteNotifier.value = _currentMinute;
+      }
+    });
     _snapController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 350),
@@ -69,6 +80,7 @@ class _FloorPageState extends ConsumerState<FloorPage>
   // ── Snap-to-now ─────────────────────────────────────────────────────────
 
   void _snapToNow() {
+    ref.read(selectedTimelineProvider.notifier).state = null;
     final from = _selectedMinuteNotifier.value;
     final to = _currentMinute;
     if (from == to) return;

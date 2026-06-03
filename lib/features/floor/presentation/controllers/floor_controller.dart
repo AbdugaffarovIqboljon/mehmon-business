@@ -34,7 +34,12 @@ final floorControllerProvider =
 /// `null` means live mode — tables show the server-computed status.
 /// A non-null value means the user is scrubbing — tables show locally
 /// computed status from cached bookings at that time of day.
-final selectedTimelineProvider = StateProvider<TimeOfDay?>((ref) => null);
+///
+/// `autoDispose` so the scrub time cannot survive a page exit: once no widget
+/// on the floor page watches it, it resets to `null` (live). Leaving and
+/// re-entering the floor always starts live, never stuck on a stale scrub.
+final selectedTimelineProvider =
+    StateProvider.autoDispose<TimeOfDay?>((ref) => null);
 
 /// Floor edit mode toggle. When `true`, drag changes and rotations buffer
 /// into [pendingPositionsProvider] / [pendingRotationsProvider] instead of
@@ -217,6 +222,25 @@ class FloorController extends AsyncNotifier<List<FloorEntity>> {
           y,
           rotation: rotation,
         );
+  }
+
+  /// Optimistically updates table status locally, then persists to backend.
+  /// Reverts the optimistic patch on API error so state stays consistent.
+  Future<void> updateTableStatus(String id, String status) async {
+    final previous = state.valueOrNull ?? [];
+    state = state.whenData(
+      (tables) => [
+        for (final t in tables)
+          if (t.id == id) t.copyWith(status: status) else t,
+      ],
+    );
+    final result = await ref
+        .read(floorRepositoryProvider)
+        .updateTableStatus(id, status);
+    result.when(
+      success: (_) {},
+      error: (_) => state = AsyncData(previous),
+    );
   }
 
   /// Optimistically applies a rotation update locally without hitting the

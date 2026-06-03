@@ -125,6 +125,19 @@ class FloorRepositoryImpl implements FloorRepository {
   }
 
   @override
+  Future<Result<void>> updateTableStatus(String id, String status) async {
+    try {
+      await _dataSource.updateTableStatus(id, status);
+      return const Success(null);
+    } on ApiException catch (e) {
+      return Err(e.toFailure());
+    } on Object catch (e, s) {
+      debugPrint('[FloorRepository] ❌ error: $e\n$s');
+      return const Err(UnknownFailure());
+    }
+  }
+
+  @override
   Future<Result<List<ActivityLogEntity>>> getActivityLog() async {
     try {
       final models = await _dataSource.getActivityLog();

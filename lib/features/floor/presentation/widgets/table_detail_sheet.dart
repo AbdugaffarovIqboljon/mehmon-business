@@ -152,6 +152,12 @@ class _DetailsBody extends ConsumerWidget {
     return (int.tryParse(p[0]) ?? 0) * 60 + (int.tryParse(p[1]) ?? 0);
   }
 
+  static int _startMin(String timeSlot) {
+    final p = timeSlot.split(':');
+    if (p.length < 2) return -1;
+    return (int.tryParse(p[0]) ?? 0) * 60 + (int.tryParse(p[1]) ?? 0);
+  }
+
   static _RowStatus _rowStatus(
     BookingEntity b,
     BookingEntity? current,
@@ -171,6 +177,10 @@ class _DetailsBody extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final allBookings =
         ref.watch(bookingControllerProvider).valueOrNull ?? const <BookingEntity>[];
+
+    final floorState = ref.watch(floorControllerProvider);
+    final entity = floorState.valueOrNull?.firstWhereOrNull((e) => e.id == tableId);
+    final tableStatus = entity?.status ?? 'free';
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -196,25 +206,35 @@ class _DetailsBody extends ConsumerWidget {
       return nowMin >= start && nowMin < end;
     });
 
-    final hasUpcomingBooking = clientCurrentBooking == null &&
-        todayTableBookings.any((b) {
-          final parts = b.timeSlot.split(':');
-          if (parts.length < 2) return false;
-          final h = int.tryParse(parts[0]);
-          final m = int.tryParse(parts[1]);
-          if (h == null || m == null) return false;
-          return (h * 60 + m) > nowMin;
-        });
+    final hasUpcomingBooking = todayTableBookings.any(
+      (b) =>
+          b.status != 'cancelled' &&
+          b.status != 'completed' &&
+          _startMin(b.timeSlot) > nowMin,
+    );
+
+    final activeBooking = todayTableBookings.firstWhereOrNull(
+      (b) => b.status != 'cancelled' && b.status != 'completed',
+    );
+
+    final banner = switch (tableStatus) {
+      'reserved' => const _ReservedBanner(),
+      'waiting' => const _WaitingBanner(),
+      'guest_arrived' => const _GuestArrivedBanner(),
+      'occupied' => const _OccupiedWithOrderBanner(),
+      _ => const _FreeCard(),
+    };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (clientCurrentBooking != null)
-          const _OccupiedBanner()
-        else if (hasUpcomingBooking)
-          const _BookedBanner()
-        else
-          const _FreeCard(),
+        banner,
+        _StatusActionButtons(
+          tableId: tableId,
+          tableStatus: tableStatus,
+          hasUpcomingBooking: hasUpcomingBooking,
+          activeBooking: activeBooking,
+        ),
         if (todayTableBookings.isEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           Text(
@@ -252,8 +272,44 @@ class _DetailsBody extends ConsumerWidget {
 
 enum _RowStatus { active, upcoming, past }
 
-class _OccupiedBanner extends StatelessWidget {
-  const _OccupiedBanner();
+class _GuestArrivedBanner extends StatelessWidget {
+  const _GuestArrivedBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.info.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: const BoxDecoration(
+              color: AppColors.info,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            l10n.floor_status_arrived,
+            style: AppTextStyles.titleMedium.copyWith(
+              color: AppColors.info,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OccupiedWithOrderBanner extends StatelessWidget {
+  const _OccupiedWithOrderBanner();
 
   @override
   Widget build(BuildContext context) {
@@ -276,7 +332,7 @@ class _OccupiedBanner extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.sm),
           Text(
-            l10n.floor_table_occupied,
+            l10n.floor_status_occupied,
             style: AppTextStyles.titleMedium.copyWith(
               color: AppColors.error,
               fontWeight: FontWeight.w700,
@@ -288,8 +344,8 @@ class _OccupiedBanner extends StatelessWidget {
   }
 }
 
-class _BookedBanner extends StatelessWidget {
-  const _BookedBanner();
+class _ReservedBanner extends StatelessWidget {
+  const _ReservedBanner();
 
   @override
   Widget build(BuildContext context) {
@@ -302,15 +358,43 @@ class _BookedBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.access_time,
-            color: AppColors.warning,
-          ),
+          const Icon(Icons.event_available, color: AppColors.warning),
           const SizedBox(width: AppSpacing.sm),
           Text(
-            l10n.floor_table_booked_soon,
+            l10n.floor_status_reserved,
             style: AppTextStyles.titleMedium.copyWith(
               color: AppColors.warning,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WaitingBanner extends StatelessWidget {
+  const _WaitingBanner();
+
+  static const _purple = Color(0xFF7C3AED);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: _purple.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.access_time, color: _purple),
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            l10n.floor_status_waiting,
+            style: AppTextStyles.titleMedium.copyWith(
+              color: _purple,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -394,6 +478,200 @@ class _FreeCard extends StatelessWidget {
   }
 }
 
+
+// ── Status Actions (hostes flow) ──────────────────────────────────────────
+
+class _StatusActionButtons extends ConsumerStatefulWidget {
+  const _StatusActionButtons({
+    required this.tableId,
+    required this.tableStatus,
+    required this.hasUpcomingBooking,
+    required this.activeBooking,
+  });
+
+  final String tableId;
+  final String tableStatus;
+  final bool hasUpcomingBooking;
+  final BookingEntity? activeBooking;
+
+  @override
+  ConsumerState<_StatusActionButtons> createState() =>
+      _StatusActionButtonsState();
+}
+
+class _StatusActionButtonsState extends ConsumerState<_StatusActionButtons> {
+  final ValueNotifier<bool> _busy = ValueNotifier<bool>(false);
+
+  static const _grey = AppColors.textSecondary;
+
+  @override
+  void dispose() {
+    _busy.dispose();
+    super.dispose();
+  }
+
+  Future<void> _apply(String newStatus, {String? bookingStatus}) async {
+    if (_busy.value) return;
+    _busy.value = true;
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    await ref
+        .read(floorControllerProvider.notifier)
+        .updateTableStatus(widget.tableId, newStatus);
+
+    if (!mounted) {
+      _busy.value = false;
+      return;
+    }
+
+    // The controller silently reverts its state on API error; if the table
+    // status did not land on the requested value, the update failed.
+    final current = ref
+        .read(floorControllerProvider)
+        .valueOrNull
+        ?.firstWhereOrNull((e) => e.id == widget.tableId)
+        ?.status;
+    if (current != newStatus) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.floor_save_error)));
+      _busy.value = false;
+      return;
+    }
+
+    if (bookingStatus != null && widget.activeBooking != null) {
+      final ok = await ref
+          .read(bookingControllerProvider.notifier)
+          .updateBookingStatus(widget.activeBooking!, bookingStatus);
+
+      if (!mounted) {
+        _busy.value = false;
+        return;
+      }
+
+      if (!ok) {
+        messenger.showSnackBar(SnackBar(content: Text(l10n.floor_save_error)));
+      }
+    }
+
+    _busy.value = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.tableStatus == 'free' && !widget.hasUpcomingBooking) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md),
+      child: ValueListenableBuilder<bool>(
+        valueListenable: _busy,
+        builder: (context, busy, _) => _content(busy),
+      ),
+    );
+  }
+
+  Widget _content(bool busy) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (widget.tableStatus) {
+      case 'free':
+        if (!widget.hasUpcomingBooking) return const SizedBox.shrink();
+        return _StatusButton(
+          label: l10n.floor_action_reserve,
+          icon: Icons.event_available,
+          filled: false,
+          color: AppColors.warning,
+          onPressed: busy ? null : () => _apply('reserved'),
+        );
+      case 'reserved':
+      case 'waiting':
+        return _StatusButton(
+          label: l10n.floor_action_mark_arrived,
+          icon: Icons.person_add_alt_1,
+          filled: true,
+          color: AppColors.info,
+          onPressed: busy
+              ? null
+              : () => _apply('guest_arrived', bookingStatus: 'arrived'),
+        );
+      case 'guest_arrived':
+        return Row(
+          children: [
+            Expanded(
+              child: _StatusButton(
+                label: l10n.floor_action_mark_occupied,
+                icon: Icons.receipt_long,
+                filled: true,
+                color: AppColors.error,
+                onPressed: busy ? null : () => _apply('occupied'),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _StatusButton(
+                label: l10n.floor_action_checkout,
+                icon: Icons.exit_to_app,
+                filled: false,
+                color: _grey,
+                onPressed: busy
+                    ? null
+                    : () => _apply('free', bookingStatus: 'completed'),
+              ),
+            ),
+          ],
+        );
+      case 'occupied':
+        return _StatusButton(
+          label: l10n.floor_action_checkout,
+          icon: Icons.exit_to_app,
+          filled: false,
+          color: _grey,
+          onPressed: busy
+              ? null
+              : () => _apply('free', bookingStatus: 'completed'),
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+}
+
+class _StatusButton extends StatelessWidget {
+  const _StatusButton({
+    required this.label,
+    required this.icon,
+    required this.filled,
+    required this.color,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool filled;
+  final Color color;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    if (filled) {
+      return FilledButton.icon(
+        onPressed: onPressed,
+        style: FilledButton.styleFrom(backgroundColor: color),
+        icon: Icon(icon),
+        label: Text(label),
+      );
+    }
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: color,
+        side: BorderSide(color: color),
+      ),
+      icon: Icon(icon),
+      label: Text(label),
+    );
+  }
+}
 
 // ── Actions ─────────────────────────────────────────────────────────────
 

@@ -472,13 +472,34 @@ class AppLocalizationsRu extends AppLocalizations {
   String get floor_save_error => 'Не удалось сохранить';
 
   @override
-  String get floor_table_occupied => 'Стол занят';
-
-  @override
   String get floor_table_free => 'Стол свободен';
 
   @override
-  String get floor_table_booked_soon => 'Скоро будет занят';
+  String get floor_status_free => 'Стол свободен';
+
+  @override
+  String get floor_status_reserved => 'Забронировано';
+
+  @override
+  String get floor_status_waiting => 'Ожидаем гостя';
+
+  @override
+  String get floor_status_arrived => 'Гость пришёл';
+
+  @override
+  String get floor_status_occupied => 'Заказ сделан';
+
+  @override
+  String get floor_action_reserve => 'Забронировать';
+
+  @override
+  String get floor_action_mark_arrived => 'Гость пришёл ✓';
+
+  @override
+  String get floor_action_mark_occupied => 'Заказ сделан';
+
+  @override
+  String get floor_action_checkout => 'Гость ушёл';
 
   @override
   String get floor_all_zones => 'Все';

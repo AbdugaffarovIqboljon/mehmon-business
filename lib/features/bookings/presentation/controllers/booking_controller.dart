@@ -126,6 +126,23 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
     );
   }
 
+  Future<bool> updateBookingStatus(
+    BookingEntity booking,
+    String newStatus,
+  ) => updateBooking(
+        id: booking.id,
+        guestName: booking.guestName,
+        phone: booking.phone,
+        tableId: booking.tableInfo?.id ?? '',
+        date: booking.date,
+        timeSlot: booking.timeSlot,
+        numberOfGuests: booking.numberOfGuests,
+        status: newStatus,
+        endTime: booking.endTime,
+        bookingType: booking.bookingType?.name,
+        notes: booking.notes,
+      );
+
   Future<bool> deleteBooking({required String id}) async {
     final result =
         await ref.read(bookingRepositoryProvider).deleteBooking(id: id);

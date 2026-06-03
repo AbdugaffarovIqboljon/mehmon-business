@@ -473,13 +473,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get floor_save_error => 'Failed to save';
 
   @override
-  String get floor_table_occupied => 'Table occupied';
-
-  @override
   String get floor_table_free => 'Table free';
 
   @override
-  String get floor_table_booked_soon => 'Booking soon';
+  String get floor_status_free => 'Table free';
+
+  @override
+  String get floor_status_reserved => 'Reserved';
+
+  @override
+  String get floor_status_waiting => 'Guest expected';
+
+  @override
+  String get floor_status_arrived => 'Guest arrived';
+
+  @override
+  String get floor_status_occupied => 'Order placed';
+
+  @override
+  String get floor_action_reserve => 'Reserve table';
+
+  @override
+  String get floor_action_mark_arrived => 'Guest arrived ✓';
+
+  @override
+  String get floor_action_mark_occupied => 'Order placed';
+
+  @override
+  String get floor_action_checkout => 'Checked out';
 
   @override
   String get floor_all_zones => 'All';

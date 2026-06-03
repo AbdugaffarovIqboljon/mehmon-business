@@ -28,10 +28,12 @@ class FloorTableWidget extends StatelessWidget {
   final VoidCallback? onTap;
 
   static Color? _colorForStatus(String status) => switch (status) {
-        'available' => AppColors.success, // green
-        'booked' => AppColors.warning, // orange — 15 min before booking
-        'occupied' => AppColors.info, // blue — guest has arrived
-        _ => AppColors.disabled, // grey — unknown/defensive
+        'free' => AppColors.success,
+        'reserved' => AppColors.warning,
+        'waiting' => const Color(0xFF7C3AED),
+        'guest_arrived' => AppColors.info,
+        'occupied' => const Color(0xFFDC2626),
+        _ => AppColors.disabled,
       };
 
   @override

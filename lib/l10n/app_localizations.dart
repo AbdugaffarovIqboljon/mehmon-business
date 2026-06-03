@@ -1000,23 +1000,65 @@ abstract class AppLocalizations {
   /// **'Failed to save'**
   String get floor_save_error;
 
-  /// No description provided for @floor_table_occupied.
-  ///
-  /// In en, this message translates to:
-  /// **'Table occupied'**
-  String get floor_table_occupied;
-
   /// No description provided for @floor_table_free.
   ///
   /// In en, this message translates to:
   /// **'Table free'**
   String get floor_table_free;
 
-  /// No description provided for @floor_table_booked_soon.
+  /// No description provided for @floor_status_free.
   ///
   /// In en, this message translates to:
-  /// **'Booking soon'**
-  String get floor_table_booked_soon;
+  /// **'Table free'**
+  String get floor_status_free;
+
+  /// No description provided for @floor_status_reserved.
+  ///
+  /// In en, this message translates to:
+  /// **'Reserved'**
+  String get floor_status_reserved;
+
+  /// No description provided for @floor_status_waiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest expected'**
+  String get floor_status_waiting;
+
+  /// No description provided for @floor_status_arrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest arrived'**
+  String get floor_status_arrived;
+
+  /// No description provided for @floor_status_occupied.
+  ///
+  /// In en, this message translates to:
+  /// **'Order placed'**
+  String get floor_status_occupied;
+
+  /// No description provided for @floor_action_reserve.
+  ///
+  /// In en, this message translates to:
+  /// **'Reserve table'**
+  String get floor_action_reserve;
+
+  /// No description provided for @floor_action_mark_arrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest arrived ✓'**
+  String get floor_action_mark_arrived;
+
+  /// No description provided for @floor_action_mark_occupied.
+  ///
+  /// In en, this message translates to:
+  /// **'Order placed'**
+  String get floor_action_mark_occupied;
+
+  /// No description provided for @floor_action_checkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked out'**
+  String get floor_action_checkout;
 
   /// No description provided for @floor_all_zones.
   ///

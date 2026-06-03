@@ -475,13 +475,34 @@ class AppLocalizationsUz extends AppLocalizations {
   String get floor_save_error => 'Saqlashda xatolik yuz berdi';
 
   @override
-  String get floor_table_occupied => 'Stol band';
-
-  @override
   String get floor_table_free => 'Stol bo\'sh';
 
   @override
-  String get floor_table_booked_soon => 'Tez orada band bo\'ladi';
+  String get floor_status_free => 'Stol bo\'sh';
+
+  @override
+  String get floor_status_reserved => 'Bron qilingan';
+
+  @override
+  String get floor_status_waiting => 'Mehmon kutilmoqda';
+
+  @override
+  String get floor_status_arrived => 'Mehmon keldi';
+
+  @override
+  String get floor_status_occupied => 'Zakaz berildi';
+
+  @override
+  String get floor_action_reserve => 'Bron qilish';
+
+  @override
+  String get floor_action_mark_arrived => 'Mehmon keldi ✓';
+
+  @override
+  String get floor_action_mark_occupied => 'Zakaz berildi';
+
+  @override
+  String get floor_action_checkout => 'Chiqib ketdi';
 
   @override
   String get floor_all_zones => 'Barchasi';

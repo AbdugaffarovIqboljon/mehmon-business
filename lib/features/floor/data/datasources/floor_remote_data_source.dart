@@ -33,6 +33,8 @@ abstract class FloorRemoteDataSource {
     double? rotation,
   });
 
+  Future<void> updateTableStatus(String id, String status);
+
   Future<List<ActivityLogModel>> getActivityLog();
 
   Future<List<ShiftModel>> getShifts();
@@ -152,6 +154,18 @@ class FloorRemoteDataSourceImpl implements FloorRemoteDataSource {
           'y': y,
           if (rotation != null) 'rotation': rotation,
         },
+      );
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<void> updateTableStatus(String id, String status) async {
+    try {
+      await _dio.put<dynamic>(
+        '${ApiConstants.tableById}$id',
+        data: {'status': status},
       );
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
