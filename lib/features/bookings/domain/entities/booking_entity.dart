@@ -6,7 +6,6 @@ enum BookingType { standard, banket }
 
 /// Minutes before a booking's start during which it is already considered to
 /// be holding its table (mirrors `kReservedWindowMin` on the floor canvas).
-// TODO: unify with floor's kReservedWindowMin in Step 3.
 const int kBookingHoldWindowMin = 20;
 
 /// Parses "HH:mm" → minutes from midnight, or null when malformed.

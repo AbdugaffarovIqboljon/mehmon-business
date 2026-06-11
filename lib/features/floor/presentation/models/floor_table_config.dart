@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 
 /// Lightweight configuration for a single table on the floor map.
@@ -34,7 +33,6 @@ class FloorTableConfig {
       left: left,
       top: top,
       width: width,
-      statusColor: _statusColorFor(entity.status),
     );
   }
 
@@ -79,15 +77,6 @@ class FloorTableConfig {
 
   static double _widthForCapacity(int capacity) =>
       capacity >= 5 ? 0.32 : 0.18;
-
-  static Color _statusColorFor(String status) => switch (status) {
-        'free' => AppColors.success,
-        'reserved' => AppColors.warning,
-        'waiting' => const Color(0xFF7C3AED),
-        'guest_arrived' => AppColors.info,
-        'occupied' => const Color(0xFFDC2626),
-        _ => AppColors.disabled,
-      };
 
   static String _assetFor(FloorEntity entity) {
     final type = entity.tableType?.toLowerCase();

@@ -4,6 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/features/floor/presentation/models/floor_table_config.dart';
 
+/// Single source of truth mapping a resolved table status to its colour.
+///
+/// Shared by the floor canvas ([FloorTableWidget]) and the table detail sheet
+/// so the map dot, the sheet dot, and the status banner all paint the same hue
+/// per status — `occupied` is the canvas red (0xFFDC2626) everywhere.
+Color tableStatusColor(String status) => switch (status) {
+      'free' => AppColors.success,
+      'reserved' => AppColors.warning,
+      'waiting' => const Color(0xFF7C3AED),
+      'guest_arrived' => AppColors.info,
+      'occupied' => const Color(0xFFDC2626),
+      _ => AppColors.disabled,
+    };
+
 /// Renders a single table on the floor map using its PNG asset.
 ///
 /// Shows a small status dot in the top-right corner when
@@ -26,15 +40,6 @@ class FloorTableWidget extends StatelessWidget {
 
   final ValueListenable<String?>? selectedNotifier;
   final VoidCallback? onTap;
-
-  static Color? _colorForStatus(String status) => switch (status) {
-        'free' => AppColors.success,
-        'reserved' => AppColors.warning,
-        'waiting' => const Color(0xFF7C3AED),
-        'guest_arrived' => AppColors.info,
-        'occupied' => const Color(0xFFDC2626),
-        _ => AppColors.disabled,
-      };
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +96,7 @@ class FloorTableWidget extends StatelessWidget {
 
   Widget _tableContent() {
     final dotColor = displayStatus != null
-        ? _colorForStatus(displayStatus!)
+        ? tableStatusColor(displayStatus!)
         : config.statusColor;
 
     return Stack(

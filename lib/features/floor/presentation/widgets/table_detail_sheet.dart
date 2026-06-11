@@ -11,6 +11,7 @@ import 'package:mehmon/features/bookings/presentation/widgets/book_a_table_sheet
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
 import 'package:mehmon/features/floor/domain/services/table_status_resolver.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
+import 'package:mehmon/features/floor/presentation/widgets/floor_table_widget.dart';
 import 'package:mehmon/features/floor/presentation/widgets/table_form_sheet.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
 
@@ -153,17 +154,6 @@ class _DetailsBody extends ConsumerWidget {
 
   final String tableId;
 
-  /// Booking-row dot colour, derived from the table's effective status so it
-  /// agrees with the header banner and the floor colour (single scheme — the
-  /// old per-row active/upcoming/past timeline is gone).
-  static Color _dotColorFor(String status) => switch (status) {
-        'reserved' => AppColors.warning,
-        'waiting' => kWaitingPurple,
-        'guest_arrived' => AppColors.info,
-        'occupied' => AppColors.error,
-        _ => AppColors.success,
-      };
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -196,7 +186,7 @@ class _DetailsBody extends ConsumerWidget {
               liveMinute % 60,
             ),
           );
-    final dotColor = _dotColorFor(tableStatus);
+    final dotColor = tableStatusColor(tableStatus);
 
     final todayTableBookings = allBookings.where((b) {
       if (b.status == 'cancelled') return false;
@@ -296,10 +286,13 @@ class _OccupiedWithOrderBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    // Occupied hue comes from the single source so the banner matches the floor
+    // canvas red (0xFFDC2626) rather than the old AppColors.error divergence.
+    final color = tableStatusColor('occupied');
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.error.withValues(alpha: 0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
       child: Row(
@@ -307,8 +300,8 @@ class _OccupiedWithOrderBanner extends StatelessWidget {
           Container(
             width: 10,
             height: 10,
-            decoration: const BoxDecoration(
-              color: AppColors.error,
+            decoration: BoxDecoration(
+              color: color,
               shape: BoxShape.circle,
             ),
           ),
@@ -316,7 +309,7 @@ class _OccupiedWithOrderBanner extends StatelessWidget {
           Text(
             l10n.floor_status_occupied,
             style: AppTextStyles.titleMedium.copyWith(
-              color: AppColors.error,
+              color: color,
               fontWeight: FontWeight.w700,
             ),
           ),
