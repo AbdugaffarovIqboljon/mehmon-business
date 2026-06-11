@@ -12,6 +12,7 @@ import 'package:mehmon/features/bookings/presentation/controllers/book_a_table_d
 import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_date_selector.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_form_actions.dart';
+import 'package:mehmon/features/bookings/presentation/widgets/booking_range_summary.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/booking_time_selector.dart';
 import 'package:mehmon/features/bookings/presentation/widgets/guest_count_picker.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
@@ -24,6 +25,18 @@ extension BookingTypeApi on BookingType {
     BookingType.standard => 'Standard',
     BookingType.banket => 'Banket',
   };
+}
+
+/// Resolves the effective end-minute used for availability checks.
+/// Uses the user-selected END whenever present (for BOTH booking types);
+/// otherwise falls back to the resolver's assumed 90-min duration.
+/// Single source of truth shared by the disable rule and save validation.
+int effectiveEndMin(int startMin, String? endStr) {
+  if (endStr != null) {
+    final parsed = hhmmToMin(endStr);
+    if (parsed != null) return parsed;
+  }
+  return startMin + kAssumedStandardDurationMin;
 }
 
 const List<String> defaultBookingTimes = [
@@ -186,10 +199,12 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     final existing = widget.existingBooking;
     if (existing == null) {
       _guestCount = ValueNotifier<int>(_initialGuests);
-      _selectedTime = ValueNotifier<String>(
-        initialSlots.contains('18:00') ? '18:00' : initialSlots.first,
+      final initialStart =
+          initialSlots.contains('18:00') ? '18:00' : initialSlots.first;
+      _selectedTime = ValueNotifier<String>(initialStart);
+      _selectedEndTime = ValueNotifier<String?>(
+        _defaultEndFor(initialStart, initialSlots),
       );
-      _selectedEndTime = ValueNotifier<String?>(null);
       _selectedBookingType = ValueNotifier<BookingType>(BookingType.standard);
       _selectedTable = ValueNotifier<FloorEntity?>(null);
       UzbekPhoneInput.seedController(_phoneController);
@@ -201,12 +216,13 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
         existing.bookingType ?? BookingType.standard,
       );
       _guestCount = ValueNotifier<int>(existing.numberOfGuests);
-      _selectedTime = ValueNotifier<String>(
-        initialSlots.contains(existing.timeSlot)
-            ? existing.timeSlot
-            : (initialSlots.isNotEmpty ? initialSlots.first : '18:00'),
+      final existingStart = initialSlots.contains(existing.timeSlot)
+          ? existing.timeSlot
+          : (initialSlots.isNotEmpty ? initialSlots.first : '18:00');
+      _selectedTime = ValueNotifier<String>(existingStart);
+      _selectedEndTime = ValueNotifier<String?>(
+        existing.endTime ?? _defaultEndFor(existingStart, initialSlots),
       );
-      _selectedEndTime = ValueNotifier<String?>(existing.endTime);
       _selectedTable = ValueNotifier<FloorEntity?>(null);
       _notesController.text = existing.notes ?? '';
       if (existing.tableInfo != null) {
@@ -249,10 +265,32 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     }
   }
 
+  /// First valid slot at [startStr] + 90 min; if that exceeds closing,
+  /// clamps to the last slot strictly after [startStr]. Null only when no
+  /// slot lies after [startStr] (start sits at the final slot).
+  String? _defaultEndFor(String startStr, [List<String>? slots]) {
+    final available = slots ?? _resolveSlots();
+    final startMin = hhmmToMin(startStr);
+    if (startMin == null) return null;
+    final laterSlots =
+        available.where((t) => t.compareTo(startStr) > 0).toList();
+    if (laterSlots.isEmpty) return null;
+    final targetMin = startMin + kAssumedStandardDurationMin;
+    for (final slot in laterSlots) {
+      final slotMin = hhmmToMin(slot);
+      if (slotMin != null && slotMin >= targetMin) return slot;
+    }
+    return laterSlots.last;
+  }
+
+  /// A START change keeps a deliberate END (longer Banket range, edited
+  /// booking's stored END) and only re-defaults when END is missing or no
+  /// longer strictly after START. Mirrors the profile listener (A1).
   void _onStartTimeChanged() {
+    final start = _selectedTime.value;
     final end = _selectedEndTime.value;
-    if (end != null && end.compareTo(_selectedTime.value) <= 0) {
-      _selectedEndTime.value = null;
+    if (end == null || end.compareTo(start) <= 0) {
+      _selectedEndTime.value = _defaultEndFor(start);
     }
   }
 
@@ -287,14 +325,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       return;
     }
 
-    final int endMin;
-    if (_selectedBookingType.value == BookingType.banket &&
-        _selectedEndTime.value != null) {
-      final parsed = hhmmToMin(_selectedEndTime.value!);
-      endMin = parsed ?? (startMin + kAssumedStandardDurationMin);
-    } else {
-      endMin = startMin + kAssumedStandardDurationMin;
-    }
+    final endMin = effectiveEndMin(startMin, _selectedEndTime.value);
 
     _busyIds.value = busyTableIds(
       bookings: bookings,
@@ -392,14 +423,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     final freshBookings =
         ref.read(bookingControllerProvider).valueOrNull ?? [];
     final startMin = hhmmToMin(_selectedTime.value) ?? 0;
-    final int freshEndMin;
-    if (_selectedBookingType.value == BookingType.banket &&
-        _selectedEndTime.value != null) {
-      freshEndMin = hhmmToMin(_selectedEndTime.value!) ??
-          (startMin + kAssumedStandardDurationMin);
-    } else {
-      freshEndMin = startMin + kAssumedStandardDurationMin;
-    }
+    final freshEndMin = effectiveEndMin(startMin, _selectedEndTime.value);
     final conflictWindow = conflictWindowFor(
       bookings: freshBookings,
       tableId: selectedTable.id,
@@ -491,6 +515,10 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     final headlineBold = textTheme.headlineSmall?.copyWith(
       fontWeight: FontWeight.w700,
     );
+    final rangeSubLabel = textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w600,
+      color: AppColors.textSecondary,
+    );
     final dateState = ref.watch(bookATableDateControllerProvider);
     final dateController = ref.read(bookATableDateControllerProvider.notifier);
     final isEditMode = widget.existingBooking != null;
@@ -506,12 +534,15 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       ..listen(profileControllerProvider, (_, __) {
         final slots = _resolveSlots();
         if (!slots.contains(_selectedTime.value)) {
+          // Re-defaults END via the _onStartTimeChanged listener.
           _selectedTime.value =
               slots.contains('18:00') ? '18:00' : slots.first;
         }
         final end = _selectedEndTime.value;
-        if (end != null && !slots.contains(end)) {
-          _selectedEndTime.value = null;
+        if (end == null ||
+            !slots.contains(end) ||
+            end.compareTo(_selectedTime.value) <= 0) {
+          _selectedEndTime.value = _defaultEndFor(_selectedTime.value, slots);
         }
       })
       ..listen(floorControllerProvider, (_, __) => _tryPreFillTable())
@@ -579,8 +610,10 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       ],
                     ),
                     const SizedBox(height: AppSpacing.xxl),
-                    Text(loc.selectTime, style: headlineBold),
+                    Text("Vaqt oralig'i", style: headlineBold),
                     const SizedBox(height: AppSpacing.md),
+                    Text('Boshlanish', style: rangeSubLabel),
+                    const SizedBox(height: AppSpacing.sm),
                     ValueListenableBuilder<String>(
                       valueListenable: _selectedTime,
                       builder: (_, time, __) => BookingTimeSelector(
@@ -588,6 +621,38 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                         selectedTime: time,
                         onTimeSelected: (selected) =>
                             _selectedTime.value = selected,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    Text('Tugash', style: rangeSubLabel),
+                    const SizedBox(height: AppSpacing.sm),
+                    ValueListenableBuilder<String>(
+                      valueListenable: _selectedTime,
+                      builder: (_, startTime, __) {
+                        final validEndTimes = timeSlots
+                            .where((t) => t.compareTo(startTime) > 0)
+                            .toList();
+                        return ValueListenableBuilder<String?>(
+                          valueListenable: _selectedEndTime,
+                          builder: (_, end, __) => BookingTimeSelector(
+                            times: validEndTimes,
+                            selectedTime: end,
+                            onTimeSelected: (String t) =>
+                                _selectedEndTime.value = t,
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    ValueListenableBuilder<String>(
+                      valueListenable: _selectedTime,
+                      builder: (_, start, __) =>
+                          ValueListenableBuilder<String?>(
+                        valueListenable: _selectedEndTime,
+                        builder: (_, end, __) => BookingRangeSummary(
+                          startTime: start,
+                          endTime: end,
+                        ),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xxl),
@@ -600,9 +665,6 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                         selectedType: type,
                         onTypeSelected: (BookingType selected) {
                           _selectedBookingType.value = selected;
-                          if (selected != BookingType.banket) {
-                            _selectedEndTime.value = null;
-                          }
                         },
                       ),
                     ),
@@ -618,7 +680,6 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                         busyIds: _busyIds,
                         selectedTime: _selectedTime,
                         selectedEndTime: _selectedEndTime,
-                        selectedBookingType: _selectedBookingType,
                         excludeBookingId: widget.existingBooking?.id,
                       ),
                     ),
@@ -637,34 +698,6 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                           ),
                         );
                       },
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: AppSpacing.xxl),
-                        Text('Tugash vaqti', style: headlineBold),
-                        const SizedBox(height: AppSpacing.md),
-                        ValueListenableBuilder<String>(
-                          valueListenable: _selectedTime,
-                          builder: (_, startTime, __) {
-                            final validEndTimes = timeSlots
-                                .where((t) => t.compareTo(startTime) > 0)
-                                .toList();
-                            return ValueListenableBuilder<String?>(
-                              valueListenable: _selectedEndTime,
-                              builder: (_, end, __) => BookingTimeSelector(
-                                times: validEndTimes,
-                                selectedTime: end,
-                                allowDeselect: true,
-                                onTimeSelected: (String t) {
-                                  _selectedEndTime.value =
-                                      _selectedEndTime.value == t ? null : t;
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ],
                     ),
                     const SizedBox(height: AppSpacing.xxl),
                     BookingDateSelector(
@@ -726,7 +759,6 @@ class _TableSelector extends ConsumerWidget {
     required this.busyIds,
     required this.selectedTime,
     required this.selectedEndTime,
-    required this.selectedBookingType,
     this.excludeBookingId,
   });
 
@@ -735,7 +767,6 @@ class _TableSelector extends ConsumerWidget {
   final ValueNotifier<Set<String>> busyIds;
   final ValueNotifier<String> selectedTime;
   final ValueNotifier<String?> selectedEndTime;
-  final ValueNotifier<BookingType> selectedBookingType;
   final String? excludeBookingId;
 
   InputDecoration _decoration() => InputDecoration(
@@ -792,18 +823,9 @@ class _TableSelector extends ConsumerWidget {
           valueListenable: busyIds,
           builder: (context, busy, _) {
             final startMin = hhmmToMin(selectedTime.value);
-            final int? endMin;
-            if (startMin != null) {
-              if (selectedBookingType.value == BookingType.banket &&
-                  selectedEndTime.value != null) {
-                endMin = hhmmToMin(selectedEndTime.value!) ??
-                    (startMin + kAssumedStandardDurationMin);
-              } else {
-                endMin = startMin + kAssumedStandardDurationMin;
-              }
-            } else {
-              endMin = null;
-            }
+            final endMin = startMin != null
+                ? effectiveEndMin(startMin, selectedEndTime.value)
+                : null;
 
             return DropdownButton<FloorEntity>(
               value: selectedTable,
