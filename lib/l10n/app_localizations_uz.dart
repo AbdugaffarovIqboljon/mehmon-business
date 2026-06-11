@@ -645,4 +645,95 @@ class AppLocalizationsUz extends AppLocalizations {
   String floor_event_guest_count(int count) {
     return '$count mehmon';
   }
+
+  @override
+  String get editBookingTitle => 'Bronni tahrirlash';
+
+  @override
+  String get bookingTimeRange => 'Vaqt oralig\'i';
+
+  @override
+  String get bookingStartLabel => 'Boshlanish';
+
+  @override
+  String get bookingEndLabel => 'Tugash';
+
+  @override
+  String get bookingTypeLabel => 'Bron turi';
+
+  @override
+  String get tableLabel => 'Stol';
+
+  @override
+  String get bookingNotesLabel => 'Izoh';
+
+  @override
+  String get bookingNotesHint => 'Qo\'shimcha ma\'lumot (ixtiyoriy)';
+
+  @override
+  String get updateBtn => 'Yangilash';
+
+  @override
+  String get enterGuestNameError => 'Mehmon ismini kiriting';
+
+  @override
+  String get selectTable => 'Stol tanlang';
+
+  @override
+  String get banquetEndTimeError => 'Banket uchun tugash vaqtini tanlang';
+
+  @override
+  String get bookingUpdated => 'Bron yangilandi';
+
+  @override
+  String get bookingCreated => 'Bron qo\'shildi';
+
+  @override
+  String get genericError => 'Xatolik yuz berdi';
+
+  @override
+  String get tablesLoadError => 'Stollarni yuklashda xatolik';
+
+  @override
+  String get tableBusy => 'Bu stol band';
+
+  @override
+  String tableBusyInRange(String range) {
+    return 'Bu stol $range vaqt oralig\'ida band';
+  }
+
+  @override
+  String tableAlreadyBookedInRange(String number, String range) {
+    return '$number stoli $range vaqt oralig\'ida allaqachon band';
+  }
+
+  @override
+  String tableBookedForSlot(String range) {
+    return 'Bu vaqt oralig\'ida ($range) stol allaqachon band';
+  }
+
+  @override
+  String bookingTableOption(String number, int capacity) {
+    return '$number ($capacity kishi)';
+  }
+
+  @override
+  String tableBusyLabel(String range) {
+    return 'Band: $range';
+  }
+
+  @override
+  String get zonesSaveError => 'Zonalarni saqlashda xatolik';
+
+  @override
+  String get zoneManagementTitle => 'Zonalar boshqaruvi';
+
+  @override
+  String get zoneManagementSubtitle => 'Masalan: Asosiy zal, Terassa, VIP.';
+
+  @override
+  String get zoneNameHint => 'Zona nomi (masalan: Terassa)';
+
+  @override
+  String get noZonesYet => 'Hali zonalar qo\'shilmagan';
 }

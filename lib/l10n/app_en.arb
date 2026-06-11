@@ -233,5 +233,53 @@
   "floor_event_guest_count": "{count} guests",
   "@floor_event_guest_count": {
     "placeholders": { "count": { "type": "int" } }
-  }
+  },
+  "editBookingTitle": "Edit booking",
+  "bookingTimeRange": "Time range",
+  "bookingStartLabel": "Start",
+  "bookingEndLabel": "End",
+  "bookingTypeLabel": "Booking type",
+  "tableLabel": "Table",
+  "bookingNotesLabel": "Note",
+  "bookingNotesHint": "Additional info (optional)",
+  "updateBtn": "Update",
+  "enterGuestNameError": "Enter guest name",
+  "selectTable": "Select a table",
+  "banquetEndTimeError": "Select an end time for the banquet",
+  "bookingUpdated": "Booking updated",
+  "bookingCreated": "Booking added",
+  "genericError": "An error occurred",
+  "tablesLoadError": "Failed to load tables",
+  "tableBusy": "This table is busy",
+  "tableBusyInRange": "This table is busy during {range}",
+  "@tableBusyInRange": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "tableAlreadyBookedInRange": "Table {number} is already booked during {range}",
+  "@tableAlreadyBookedInRange": {
+    "placeholders": {
+      "number": { "type": "String" },
+      "range": { "type": "String" }
+    }
+  },
+  "tableBookedForSlot": "A table is already booked for this time slot ({range})",
+  "@tableBookedForSlot": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "bookingTableOption": "{number} ({capacity} guests)",
+  "@bookingTableOption": {
+    "placeholders": {
+      "number": { "type": "String" },
+      "capacity": { "type": "int" }
+    }
+  },
+  "tableBusyLabel": "Busy: {range}",
+  "@tableBusyLabel": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "zonesSaveError": "Failed to save zones",
+  "zoneManagementTitle": "Zone management",
+  "zoneManagementSubtitle": "For example: Main hall, Terrace, VIP.",
+  "zoneNameHint": "Zone name (e.g. Terrace)",
+  "noZonesYet": "No zones added yet"
 }

@@ -7,6 +7,7 @@ import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/core/widgets/app_text_field.dart';
 import 'package:mehmon/core/widgets/primary_button.dart';
 import 'package:mehmon/features/settings/presentation/controllers/profile_controller.dart';
+import 'package:mehmon/l10n/app_localizations.dart';
 
 class ZoneManagementSheet extends ConsumerStatefulWidget {
   const ZoneManagementSheet({super.key});
@@ -68,13 +69,14 @@ class _ZoneManagementSheetState extends ConsumerState<ZoneManagementSheet> {
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Zonalarni saqlashda xatolik')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.zonesSaveError)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
     return AnimatedPadding(
       duration: const Duration(milliseconds: 220),
@@ -114,14 +116,14 @@ class _ZoneManagementSheetState extends ConsumerState<ZoneManagementSheet> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  const Text(
-                    'Zonalar boshqaruvi',
+                  Text(
+                    loc.zoneManagementTitle,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.titleLarge,
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  const Text(
-                    'Masalan: Asosiy zal, Terassa, VIP.',
+                  Text(
+                    loc.zoneManagementSubtitle,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.bodyMedium,
                   ),
@@ -135,7 +137,7 @@ class _ZoneManagementSheetState extends ConsumerState<ZoneManagementSheet> {
                             Expanded(
                               child: AppTextField(
                                 controller: _zoneCtrl,
-                                hint: 'Zona nomi (masalan: Terassa)',
+                                hint: loc.zoneNameHint,
                               ),
                             ),
                             const SizedBox(width: AppSpacing.sm),
@@ -162,12 +164,12 @@ class _ZoneManagementSheetState extends ConsumerState<ZoneManagementSheet> {
                           valueListenable: _zones,
                           builder: (_, zones, __) {
                             if (zones.isEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
                                   vertical: AppSpacing.sm,
                                 ),
                                 child: Text(
-                                  "Hali zonalar qo'shilmagan",
+                                  loc.noZonesYet,
                                   style: AppTextStyles.bodySmall,
                                 ),
                               );
@@ -210,7 +212,7 @@ class _ZoneManagementSheetState extends ConsumerState<ZoneManagementSheet> {
                       return ValueListenableBuilder<bool>(
                         valueListenable: _isLoading,
                         builder: (_, loading, __) => PrimaryButton(
-                          label: 'Saqlash',
+                          label: loc.saveBtn,
                           isLoading: loading,
                           onPressed: zones.isEmpty ? null : _submit,
                         ),

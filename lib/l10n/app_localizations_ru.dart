@@ -642,4 +642,95 @@ class AppLocalizationsRu extends AppLocalizations {
   String floor_event_guest_count(int count) {
     return '$count гостей';
   }
+
+  @override
+  String get editBookingTitle => 'Редактировать бронь';
+
+  @override
+  String get bookingTimeRange => 'Промежуток времени';
+
+  @override
+  String get bookingStartLabel => 'Начало';
+
+  @override
+  String get bookingEndLabel => 'Конец';
+
+  @override
+  String get bookingTypeLabel => 'Тип брони';
+
+  @override
+  String get tableLabel => 'Стол';
+
+  @override
+  String get bookingNotesLabel => 'Комментарий';
+
+  @override
+  String get bookingNotesHint => 'Дополнительная информация (необязательно)';
+
+  @override
+  String get updateBtn => 'Обновить';
+
+  @override
+  String get enterGuestNameError => 'Введите имя гостя';
+
+  @override
+  String get selectTable => 'Выберите стол';
+
+  @override
+  String get banquetEndTimeError => 'Выберите время окончания банкета';
+
+  @override
+  String get bookingUpdated => 'Бронь обновлена';
+
+  @override
+  String get bookingCreated => 'Бронь добавлена';
+
+  @override
+  String get genericError => 'Произошла ошибка';
+
+  @override
+  String get tablesLoadError => 'Не удалось загрузить столы';
+
+  @override
+  String get tableBusy => 'Этот стол занят';
+
+  @override
+  String tableBusyInRange(String range) {
+    return 'Этот стол занят в промежутке $range';
+  }
+
+  @override
+  String tableAlreadyBookedInRange(String number, String range) {
+    return 'Стол $number уже забронирован в промежутке $range';
+  }
+
+  @override
+  String tableBookedForSlot(String range) {
+    return 'Стол уже забронирован на этот промежуток ($range)';
+  }
+
+  @override
+  String bookingTableOption(String number, int capacity) {
+    return '$number ($capacity гостей)';
+  }
+
+  @override
+  String tableBusyLabel(String range) {
+    return 'Занято: $range';
+  }
+
+  @override
+  String get zonesSaveError => 'Не удалось сохранить зоны';
+
+  @override
+  String get zoneManagementTitle => 'Управление зонами';
+
+  @override
+  String get zoneManagementSubtitle => 'Например: Главный зал, Терраса, VIP.';
+
+  @override
+  String get zoneNameHint => 'Название зоны (например: Терраса)';
+
+  @override
+  String get noZonesYet => 'Зоны ещё не добавлены';
 }

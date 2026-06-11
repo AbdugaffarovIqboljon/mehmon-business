@@ -131,7 +131,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             ),
             const SizedBox(height: AppSpacing.md),
             ProfileActionTile(
-              title: 'Zonalar boshqaruvi',
+              title: loc.zoneManagementTitle,
               icon: Icons.category_outlined,
               onTap: _openZoneManagement,
             ),

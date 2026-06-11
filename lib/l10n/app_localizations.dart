@@ -1311,6 +1311,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} guests'**
   String floor_event_guest_count(int count);
+
+  /// No description provided for @editBookingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit booking'**
+  String get editBookingTitle;
+
+  /// No description provided for @bookingTimeRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Time range'**
+  String get bookingTimeRange;
+
+  /// No description provided for @bookingStartLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get bookingStartLabel;
+
+  /// No description provided for @bookingEndLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get bookingEndLabel;
+
+  /// No description provided for @bookingTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking type'**
+  String get bookingTypeLabel;
+
+  /// No description provided for @tableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Table'**
+  String get tableLabel;
+
+  /// No description provided for @bookingNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get bookingNotesLabel;
+
+  /// No description provided for @bookingNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional info (optional)'**
+  String get bookingNotesHint;
+
+  /// No description provided for @updateBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get updateBtn;
+
+  /// No description provided for @enterGuestNameError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter guest name'**
+  String get enterGuestNameError;
+
+  /// No description provided for @selectTable.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a table'**
+  String get selectTable;
+
+  /// No description provided for @banquetEndTimeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an end time for the banquet'**
+  String get banquetEndTimeError;
+
+  /// No description provided for @bookingUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking updated'**
+  String get bookingUpdated;
+
+  /// No description provided for @bookingCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking added'**
+  String get bookingCreated;
+
+  /// No description provided for @genericError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get genericError;
+
+  /// No description provided for @tablesLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load tables'**
+  String get tablesLoadError;
+
+  /// No description provided for @tableBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'This table is busy'**
+  String get tableBusy;
+
+  /// No description provided for @tableBusyInRange.
+  ///
+  /// In en, this message translates to:
+  /// **'This table is busy during {range}'**
+  String tableBusyInRange(String range);
+
+  /// No description provided for @tableAlreadyBookedInRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Table {number} is already booked during {range}'**
+  String tableAlreadyBookedInRange(String number, String range);
+
+  /// No description provided for @tableBookedForSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'A table is already booked for this time slot ({range})'**
+  String tableBookedForSlot(String range);
+
+  /// No description provided for @bookingTableOption.
+  ///
+  /// In en, this message translates to:
+  /// **'{number} ({capacity} guests)'**
+  String bookingTableOption(String number, int capacity);
+
+  /// No description provided for @tableBusyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Busy: {range}'**
+  String tableBusyLabel(String range);
+
+  /// No description provided for @zonesSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save zones'**
+  String get zonesSaveError;
+
+  /// No description provided for @zoneManagementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zone management'**
+  String get zoneManagementTitle;
+
+  /// No description provided for @zoneManagementSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: Main hall, Terrace, VIP.'**
+  String get zoneManagementSubtitle;
+
+  /// No description provided for @zoneNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Zone name (e.g. Terrace)'**
+  String get zoneNameHint;
+
+  /// No description provided for @noZonesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No zones added yet'**
+  String get noZonesYet;
 }
 
 class _AppLocalizationsDelegate

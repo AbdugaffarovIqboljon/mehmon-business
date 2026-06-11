@@ -200,5 +200,53 @@
   "floor_event_guest_count": "{count} гостей",
   "@floor_event_guest_count": {
     "placeholders": { "count": { "type": "int" } }
-  }
+  },
+  "editBookingTitle": "Редактировать бронь",
+  "bookingTimeRange": "Промежуток времени",
+  "bookingStartLabel": "Начало",
+  "bookingEndLabel": "Конец",
+  "bookingTypeLabel": "Тип брони",
+  "tableLabel": "Стол",
+  "bookingNotesLabel": "Комментарий",
+  "bookingNotesHint": "Дополнительная информация (необязательно)",
+  "updateBtn": "Обновить",
+  "enterGuestNameError": "Введите имя гостя",
+  "selectTable": "Выберите стол",
+  "banquetEndTimeError": "Выберите время окончания банкета",
+  "bookingUpdated": "Бронь обновлена",
+  "bookingCreated": "Бронь добавлена",
+  "genericError": "Произошла ошибка",
+  "tablesLoadError": "Не удалось загрузить столы",
+  "tableBusy": "Этот стол занят",
+  "tableBusyInRange": "Этот стол занят в промежутке {range}",
+  "@tableBusyInRange": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "tableAlreadyBookedInRange": "Стол {number} уже забронирован в промежутке {range}",
+  "@tableAlreadyBookedInRange": {
+    "placeholders": {
+      "number": { "type": "String" },
+      "range": { "type": "String" }
+    }
+  },
+  "tableBookedForSlot": "Стол уже забронирован на этот промежуток ({range})",
+  "@tableBookedForSlot": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "bookingTableOption": "{number} ({capacity} гостей)",
+  "@bookingTableOption": {
+    "placeholders": {
+      "number": { "type": "String" },
+      "capacity": { "type": "int" }
+    }
+  },
+  "tableBusyLabel": "Занято: {range}",
+  "@tableBusyLabel": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "zonesSaveError": "Не удалось сохранить зоны",
+  "zoneManagementTitle": "Управление зонами",
+  "zoneManagementSubtitle": "Например: Главный зал, Терраса, VIP.",
+  "zoneNameHint": "Название зоны (например: Терраса)",
+  "noZonesYet": "Зоны ещё не добавлены"
 }

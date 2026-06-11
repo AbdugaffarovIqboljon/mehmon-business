@@ -364,9 +364,10 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
         endMin: endMin,
         excludeBookingId: widget.existingBooking?.id,
       );
+      final loc = AppLocalizations.of(context)!;
       _tableConflictMsg.value = window != null
-          ? "Bu stol $window vaqt oralig'ida band"
-          : 'Bu stol band';
+          ? loc.tableBusyInRange(window)
+          : loc.tableBusy;
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (mounted) _selectedTable.value = null;
       });
@@ -395,25 +396,26 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
   }
 
   Future<void> _confirm() async {
+    final loc = AppLocalizations.of(context)!;
     final guestName = _guestNameController.text.trim();
     final phone = _phoneController.text.trim();
 
     if (guestName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mehmon ismini kiriting')),
+        SnackBar(content: Text(loc.enterGuestNameError)),
       );
       return;
     }
     if (!UzbekPhoneInput.isValid(phone)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Telefon raqamini kiriting')),
+        SnackBar(content: Text(loc.phoneValidationError)),
       );
       return;
     }
     final selectedTable = _selectedTable.value;
     if (selectedTable == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Stol tanlang')),
+        SnackBar(content: Text(loc.selectTable)),
       );
       return;
     }
@@ -421,8 +423,8 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     final endTimeValue = _selectedEndTime.value;
     if (bookingType == BookingType.banket && endTimeValue == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Banket uchun tugash vaqtini tanlang'),
+        SnackBar(
+          content: Text(loc.banquetEndTimeError),
         ),
       );
       return;
@@ -456,8 +458,10 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '${selectedTable.number} stoli $conflictWindow '
-            "vaqt oralig'ida allaqachon band",
+            loc.tableAlreadyBookedInRange(
+              selectedTable.number,
+              conflictWindow,
+            ),
           ),
           backgroundColor: AppColors.error,
         ),
@@ -505,7 +509,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            existing != null ? 'Bron yangilandi' : "Bron qo'shildi",
+            existing != null ? loc.bookingUpdated : loc.bookingCreated,
           ),
         ),
       );
@@ -517,8 +521,8 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
         SnackBar(
           content: Text(
             conflictWindow != null
-                ? "Bu vaqt oralig'ida ($conflictWindow) stol allaqachon band"
-                : 'Xatolik yuz berdi',
+                ? loc.tableBookedForSlot(conflictWindow)
+                : loc.genericError,
           ),
           backgroundColor:
               conflictWindow != null ? AppColors.error : null,
@@ -599,7 +603,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                   ),
                   Center(
                     child: Text(
-                      isEditMode ? 'Bronni tahrirlash' : loc.bookATable,
+                      isEditMode ? loc.editBookingTitle : loc.bookATable,
                       style: headlineBold,
                     ),
                   ),
@@ -629,9 +633,9 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       ],
                     ),
                     const SizedBox(height: AppSpacing.xxl),
-                    Text("Vaqt oralig'i", style: headlineBold),
+                    Text(loc.bookingTimeRange, style: headlineBold),
                     const SizedBox(height: AppSpacing.md),
-                    Text('Boshlanish', style: rangeSubLabel),
+                    Text(loc.bookingStartLabel, style: rangeSubLabel),
                     const SizedBox(height: AppSpacing.sm),
                     ValueListenableBuilder<String>(
                       valueListenable: _selectedTime,
@@ -643,7 +647,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    Text('Tugash', style: rangeSubLabel),
+                    Text(loc.bookingEndLabel, style: rangeSubLabel),
                     const SizedBox(height: AppSpacing.sm),
                     ValueListenableBuilder<String>(
                       valueListenable: _selectedTime,
@@ -675,7 +679,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xxl),
-                    Text('Bron turi', style: headlineBold),
+                    Text(loc.bookingTypeLabel, style: headlineBold),
                     const SizedBox(height: AppSpacing.md),
                     ValueListenableBuilder<BookingType>(
                       valueListenable: _selectedBookingType,
@@ -688,7 +692,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xxl),
-                    Text('Stol', style: headlineBold),
+                    Text(loc.tableLabel, style: headlineBold),
                     const SizedBox(height: AppSpacing.md),
                     ValueListenableBuilder<FloorEntity?>(
                       valueListenable: _selectedTable,
@@ -747,8 +751,8 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
                     const SizedBox(height: AppSpacing.lg),
                     AppTextField(
                       controller: _notesController,
-                      label: 'Izoh',
-                      hint: "Qo'shimcha ma'lumot (ixtiyoriy)",
+                      label: loc.bookingNotesLabel,
+                      hint: loc.bookingNotesHint,
                       maxLines: 2,
                     ),
                     const SizedBox(height: AppSpacing.xl),
@@ -760,7 +764,7 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
             BookingFormActions(
               onCancel: () => Navigator.of(context).pop(),
               onConfirm: _confirm,
-              confirmLabel: isEditMode ? 'Yangilash' : 'Saqlash',
+              confirmLabel: isEditMode ? loc.updateBtn : loc.saveBtn,
             ),
           ],
         ),
@@ -812,6 +816,7 @@ class _TableSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final loc = AppLocalizations.of(context)!;
     final floorsAsync = ref.watch(floorControllerProvider);
     final bookings =
         ref.watch(bookingControllerProvider).valueOrNull ?? const <BookingEntity>[];
@@ -823,10 +828,10 @@ class _TableSelector extends ConsumerWidget {
     final hasError = tables == null && floorsAsync.hasError;
 
     if (isFirstLoad) {
-      return _disabledDropdown('Stollar yuklanmoqda...');
+      return _disabledDropdown(loc.floor_tables_loading);
     }
     if (hasError) {
-      return _disabledDropdown('Stollarni yuklashda xatolik');
+      return _disabledDropdown(loc.tablesLoadError);
     }
 
     final items = tables ?? const <FloorEntity>[];
@@ -850,7 +855,7 @@ class _TableSelector extends ConsumerWidget {
               value: selectedTable,
               isExpanded: true,
               underline: const SizedBox.shrink(),
-              hint: const Text('Stol tanlang'),
+              hint: Text(loc.selectTable),
               itemHeight: null,
               items: items.map((t) {
                 final isBusy = busy.contains(t.id);
@@ -872,7 +877,7 @@ class _TableSelector extends ConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '${t.number} (${t.capacity} kishi)',
+                        loc.bookingTableOption(t.number, t.capacity),
                         style: TextStyle(
                           color: isBusy
                               ? Theme.of(context).disabledColor
@@ -881,7 +886,7 @@ class _TableSelector extends ConsumerWidget {
                       ),
                       if (isBusy && window != null)
                         Text(
-                          'Band: $window',
+                          loc.tableBusyLabel(window),
                           style: const TextStyle(
                             fontSize: 11,
                             color: AppColors.error,

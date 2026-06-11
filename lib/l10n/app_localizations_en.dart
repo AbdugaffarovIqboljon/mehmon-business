@@ -643,4 +643,95 @@ class AppLocalizationsEn extends AppLocalizations {
   String floor_event_guest_count(int count) {
     return '$count guests';
   }
+
+  @override
+  String get editBookingTitle => 'Edit booking';
+
+  @override
+  String get bookingTimeRange => 'Time range';
+
+  @override
+  String get bookingStartLabel => 'Start';
+
+  @override
+  String get bookingEndLabel => 'End';
+
+  @override
+  String get bookingTypeLabel => 'Booking type';
+
+  @override
+  String get tableLabel => 'Table';
+
+  @override
+  String get bookingNotesLabel => 'Note';
+
+  @override
+  String get bookingNotesHint => 'Additional info (optional)';
+
+  @override
+  String get updateBtn => 'Update';
+
+  @override
+  String get enterGuestNameError => 'Enter guest name';
+
+  @override
+  String get selectTable => 'Select a table';
+
+  @override
+  String get banquetEndTimeError => 'Select an end time for the banquet';
+
+  @override
+  String get bookingUpdated => 'Booking updated';
+
+  @override
+  String get bookingCreated => 'Booking added';
+
+  @override
+  String get genericError => 'An error occurred';
+
+  @override
+  String get tablesLoadError => 'Failed to load tables';
+
+  @override
+  String get tableBusy => 'This table is busy';
+
+  @override
+  String tableBusyInRange(String range) {
+    return 'This table is busy during $range';
+  }
+
+  @override
+  String tableAlreadyBookedInRange(String number, String range) {
+    return 'Table $number is already booked during $range';
+  }
+
+  @override
+  String tableBookedForSlot(String range) {
+    return 'A table is already booked for this time slot ($range)';
+  }
+
+  @override
+  String bookingTableOption(String number, int capacity) {
+    return '$number ($capacity guests)';
+  }
+
+  @override
+  String tableBusyLabel(String range) {
+    return 'Busy: $range';
+  }
+
+  @override
+  String get zonesSaveError => 'Failed to save zones';
+
+  @override
+  String get zoneManagementTitle => 'Zone management';
+
+  @override
+  String get zoneManagementSubtitle => 'For example: Main hall, Terrace, VIP.';
+
+  @override
+  String get zoneNameHint => 'Zone name (e.g. Terrace)';
+
+  @override
+  String get noZonesYet => 'No zones added yet';
 }

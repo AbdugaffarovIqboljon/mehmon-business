@@ -200,5 +200,53 @@
   "floor_event_guest_count": "{count} mehmon",
   "@floor_event_guest_count": {
     "placeholders": { "count": { "type": "int" } }
-  }
+  },
+  "editBookingTitle": "Bronni tahrirlash",
+  "bookingTimeRange": "Vaqt oralig'i",
+  "bookingStartLabel": "Boshlanish",
+  "bookingEndLabel": "Tugash",
+  "bookingTypeLabel": "Bron turi",
+  "tableLabel": "Stol",
+  "bookingNotesLabel": "Izoh",
+  "bookingNotesHint": "Qo'shimcha ma'lumot (ixtiyoriy)",
+  "updateBtn": "Yangilash",
+  "enterGuestNameError": "Mehmon ismini kiriting",
+  "selectTable": "Stol tanlang",
+  "banquetEndTimeError": "Banket uchun tugash vaqtini tanlang",
+  "bookingUpdated": "Bron yangilandi",
+  "bookingCreated": "Bron qo'shildi",
+  "genericError": "Xatolik yuz berdi",
+  "tablesLoadError": "Stollarni yuklashda xatolik",
+  "tableBusy": "Bu stol band",
+  "tableBusyInRange": "Bu stol {range} vaqt oralig'ida band",
+  "@tableBusyInRange": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "tableAlreadyBookedInRange": "{number} stoli {range} vaqt oralig'ida allaqachon band",
+  "@tableAlreadyBookedInRange": {
+    "placeholders": {
+      "number": { "type": "String" },
+      "range": { "type": "String" }
+    }
+  },
+  "tableBookedForSlot": "Bu vaqt oralig'ida ({range}) stol allaqachon band",
+  "@tableBookedForSlot": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "bookingTableOption": "{number} ({capacity} kishi)",
+  "@bookingTableOption": {
+    "placeholders": {
+      "number": { "type": "String" },
+      "capacity": { "type": "int" }
+    }
+  },
+  "tableBusyLabel": "Band: {range}",
+  "@tableBusyLabel": {
+    "placeholders": { "range": { "type": "String" } }
+  },
+  "zonesSaveError": "Zonalarni saqlashda xatolik",
+  "zoneManagementTitle": "Zonalar boshqaruvi",
+  "zoneManagementSubtitle": "Masalan: Asosiy zal, Terassa, VIP.",
+  "zoneNameHint": "Zona nomi (masalan: Terassa)",
+  "noZonesYet": "Hali zonalar qo'shilmagan"
 }
