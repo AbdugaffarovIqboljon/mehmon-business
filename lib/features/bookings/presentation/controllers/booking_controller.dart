@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mehmon/core/errors/failure.dart';
@@ -30,13 +31,70 @@ final bookingControllerProvider =
 
 // ── Controller ────────────────────────────────────────────────────────────
 
-class BookingController extends AsyncNotifier<List<BookingEntity>> {
+class BookingController extends AsyncNotifier<List<BookingEntity>>
+    with WidgetsBindingObserver {
   /// Set when the last createBooking call failed with TABLE_CONFLICT.
   /// Cleared on the next createBooking attempt.
   String? lastConflictWindow;
 
   @override
-  FutureOr<List<BookingEntity>> build() => _loadBookings();
+  FutureOr<List<BookingEntity>> build() async {
+    WidgetsBinding.instance.addObserver(this);
+    ref.onDispose(() => WidgetsBinding.instance.removeObserver(this));
+
+    final bookings = await _loadBookings();
+
+    // Auto-complete any expired bookings once the first frame is in.
+    // addPostFrameCallback avoids mutating `state` during build.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _autoCompleteExpired());
+
+    return bookings;
+  }
+
+  /// On app resume, finalize any booking whose window has elapsed while the
+  /// app was backgrounded. No Timer/polling — driven purely by lifecycle.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _autoCompleteExpired();
+  }
+
+  /// Flips bookings past their `endTime` to `completed`. Optimistic local
+  /// update first (instant UI — [updateBookingStatus] only reconciles `state`
+  /// *after* its server PUT resolves, so without this the UI would lag the
+  /// round-trips), then a parallel fire-and-forget server sync. A failed PUT is
+  /// swallowed: the local state stays ahead and the next [refresh] corrects it.
+  Future<void> _autoCompleteExpired() async {
+    final current = state.valueOrNull;
+    if (current == null) return;
+
+    final expired = current
+        .where(
+          (b) =>
+              b.isExpired &&
+              b.status != 'completed' &&
+              b.status != 'cancelled',
+        )
+        .toList();
+
+    if (expired.isEmpty) return;
+
+    final expiredIds = expired.map((b) => b.id).toSet();
+
+    // Optimistic local update — UI responds instantly.
+    state = AsyncData([
+      for (final b in current)
+        if (expiredIds.contains(b.id)) b.copyWith(status: 'completed') else b,
+    ]);
+
+    // Parallel server sync. updateBookingStatus returns Future<bool> and
+    // already handles its own failures (returns false), so catchError here is
+    // a belt-and-braces guard that must yield a bool to match the type.
+    await Future.wait(
+      expired.map(
+        (b) => updateBookingStatus(b, 'completed').catchError((_) => false),
+      ),
+    );
+  }
 
   Future<List<BookingEntity>> _loadBookings() async {
     final result = await ref.read(bookingRepositoryProvider).getBookings();

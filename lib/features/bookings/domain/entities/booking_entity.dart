@@ -26,7 +26,7 @@ extension BookingEntityX on BookingEntity {
     final hour = parts.isNotEmpty ? int.tryParse(parts[0].trim()) ?? 0 : 0;
     final minute = parts.length > 1 ? int.tryParse(parts[1].trim()) ?? 0 : 0;
     return DateTime(d.year, d.month, d.day, hour, minute);
-  }
+  } 
 
   int get partySize => numberOfGuests;
 
@@ -53,6 +53,25 @@ extension BookingEntityX on BookingEntity {
 
     final refMin = now.hour * 60 + now.minute;
     return refMin >= startMin - kBookingHoldWindowMin && refMin < endMin;
+  }
+
+  /// True when this booking's `endTime` (combined with its `date`) lies strictly
+  /// in the past. Combining date + endTime into a full [DateTime] keeps the
+  /// comparison correct across midnight and day boundaries. Returns false when
+  /// `endTime` is absent or either field is malformed — an open-ended booking
+  /// never auto-expires. Domain gate for booking auto-completion.
+  bool get isExpired {
+    if (endTime == null) return false;
+    final endMin = _hhmmToMin(endTime!);
+    if (endMin == null) return false;
+    final dateParts = date.split('-');
+    if (dateParts.length != 3) return false;
+    final year = int.tryParse(dateParts[0]);
+    final month = int.tryParse(dateParts[1]);
+    final day = int.tryParse(dateParts[2]);
+    if (year == null || month == null || day == null) return false;
+    final endDt = DateTime(year, month, day, endMin ~/ 60, endMin % 60);
+    return endDt.isBefore(DateTime.now());
   }
 }
 
