@@ -199,8 +199,9 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     final existing = widget.existingBooking;
     if (existing == null) {
       _guestCount = ValueNotifier<int>(_initialGuests);
-      final initialStart =
-          initialSlots.contains('18:00') ? '18:00' : initialSlots.first;
+      final selectedDate =
+          ref.read(bookATableDateControllerProvider).selectedDate;
+      final initialStart = _initialStartFor(initialSlots, selectedDate);
       _selectedTime = ValueNotifier<String>(initialStart);
       _selectedEndTime = ValueNotifier<String?>(
         _defaultEndFor(initialStart, initialSlots),
@@ -248,6 +249,24 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       opening: profile?.openingTime,
       closing: profile?.closingTime,
       fallback: widget.timeSlots,
+    );
+  }
+
+  /// Start slot pre-selected when opening the sheet for a NEW booking.
+  /// For a future date keeps the prior default (18:00 when present, else the
+  /// first slot). For today, jumps to the first slot strictly after the
+  /// current time so the user isn't forced to scroll past past slots; if every
+  /// slot today is already past, falls back to the last slot.
+  /// [slots] is always non-empty (buildTimeSlots returns a non-empty fallback).
+  String _initialStartFor(List<String> slots, DateTime selectedDate) {
+    if (!DateUtils.isSameDay(selectedDate, DateTime.now())) {
+      return slots.contains('18:00') ? '18:00' : slots.first;
+    }
+    final now = TimeOfDay.now();
+    final nowMin = now.hour * 60 + now.minute;
+    return slots.firstWhere(
+      (s) => (hhmmToMin(s) ?? 0) > nowMin,
+      orElse: () => slots.last,
     );
   }
 

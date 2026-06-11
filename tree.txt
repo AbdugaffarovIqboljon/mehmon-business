@@ -113,6 +113,7 @@ lib
 │   │           ├── booking_month_calendar.dart
 │   │           ├── booking_month_dropdown.dart
 │   │           ├── booking_options_sheet.dart
+│   │           ├── booking_range_summary.dart
 │   │           ├── booking_time_selector.dart
 │   │           ├── bookings_fab.dart
 │   │           └── guest_count_picker.dart
