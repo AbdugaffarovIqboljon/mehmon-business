@@ -73,6 +73,51 @@ extension BookingEntityX on BookingEntity {
     final endDt = DateTime(year, month, day, endMin ~/ 60, endMin % 60);
     return endDt.isBefore(DateTime.now());
   }
+
+  /// Full [DateTime] of this booking's `endTime` combined with its `date`, or
+  /// null when `endTime` is absent or either field is malformed. Mirrors the
+  /// parsing pattern used by [isExpired] and reuses `_hhmmToMin`.
+  DateTime? get endDateTime {
+    if (endTime == null) return null;
+    final endMin = _hhmmToMin(endTime!);
+    if (endMin == null) return null;
+    final parts = date.split('-');
+    if (parts.length != 3) return null;
+    final y = int.tryParse(parts[0]);
+    final m = int.tryParse(parts[1]);
+    final d = int.tryParse(parts[2]);
+    if (y == null || m == null || d == null) return null;
+    return DateTime(y, m, d, endMin ~/ 60, endMin % 60);
+  }
+
+  /// Sort bucket for day-view ordering — pure/computed, no side effects:
+  /// `0` ongoing (started, not yet ended), `1` upcoming (starts in the future),
+  /// `2` past/finalized (completed, cancelled, or already ended).
+  int get sortBucket {
+    final now = DateTime.now();
+    final start = dateTime;
+    final end = endDateTime;
+
+    // Terminal statuses → always past bucket.
+    if (status == 'completed' || status == 'cancelled') return 2;
+
+    // PAST: start already passed.
+    if (start.isBefore(now)) {
+      // Has endTime and it hasn't passed yet → genuinely ongoing.
+      if (end != null && end.isAfter(now)) return 0;
+      // No endTime: open-ended booking → ongoing only within a start+2h grace
+      // window (matches isHoldingTableAt's start+120min fallback), then past.
+      if (end == null) {
+        final grace = start.add(const Duration(hours: 2));
+        if (grace.isAfter(now)) return 0; // still within 2h grace → ongoing
+        return 2; // past grace window → past
+      }
+      return 2; // endTime exists and has passed
+    }
+
+    // UPCOMING: starts in the future.
+    return 1;
+  }
 }
 
 @freezed

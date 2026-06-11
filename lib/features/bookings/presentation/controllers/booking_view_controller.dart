@@ -44,7 +44,14 @@ final selectedDayBookingsProvider = Provider<List<BookingEntity>>((ref) {
             (booking) => DateUtils.isSameDay(booking.dateTime, selectedDate),
           )
           .toList()
-        ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+        ..sort((a, b) {
+          final bucketCmp = a.sortBucket.compareTo(b.sortBucket);
+          if (bucketCmp != 0) return bucketCmp;
+          // Within bucket 2 (past): most recent first → descending.
+          if (a.sortBucket == 2) return b.dateTime.compareTo(a.dateTime);
+          // Within bucket 0 (ongoing) and 1 (upcoming): ascending.
+          return a.dateTime.compareTo(b.dateTime);
+        });
 
   return List<BookingEntity>.unmodifiable(selectedDayBookings);
 });
