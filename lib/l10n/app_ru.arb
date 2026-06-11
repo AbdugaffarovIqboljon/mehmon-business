@@ -213,6 +213,7 @@
   "enterGuestNameError": "Введите имя гостя",
   "selectTable": "Выберите стол",
   "banquetEndTimeError": "Выберите время окончания банкета",
+  "bookingPastTimeError": "Нельзя забронировать стол на уже прошедшее время",
   "bookingUpdated": "Бронь обновлена",
   "bookingCreated": "Бронь добавлена",
   "genericError": "Произошла ошибка",

@@ -681,6 +681,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get banquetEndTimeError => 'Select an end time for the banquet';
 
   @override
+  String get bookingPastTimeError =>
+      'Cannot book a table for a time that has already passed';
+
+  @override
   String get bookingUpdated => 'Booking updated';
 
   @override

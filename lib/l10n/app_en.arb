@@ -246,6 +246,7 @@
   "enterGuestNameError": "Enter guest name",
   "selectTable": "Select a table",
   "banquetEndTimeError": "Select an end time for the banquet",
+  "bookingPastTimeError": "Cannot book a table for a time that has already passed",
   "bookingUpdated": "Booking updated",
   "bookingCreated": "Booking added",
   "genericError": "An error occurred",

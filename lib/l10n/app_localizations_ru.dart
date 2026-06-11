@@ -680,6 +680,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get banquetEndTimeError => 'Выберите время окончания банкета';
 
   @override
+  String get bookingPastTimeError =>
+      'Нельзя забронировать стол на уже прошедшее время';
+
+  @override
   String get bookingUpdated => 'Бронь обновлена';
 
   @override

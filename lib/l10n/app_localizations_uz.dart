@@ -683,6 +683,10 @@ class AppLocalizationsUz extends AppLocalizations {
   String get banquetEndTimeError => 'Banket uchun tugash vaqtini tanlang';
 
   @override
+  String get bookingPastTimeError =>
+      'O\'tib ketgan vaqtga stol band qilib bo\'lmaydi';
+
+  @override
   String get bookingUpdated => 'Bron yangilandi';
 
   @override

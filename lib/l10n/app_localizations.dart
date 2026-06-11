@@ -1384,6 +1384,12 @@ abstract class AppLocalizations {
   /// **'Select an end time for the banquet'**
   String get banquetEndTimeError;
 
+  /// No description provided for @bookingPastTimeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot book a table for a time that has already passed'**
+  String get bookingPastTimeError;
+
   /// No description provided for @bookingUpdated.
   ///
   /// In en, this message translates to:

@@ -245,11 +245,32 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
 
   List<String> _resolveSlots() {
     final profile = ref.read(profileControllerProvider).valueOrNull;
-    return BookATableSheet.buildTimeSlots(
+    final slots = BookATableSheet.buildTimeSlots(
       opening: profile?.openingTime,
       closing: profile?.closingTime,
       fallback: widget.timeSlots,
     );
+    final selectedDate =
+        ref.read(bookATableDateControllerProvider).selectedDate;
+    return _filterPastSlots(slots, selectedDate);
+  }
+
+  /// Drops start slots that have already elapsed when [selectedDate] is today,
+  /// so a NEW booking can never start in the past. Edit mode and future dates
+  /// are returned untouched (an existing booking may legitimately sit on a
+  /// past slot). If every slot today is already past, keeps the final slot as
+  /// a fallback (restaurant closing very soon). Shares the isSameDay + nowMin
+  /// logic with [_initialStartFor] and the save-time guard for consistency.
+  /// [slots] is always non-empty (buildTimeSlots returns a non-empty fallback).
+  List<String> _filterPastSlots(List<String> slots, DateTime selectedDate) {
+    if (widget.existingBooking != null) return slots;
+    if (!DateUtils.isSameDay(selectedDate, DateTime.now())) return slots;
+    final now = TimeOfDay.now();
+    final nowMin = now.hour * 60 + now.minute;
+    final upcoming =
+        slots.where((s) => (hhmmToMin(s) ?? 0) > nowMin).toList();
+    if (upcoming.isEmpty) return [slots.last];
+    return upcoming;
   }
 
   /// Start slot pre-selected when opening the sheet for a NEW booking.
@@ -438,6 +459,26 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
         : _notesController.text.trim();
     final existing = widget.existingBooking;
 
+    // Past-time guard (NEW bookings only): block a start time that has already
+    // elapsed today. Safety net for the race where the clock ticks past the
+    // selected slot between opening the sheet and tapping Save. Uses the same
+    // isSameDay + nowMin logic as the slot filter (Layer 1) for consistency.
+    if (existing == null &&
+        DateUtils.isSameDay(dateState.selectedDate, DateTime.now())) {
+      final now = TimeOfDay.now();
+      final nowMin = now.hour * 60 + now.minute;
+      final startMin = hhmmToMin(_selectedTime.value) ?? 0;
+      if (startMin <= nowMin) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(loc.bookingPastTimeError),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        return;
+      }
+    }
+
     // Race-condition guard: re-check with the freshest booking snapshot
     // just before committing, in case another booking was created after
     // the form was opened.
@@ -547,10 +588,13 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     final isEditMode = widget.existingBooking != null;
 
     final profile = ref.watch(profileControllerProvider).valueOrNull;
-    final timeSlots = BookATableSheet.buildTimeSlots(
-      opening: profile?.openingTime,
-      closing: profile?.closingTime,
-      fallback: widget.timeSlots,
+    final timeSlots = _filterPastSlots(
+      BookATableSheet.buildTimeSlots(
+        opening: profile?.openingTime,
+        closing: profile?.closingTime,
+        fallback: widget.timeSlots,
+      ),
+      dateState.selectedDate,
     );
 
     ref

@@ -213,6 +213,7 @@
   "enterGuestNameError": "Mehmon ismini kiriting",
   "selectTable": "Stol tanlang",
   "banquetEndTimeError": "Banket uchun tugash vaqtini tanlang",
+  "bookingPastTimeError": "O'tib ketgan vaqtga stol band qilib bo'lmaydi",
   "bookingUpdated": "Bron yangilandi",
   "bookingCreated": "Bron qo'shildi",
   "genericError": "Xatolik yuz berdi",
