@@ -8,6 +8,7 @@ import 'package:mehmon/features/bookings/data/datasources/booking_remote_data_so
 import 'package:mehmon/features/bookings/data/repositories/booking_repository_impl.dart';
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
 import 'package:mehmon/features/bookings/domain/repositories/booking_repository.dart';
+import 'package:mehmon/features/bookings/domain/services/booking_conflict_resolver.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────
@@ -120,9 +121,50 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
           for (final b in current)
             if (b.id == entity.id) entity else b,
         ]);
+        _freeTableIfReleased(entity, tableId);
         return true;
       },
       error: (_) => false,
+    );
+  }
+
+  /// Mirrors the floor-side release in table_detail_sheet so finalizing a
+  /// booking from the Bookings section also clears a manual 'occupied'/
+  /// 'guest_arrived' override on the table it was holding.
+  ///
+  /// Fires when [terminated] has moved into a terminal status
+  /// ([kNonBlockingStatuses]) and has a linked table — UNLESS some OTHER
+  /// booking still actively holds that table right now
+  /// ([BookingEntityX.isHoldingTableAt]). Gating on the *other* holders (not
+  /// the terminated booking's own window) is what fixes B5's complete-at/after-
+  /// end case while keeping future-cancel protection: a current booking shows
+  /// up as an active holder and blocks the free. [sentTableId] (the id sent on
+  /// the update) is the fallback when the response omits `tableInfo`.
+  ///
+  /// Routed through [FloorController.updateTableStatus] (a kept-alive provider)
+  /// so a mounted floor reflects the change optimistically; 'free' is
+  /// non-sticky after Step 1, so any later booking simply re-derives. Fire-
+  /// and-forget: the list update must not block on the floor PUT.
+  void _freeTableIfReleased(BookingEntity terminated, String sentTableId) {
+    if (!kNonBlockingStatuses.contains(terminated.status)) return;
+    final tableId = terminated.tableInfo?.id ?? sentTableId;
+    if (tableId.isEmpty) return;
+
+    final now = DateTime.now();
+    final bookings = state.valueOrNull ?? const <BookingEntity>[];
+    final heldByOther = bookings.any(
+      (b) =>
+          b.id != terminated.id &&
+          b.tableInfo?.id == tableId &&
+          !kNonBlockingStatuses.contains(b.status) &&
+          b.isHoldingTableAt(now),
+    );
+    if (heldByOther) return;
+
+    unawaited(
+      ref
+          .read(floorControllerProvider.notifier)
+          .updateTableStatus(tableId, 'free'),
     );
   }
 

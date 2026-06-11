@@ -31,15 +31,29 @@ final floorControllerProvider =
 
 /// Currently scrubbed time on the floor timeline.
 ///
-/// `null` means live mode — tables show the server-computed status.
-/// A non-null value means the user is scrubbing — tables show locally
-/// computed status from cached bookings at that time of day.
+/// `null` means live mode — status is DERIVED at the current minute
+/// ([liveMinuteProvider]) as `manualOverride ?? auto(now)`, not the raw
+/// server status. A non-null value means the user is scrubbing — tables show
+/// pure auto-projected status from cached bookings at that time of day.
 ///
 /// `autoDispose` so the scrub time cannot survive a page exit: once no widget
 /// on the floor page watches it, it resets to `null` (live). Leaving and
 /// re-entering the floor always starts live, never stuck on a stale scrub.
 final selectedTimelineProvider =
     StateProvider.autoDispose<TimeOfDay?>((ref) => null);
+
+/// Current wall-clock minute-of-day used as the live reference time.
+///
+/// In live mode ([selectedTimelineProvider] is `null`) the floor page advances
+/// this on the same 60s tick that drives the clock display, so the canvas
+/// recomputes table status on the minute boundary (reserved → waiting → free)
+/// with no user interaction. Ignored while scrubbing, where the scrubbed
+/// [TimeOfDay] is the reference instead. This is the SAME "now" source feeding
+/// both the clock and live status — keep them in lockstep.
+final liveMinuteProvider = StateProvider<int>((ref) {
+  final now = DateTime.now();
+  return now.hour * 60 + now.minute;
+});
 
 /// Floor edit mode toggle. When `true`, drag changes and rotations buffer
 /// into [pendingPositionsProvider] / [pendingRotationsProvider] instead of

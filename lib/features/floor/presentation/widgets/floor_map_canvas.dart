@@ -431,6 +431,10 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     }
 
     final selectedTime = ref.watch(selectedTimelineProvider);
+    // Live status derives at the current minute; watching it here makes the
+    // canvas rebuild on every 60s tick so colours flip on the booking
+    // boundary with no user interaction. In scrub mode it is ignored.
+    final liveMinute = ref.watch(liveMinuteProvider);
     final bookings = ref.watch(bookingControllerProvider).valueOrNull ??
         const <BookingEntity>[];
     final isEditing = ref.watch(floorEditModeProvider);
@@ -475,7 +479,12 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
                         _buildTable(
                           entities[i],
                           i,
-                          _statusFor(entities[i], selectedTime, bookings),
+                          _statusFor(
+                            entities[i],
+                            selectedTime,
+                            liveMinute,
+                            bookings,
+                          ),
                           isEditing: isEditing,
                           pendingRotation: pendingRotations[entities[i].id],
                         ),
@@ -573,13 +582,27 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
   String? _statusFor(
     FloorEntity entity,
     TimeOfDay? selectedTime,
+    int liveMinute,
     List<BookingEntity> bookings,
   ) {
-    if (selectedTime == null) return entity.status;
+    // SCRUB: pure auto-projection at the scrubbed time. Manual overrides are
+    // deliberately ignored here so the timeline reflects bookings only.
+    if (selectedTime != null) {
+      return _computeStatusAtTime(
+        tableId: entity.id,
+        bookings: bookings,
+        time: selectedTime,
+      );
+    }
+
+    // LIVE: a manual override wins; otherwise derive at the current minute.
+    if (kManualStatuses.contains(_normalizeStatus(entity.status))) {
+      return entity.status;
+    }
     return _computeStatusAtTime(
       tableId: entity.id,
       bookings: bookings,
-      time: selectedTime,
+      time: TimeOfDay(hour: liveMinute ~/ 60, minute: liveMinute % 60),
     );
   }
 }
@@ -685,47 +708,46 @@ class _ZoneBadge extends StatelessWidget {
   }
 }
 
-// ── Pure helpers (top-level, no closures) ───────────────────────────────────
+// ── Status constants & pure helpers (top-level, no closures) ────────────────
+
+/// Minutes before a booking's start during which the table reads 'reserved'.
+const int kReservedWindowMin = 20;
+
+/// Table statuses that represent a deliberate manual override (set by staff)
+/// and therefore win over auto-projection in live mode.
+const Set<String> kManualStatuses = {'guest_arrived', 'occupied'};
+
+/// Booking lifecycle statuses that occupy the table on the timeline. Anything
+/// else (completed, cancelled, no_show, …) is excluded from the projection.
+const Set<String> _kActiveBookingStatuses = {'confirmed', 'arrived'};
+
+/// Defensive mapping so unknown/legacy backend strings never fall through to
+/// the disabled/grey colour in the manual branch: legacy 'available' is
+/// treated as 'free', and only [kManualStatuses] count as manual — everything
+/// else is derivable (→ auto-projection).
+String _normalizeStatus(String? status) {
+  if (status == null || status == 'available') return 'free';
+  return status;
+}
 
 String _computeStatusAtTime({
   required String tableId,
   required List<BookingEntity> bookings,
   required TimeOfDay time,
 }) {
-  final selectedMin = time.hour * 60 + time.minute;
+  final refMin = time.hour * 60 + time.minute;
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
 
+  var hasReservedSoon = false;
   for (final b in bookings) {
-    if (b.status == 'cancelled') continue;
-
-    final bTableId = b.tableInfo?.id;
-    if (bTableId != tableId) continue;
-
-    final parsedDate = DateTime.tryParse(b.date)?.toLocal();
-    if (parsedDate == null) continue;
-    final bookingDay = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
-    if (bookingDay != today) continue;
-
-    final startParts = b.timeSlot.split(':');
-    if (startParts.length < 2) continue;
-    final startMin = (int.tryParse(startParts[0]) ?? 0) * 60 +
-        (int.tryParse(startParts[1]) ?? 0);
-
-    final endMin =
-        b.endTime != null ? _parseTimeToMin(b.endTime!) : startMin + 120;
-
-    if (selectedMin >= startMin && selectedMin < endMin) {
-      return 'guest_arrived';
-    }
-  }
-
-  // Pass 2 — no active booking; check if a future booking starts soon.
-  const kReservedWindowMin = 20;
-  for (final b in bookings) {
-    if (b.status == 'cancelled') continue;
+    // Candidate filter: table match (tableId null → skip), displayed calendar
+    // day, and an ACTIVE booking status.
     if (b.tableInfo?.id != tableId) continue;
+    if (!_kActiveBookingStatuses.contains(b.status)) continue;
 
+    // `date` may arrive as a local date or a 00:00Z instant; `toLocal()` maps
+    // it to the correct Asia/Tashkent (+5) calendar day before comparison.
     final parsedDate = DateTime.tryParse(b.date)?.toLocal();
     if (parsedDate == null) continue;
     final bookingDay =
@@ -736,15 +758,18 @@ String _computeStatusAtTime({
     if (startParts.length < 2) continue;
     final startMin = (int.tryParse(startParts[0]) ?? 0) * 60 +
         (int.tryParse(startParts[1]) ?? 0);
+    final endMin =
+        b.endTime != null ? _parseTimeToMin(b.endTime!) : startMin + 120;
 
-    if (startMin > selectedMin &&
-        (startMin - selectedMin) <= kReservedWindowMin) {
-      return 'reserved';
+    // Active window wins immediately — the guest is/should be seated.
+    if (refMin >= startMin && refMin < endMin) return 'waiting';
+
+    if (startMin > refMin && (startMin - refMin) <= kReservedWindowMin) {
+      hasReservedSoon = true;
     }
-    // Booking is too far in the future; keep checking remaining bookings.
   }
 
-  return 'free';
+  return hasReservedSoon ? 'reserved' : 'free';
 }
 
 int _parseTimeToMin(String hhmm) {

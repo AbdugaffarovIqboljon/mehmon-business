@@ -48,6 +48,8 @@ class _FloorPageState extends ConsumerState<FloorPage>
         ref.read(selectedTimelineProvider.notifier).state = null;
         _selectedMinuteNotifier.value = _currentMinute;
       }
+      // Seed the live reference so status derives at "now" on first paint.
+      ref.read(liveMinuteProvider.notifier).state = _currentMinute;
     });
     _snapController = AnimationController(
       vsync: this,
@@ -58,7 +60,10 @@ class _FloorPageState extends ConsumerState<FloorPage>
       (_) {
         if (!mounted) return;
         if (ref.read(selectedTimelineProvider) == null) {
-          _selectedMinuteNotifier.value = _currentMinute;
+          final minute = _currentMinute;
+          // One source feeds both: the clock display and live status.
+          _selectedMinuteNotifier.value = minute;
+          ref.read(liveMinuteProvider.notifier).state = minute;
         }
       },
     );
@@ -81,8 +86,11 @@ class _FloorPageState extends ConsumerState<FloorPage>
 
   void _snapToNow() {
     ref.read(selectedTimelineProvider.notifier).state = null;
-    final from = _selectedMinuteNotifier.value;
     final to = _currentMinute;
+    // Re-anchor live status to the real "now" the moment we leave scrub, so
+    // tapping Live recomputes (e.g. orange → purple) instead of staying stuck.
+    ref.read(liveMinuteProvider.notifier).state = to;
+    final from = _selectedMinuteNotifier.value;
     if (from == to) return;
 
     _snapController.reset();
