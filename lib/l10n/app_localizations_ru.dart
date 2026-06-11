@@ -499,7 +499,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get floor_action_mark_occupied => 'Заказ сделан';
 
   @override
-  String get floor_action_checkout => 'Гость ушёл';
+  String get floor_action_no_show => 'Не пришёл';
+
+  @override
+  String get floor_action_free => 'Освободить';
+
+  @override
+  String get floor_action_finish => 'Завершить';
 
   @override
   String get floor_all_zones => 'Все';

@@ -1054,11 +1054,23 @@ abstract class AppLocalizations {
   /// **'Order placed'**
   String get floor_action_mark_occupied;
 
-  /// No description provided for @floor_action_checkout.
+  /// No description provided for @floor_action_no_show.
   ///
   /// In en, this message translates to:
-  /// **'Checked out'**
-  String get floor_action_checkout;
+  /// **'No-show'**
+  String get floor_action_no_show;
+
+  /// No description provided for @floor_action_free.
+  ///
+  /// In en, this message translates to:
+  /// **'Free up'**
+  String get floor_action_free;
+
+  /// No description provided for @floor_action_finish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get floor_action_finish;
 
   /// No description provided for @floor_all_zones.
   ///

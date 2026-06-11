@@ -502,7 +502,13 @@ class AppLocalizationsUz extends AppLocalizations {
   String get floor_action_mark_occupied => 'Zakaz berildi';
 
   @override
-  String get floor_action_checkout => 'Chiqib ketdi';
+  String get floor_action_no_show => 'Kelmadi';
+
+  @override
+  String get floor_action_free => 'Bo\'shatish';
+
+  @override
+  String get floor_action_finish => 'Yakunlash';
 
   @override
   String get floor_all_zones => 'Barchasi';

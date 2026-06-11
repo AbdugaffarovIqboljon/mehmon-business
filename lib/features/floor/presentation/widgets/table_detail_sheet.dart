@@ -7,10 +7,16 @@ import 'package:mehmon/core/theme/app_colors.dart';
 import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
+import 'package:mehmon/features/bookings/presentation/widgets/book_a_table_sheet.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
+import 'package:mehmon/features/floor/domain/services/table_status_resolver.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/features/floor/presentation/widgets/table_form_sheet.dart';
 import 'package:mehmon/l10n/app_localizations.dart';
+
+/// Shared 'waiting' hue — mirrors the floor canvas colour for the same status
+/// so the banner and the booking-row dot match the table on the map.
+const Color kWaitingPurple = Color(0xFF7C3AED);
 
 class TableDetailSheet extends ConsumerWidget {
   const TableDetailSheet({
@@ -147,30 +153,16 @@ class _DetailsBody extends ConsumerWidget {
 
   final String tableId;
 
-  static int _parseEnd(String endTime) {
-    final p = endTime.split(':');
-    return (int.tryParse(p[0]) ?? 0) * 60 + (int.tryParse(p[1]) ?? 0);
-  }
-
-  static int _startMin(String timeSlot) {
-    final p = timeSlot.split(':');
-    if (p.length < 2) return -1;
-    return (int.tryParse(p[0]) ?? 0) * 60 + (int.tryParse(p[1]) ?? 0);
-  }
-
-  static _RowStatus _rowStatus(
-    BookingEntity b,
-    BookingEntity? current,
-    int nowMin,
-  ) {
-    if (b.id == current?.id) return _RowStatus.active;
-    final parts = b.timeSlot.split(':');
-    if (parts.length < 2) return _RowStatus.past;
-    final h = int.tryParse(parts[0]);
-    final m = int.tryParse(parts[1]);
-    if (h == null || m == null) return _RowStatus.past;
-    return (h * 60 + m) > nowMin ? _RowStatus.upcoming : _RowStatus.past;
-  }
+  /// Booking-row dot colour, derived from the table's effective status so it
+  /// agrees with the header banner and the floor colour (single scheme — the
+  /// old per-row active/upcoming/past timeline is gone).
+  static Color _dotColorFor(String status) => switch (status) {
+        'reserved' => AppColors.warning,
+        'waiting' => kWaitingPurple,
+        'guest_arrived' => AppColors.info,
+        'occupied' => AppColors.error,
+        _ => AppColors.success,
+      };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -180,10 +172,32 @@ class _DetailsBody extends ConsumerWidget {
 
     final floorState = ref.watch(floorControllerProvider);
     final entity = floorState.valueOrNull?.firstWhereOrNull((e) => e.id == tableId);
-    final tableStatus = entity?.status ?? 'free';
 
+    // Watching the live minute makes the sheet recompute every tick so the
+    // banner and the booking-row dot flip on the reserved→waiting (and
+    // waiting→free) boundary without reopening — mirrors the canvas.
+    final liveMinute = ref.watch(liveMinuteProvider);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
+
+    // Single source of truth: derive the *effective* status (reserved/waiting
+    // are projected, never persisted) so the sheet agrees with the floor. Live
+    // mode → no scrubbed time; manual guest_arrived/occupied still win.
+    final tableStatus = entity == null
+        ? 'free'
+        : TableStatusResolver.effectiveStatus(
+            entity,
+            allBookings,
+            now: DateTime(
+              now.year,
+              now.month,
+              now.day,
+              liveMinute ~/ 60,
+              liveMinute % 60,
+            ),
+          );
+    final dotColor = _dotColorFor(tableStatus);
+
     final todayTableBookings = allBookings.where((b) {
       if (b.status == 'cancelled') return false;
       if (b.tableInfo?.id != tableId) return false;
@@ -192,30 +206,6 @@ class _DetailsBody extends ConsumerWidget {
       return DateTime(parsed.year, parsed.month, parsed.day) == today;
     }).toList()
       ..sort((a, b) => a.timeSlot.compareTo(b.timeSlot));
-
-    final nowMin = TimeOfDay.now().hour * 60 + TimeOfDay.now().minute;
-
-    final clientCurrentBooking = todayTableBookings.firstWhereOrNull((b) {
-      final parts = b.timeSlot.split(':');
-      if (parts.length < 2) return false;
-      final h = int.tryParse(parts[0]);
-      final m = int.tryParse(parts[1]);
-      if (h == null || m == null) return false;
-      final start = h * 60 + m;
-      final end = b.endTime != null ? _parseEnd(b.endTime!) : start + 120;
-      return nowMin >= start && nowMin < end;
-    });
-
-    final hasUpcomingBooking = todayTableBookings.any(
-      (b) =>
-          b.status != 'cancelled' &&
-          b.status != 'completed' &&
-          _startMin(b.timeSlot) > nowMin,
-    );
-
-    final activeBooking = todayTableBookings.firstWhereOrNull(
-      (b) => b.status != 'cancelled' && b.status != 'completed',
-    );
 
     final banner = switch (tableStatus) {
       'reserved' => const _ReservedBanner(),
@@ -232,8 +222,6 @@ class _DetailsBody extends ConsumerWidget {
         _StatusActionButtons(
           tableId: tableId,
           tableStatus: tableStatus,
-          hasUpcomingBooking: hasUpcomingBooking,
-          activeBooking: activeBooking,
         ),
         if (todayTableBookings.isEmpty) ...[
           const SizedBox(height: AppSpacing.md),
@@ -255,11 +243,7 @@ class _DetailsBody extends ConsumerWidget {
                   const Divider(height: 1, color: AppColors.divider),
                 _BookingRow(
                   booking: todayTableBookings[i],
-                  rowStatus: _rowStatus(
-                    todayTableBookings[i],
-                    clientCurrentBooking,
-                    nowMin,
-                  ),
+                  dotColor: dotColor,
                 ),
               ],
             ],
@@ -269,8 +253,6 @@ class _DetailsBody extends ConsumerWidget {
     );
   }
 }
-
-enum _RowStatus { active, upcoming, past }
 
 class _GuestArrivedBanner extends StatelessWidget {
   const _GuestArrivedBanner();
@@ -376,7 +358,7 @@ class _ReservedBanner extends StatelessWidget {
 class _WaitingBanner extends StatelessWidget {
   const _WaitingBanner();
 
-  static const _purple = Color(0xFF7C3AED);
+  static const _purple = kWaitingPurple;
 
   @override
   Widget build(BuildContext context) {
@@ -405,10 +387,10 @@ class _WaitingBanner extends StatelessWidget {
 }
 
 class _BookingRow extends StatelessWidget {
-  const _BookingRow({required this.booking, required this.rowStatus});
+  const _BookingRow({required this.booking, required this.dotColor});
 
   final BookingEntity booking;
-  final _RowStatus rowStatus;
+  final Color dotColor;
 
   @override
   Widget build(BuildContext context) {
@@ -416,11 +398,6 @@ class _BookingRow extends StatelessWidget {
     final timeRange = '${booking.timeSlot}–${booking.endTime ?? '?'}';
     final name =
         booking.guestName.trim().isEmpty ? l10n.regularGuest : booking.guestName;
-    final dotColor = switch (rowStatus) {
-      _RowStatus.active => AppColors.error,
-      _RowStatus.upcoming => AppColors.warning,
-      _RowStatus.past => AppColors.textSecondary,
-    };
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
@@ -485,14 +462,10 @@ class _StatusActionButtons extends ConsumerStatefulWidget {
   const _StatusActionButtons({
     required this.tableId,
     required this.tableStatus,
-    required this.hasUpcomingBooking,
-    required this.activeBooking,
   });
 
   final String tableId;
   final String tableStatus;
-  final bool hasUpcomingBooking;
-  final BookingEntity? activeBooking;
 
   @override
   ConsumerState<_StatusActionButtons> createState() =>
@@ -504,10 +477,50 @@ class _StatusActionButtonsState extends ConsumerState<_StatusActionButtons> {
 
   static const _grey = AppColors.textSecondary;
 
+  /// Booking lifecycle statuses that still occupy a table — the only ones a
+  /// status transition may legitimately drive (mirrors the resolver).
+  static const Set<String> _activeBookingStatuses = {'confirmed', 'arrived'};
+
   @override
   void dispose() {
     _busy.dispose();
     super.dispose();
+  }
+
+  /// The booking that DRIVES the current derived status, i.e. the one a
+  /// transition must write to. Active ({confirmed, arrived}) booking on THIS
+  /// table today that is holding it right now ([BookingEntityX.isHoldingTableAt]);
+  /// falls back to the latest active booking today so a manual 'occupied' that
+  /// has outlived its booking window can still be finalized. Replaces the old
+  /// earliest-non-terminal targeting that mis-fired on back-to-back bookings.
+  BookingEntity? _targetBooking() {
+    final bookings =
+        ref.read(bookingControllerProvider).valueOrNull ?? const <BookingEntity>[];
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final active = bookings.where((b) {
+      if (b.tableInfo?.id != widget.tableId) return false;
+      if (!_activeBookingStatuses.contains(b.status)) return false;
+      final parsed = DateTime.tryParse(b.date)?.toLocal();
+      if (parsed == null) return false;
+      return DateTime(parsed.year, parsed.month, parsed.day) == today;
+    }).toList()
+      ..sort((a, b) => a.timeSlot.compareTo(b.timeSlot));
+
+    if (active.isEmpty) return null;
+    return active.firstWhereOrNull((b) => b.isHoldingTableAt(now)) ??
+        active.lastOrNull;
+  }
+
+  /// Free → "Bron qilish": opens the existing create-booking sheet. Closes this
+  /// detail sheet first so it doesn't stack under the create flow.
+  Future<void> _openCreate() async {
+    // Capture the app-navigator context before popping so the create sheet has
+    // a live context to mount on once this detail sheet is gone.
+    final rootContext = Navigator.of(context).context;
+    Navigator.of(context).pop();
+    await showBookATableSheet(rootContext, initialTableId: widget.tableId);
   }
 
   Future<void> _apply(String newStatus, {String? bookingStatus}) async {
@@ -538,18 +551,21 @@ class _StatusActionButtonsState extends ConsumerState<_StatusActionButtons> {
       return;
     }
 
-    if (bookingStatus != null && widget.activeBooking != null) {
-      final ok = await ref
-          .read(bookingControllerProvider.notifier)
-          .updateBookingStatus(widget.activeBooking!, bookingStatus);
+    if (bookingStatus != null) {
+      final target = _targetBooking();
+      if (target != null) {
+        final ok = await ref
+            .read(bookingControllerProvider.notifier)
+            .updateBookingStatus(target, bookingStatus);
 
-      if (!mounted) {
-        _busy.value = false;
-        return;
-      }
+        if (!mounted) {
+          _busy.value = false;
+          return;
+        }
 
-      if (!ok) {
-        messenger.showSnackBar(SnackBar(content: Text(l10n.floor_save_error)));
+        if (!ok) {
+          messenger.showSnackBar(SnackBar(content: Text(l10n.floor_save_error)));
+        }
       }
     }
 
@@ -558,10 +574,6 @@ class _StatusActionButtonsState extends ConsumerState<_StatusActionButtons> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.tableStatus == 'free' && !widget.hasUpcomingBooking) {
-      return const SizedBox.shrink();
-    }
-
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.md),
       child: ValueListenableBuilder<bool>(
@@ -575,24 +587,43 @@ class _StatusActionButtonsState extends ConsumerState<_StatusActionButtons> {
     final l10n = AppLocalizations.of(context)!;
     switch (widget.tableStatus) {
       case 'free':
-        if (!widget.hasUpcomingBooking) return const SizedBox.shrink();
+        // Opens the create-booking flow for this table (no bookingless
+        // 'reserved' — the resolver never honours it).
         return _StatusButton(
           label: l10n.floor_action_reserve,
           icon: Icons.event_available,
           filled: false,
           color: AppColors.warning,
-          onPressed: busy ? null : () => _apply('reserved'),
+          onPressed: busy ? null : _openCreate,
         );
       case 'reserved':
       case 'waiting':
-        return _StatusButton(
-          label: l10n.floor_action_mark_arrived,
-          icon: Icons.person_add_alt_1,
-          filled: true,
-          color: AppColors.info,
-          onPressed: busy
-              ? null
-              : () => _apply('guest_arrived', bookingStatus: 'arrived'),
+        return Row(
+          children: [
+            Expanded(
+              child: _StatusButton(
+                label: l10n.floor_action_mark_arrived,
+                icon: Icons.person_add_alt_1,
+                filled: true,
+                color: AppColors.info,
+                onPressed: busy
+                    ? null
+                    : () => _apply('guest_arrived', bookingStatus: 'arrived'),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _StatusButton(
+                label: l10n.floor_action_no_show,
+                icon: Icons.person_off_outlined,
+                filled: false,
+                color: AppColors.error,
+                onPressed: busy
+                    ? null
+                    : () => _apply('free', bookingStatus: 'no_show'),
+              ),
+            ),
+          ],
         );
       case 'guest_arrived':
         return Row(
@@ -603,13 +634,14 @@ class _StatusActionButtonsState extends ConsumerState<_StatusActionButtons> {
                 icon: Icons.receipt_long,
                 filled: true,
                 color: AppColors.error,
+                // Order placed → occupied; no booking write (stays 'arrived').
                 onPressed: busy ? null : () => _apply('occupied'),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: _StatusButton(
-                label: l10n.floor_action_checkout,
+                label: l10n.floor_action_free,
                 icon: Icons.exit_to_app,
                 filled: false,
                 color: _grey,
@@ -622,8 +654,8 @@ class _StatusActionButtonsState extends ConsumerState<_StatusActionButtons> {
         );
       case 'occupied':
         return _StatusButton(
-          label: l10n.floor_action_checkout,
-          icon: Icons.exit_to_app,
+          label: l10n.floor_action_finish,
+          icon: Icons.check_circle_outline,
           filled: false,
           color: _grey,
           onPressed: busy

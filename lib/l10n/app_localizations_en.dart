@@ -500,7 +500,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get floor_action_mark_occupied => 'Order placed';
 
   @override
-  String get floor_action_checkout => 'Checked out';
+  String get floor_action_no_show => 'No-show';
+
+  @override
+  String get floor_action_free => 'Free up';
+
+  @override
+  String get floor_action_finish => 'Finish';
 
   @override
   String get floor_all_zones => 'All';

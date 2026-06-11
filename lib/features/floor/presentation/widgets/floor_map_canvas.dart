@@ -9,6 +9,7 @@ import 'package:mehmon/core/theme/app_text_styles.dart';
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
 import 'package:mehmon/features/bookings/presentation/controllers/booking_controller.dart';
 import 'package:mehmon/features/floor/domain/entities/floor_entity.dart';
+import 'package:mehmon/features/floor/domain/services/table_status_resolver.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 import 'package:mehmon/features/floor/presentation/models/floor_table_config.dart';
 import 'package:mehmon/features/floor/presentation/widgets/floor_table_widget.dart';
@@ -585,24 +586,22 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     int liveMinute,
     List<BookingEntity> bookings,
   ) {
-    // SCRUB: pure auto-projection at the scrubbed time. Manual overrides are
-    // deliberately ignored here so the timeline reflects bookings only.
-    if (selectedTime != null) {
-      return _computeStatusAtTime(
-        tableId: entity.id,
-        bookings: bookings,
-        time: selectedTime,
-      );
-    }
-
-    // LIVE: a manual override wins; otherwise derive at the current minute.
-    if (kManualStatuses.contains(_normalizeStatus(entity.status))) {
-      return entity.status;
-    }
-    return _computeStatusAtTime(
-      tableId: entity.id,
-      bookings: bookings,
-      time: TimeOfDay(hour: liveMinute ~/ 60, minute: liveMinute % 60),
+    // `now` carries today's calendar day (for booking matching) and, in live
+    // mode, the reference minute from [liveMinuteProvider]. Delegating keeps
+    // the canvas and the detail sheet on one derivation.
+    final nowDate = DateTime.now();
+    final now = DateTime(
+      nowDate.year,
+      nowDate.month,
+      nowDate.day,
+      liveMinute ~/ 60,
+      liveMinute % 60,
+    );
+    return TableStatusResolver.effectiveStatus(
+      entity,
+      bookings,
+      now: now,
+      selectedTime: selectedTime,
     );
   }
 }
@@ -706,74 +705,4 @@ class _ZoneBadge extends StatelessWidget {
       ),
     );
   }
-}
-
-// ── Status constants & pure helpers (top-level, no closures) ────────────────
-
-/// Minutes before a booking's start during which the table reads 'reserved'.
-const int kReservedWindowMin = 20;
-
-/// Table statuses that represent a deliberate manual override (set by staff)
-/// and therefore win over auto-projection in live mode.
-const Set<String> kManualStatuses = {'guest_arrived', 'occupied'};
-
-/// Booking lifecycle statuses that occupy the table on the timeline. Anything
-/// else (completed, cancelled, no_show, …) is excluded from the projection.
-const Set<String> _kActiveBookingStatuses = {'confirmed', 'arrived'};
-
-/// Defensive mapping so unknown/legacy backend strings never fall through to
-/// the disabled/grey colour in the manual branch: legacy 'available' is
-/// treated as 'free', and only [kManualStatuses] count as manual — everything
-/// else is derivable (→ auto-projection).
-String _normalizeStatus(String? status) {
-  if (status == null || status == 'available') return 'free';
-  return status;
-}
-
-String _computeStatusAtTime({
-  required String tableId,
-  required List<BookingEntity> bookings,
-  required TimeOfDay time,
-}) {
-  final refMin = time.hour * 60 + time.minute;
-  final now = DateTime.now();
-  final today = DateTime(now.year, now.month, now.day);
-
-  var hasReservedSoon = false;
-  for (final b in bookings) {
-    // Candidate filter: table match (tableId null → skip), displayed calendar
-    // day, and an ACTIVE booking status.
-    if (b.tableInfo?.id != tableId) continue;
-    if (!_kActiveBookingStatuses.contains(b.status)) continue;
-
-    // `date` may arrive as a local date or a 00:00Z instant; `toLocal()` maps
-    // it to the correct Asia/Tashkent (+5) calendar day before comparison.
-    final parsedDate = DateTime.tryParse(b.date)?.toLocal();
-    if (parsedDate == null) continue;
-    final bookingDay =
-        DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
-    if (bookingDay != today) continue;
-
-    final startParts = b.timeSlot.split(':');
-    if (startParts.length < 2) continue;
-    final startMin = (int.tryParse(startParts[0]) ?? 0) * 60 +
-        (int.tryParse(startParts[1]) ?? 0);
-    final endMin =
-        b.endTime != null ? _parseTimeToMin(b.endTime!) : startMin + 120;
-
-    // Active window wins immediately — the guest is/should be seated.
-    if (refMin >= startMin && refMin < endMin) return 'waiting';
-
-    if (startMin > refMin && (startMin - refMin) <= kReservedWindowMin) {
-      hasReservedSoon = true;
-    }
-  }
-
-  return hasReservedSoon ? 'reserved' : 'free';
-}
-
-int _parseTimeToMin(String hhmm) {
-  final p = hhmm.split(':');
-  if (p.length < 2) return 0;
-  return (int.tryParse(p[0]) ?? 0) * 60 + (int.tryParse(p[1]) ?? 0);
 }

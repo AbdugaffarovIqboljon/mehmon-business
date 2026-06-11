@@ -55,6 +55,7 @@ Future<BookATableFormPayload?> showBookATableSheet(
   DateTime? initialDate,
   List<String> timeSlots = defaultBookingTimes,
   BookingEntity? existingBooking,
+  String? initialTableId,
 }) {
   final normalizedInitialDate = DateUtils.dateOnly(
     initialDate ??
@@ -90,6 +91,7 @@ Future<BookATableFormPayload?> showBookATableSheet(
             child: BookATableSheet(
               timeSlots: timeSlots,
               existingBooking: existingBooking,
+              initialTableId: initialTableId,
             ),
           ),
         ),
@@ -129,10 +131,15 @@ class BookATableSheet extends ConsumerStatefulWidget {
     required this.timeSlots,
     super.key,
     this.existingBooking,
+    this.initialTableId,
   });
 
   final List<String> timeSlots;
   final BookingEntity? existingBooking;
+
+  /// Table to pre-select for a NEW booking (e.g. opened from a table's detail
+  /// sheet). Ignored in edit mode, where the table comes from [existingBooking].
+  final String? initialTableId;
 
   @override
   ConsumerState<BookATableSheet> createState() => _BookATableSheetState();
@@ -226,9 +233,12 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
       );
       _selectedTable = ValueNotifier<FloorEntity?>(null);
       _notesController.text = existing.notes ?? '';
-      if (existing.tableInfo != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) => _tryPreFillTable());
-      }
+    }
+    // Pre-select the target table (edit-mode booking table OR a NEW booking's
+    // initialTableId) once the first frame is up; the build's floor listener
+    // covers the case where the floor list arrives later.
+    if (_preFillTableId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _tryPreFillTable());
     }
     _lastPhoneValue = _phoneController.text;
     _recomputeBusy();
@@ -291,15 +301,24 @@ class _BookATableSheetState extends ConsumerState<BookATableSheet> {
     );
   }
 
+  /// Table to pre-select: the edited booking's table in edit mode, otherwise
+  /// the [BookATableSheet.initialTableId] passed for a NEW booking.
+  String? get _preFillTableId =>
+      widget.existingBooking?.tableInfo?.id ?? widget.initialTableId;
+
   void _tryPreFillTable() {
     if (!mounted || _tablePreFilled) return;
-    final tableId = widget.existingBooking?.tableInfo?.id;
+    final tableId = _preFillTableId;
     if (tableId == null) return;
     final floors = ref.read(floorControllerProvider).valueOrNull ?? [];
     for (final floor in floors) {
       if (floor.id == tableId) {
         _selectedTable.value = floor;
         _tablePreFilled = true;
+        // Run the standard availability check so a prefilled table that is
+        // busy for the chosen window still surfaces the conflict (and
+        // deselects) instead of being silently bookable.
+        _recomputeBusy();
         return;
       }
     }

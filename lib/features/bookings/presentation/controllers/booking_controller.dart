@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mehmon/core/errors/failure.dart';
@@ -9,6 +10,7 @@ import 'package:mehmon/features/bookings/data/repositories/booking_repository_im
 import 'package:mehmon/features/bookings/domain/entities/booking_entity.dart';
 import 'package:mehmon/features/bookings/domain/repositories/booking_repository.dart';
 import 'package:mehmon/features/bookings/domain/services/booking_conflict_resolver.dart';
+import 'package:mehmon/features/floor/domain/services/table_status_resolver.dart';
 import 'package:mehmon/features/floor/presentation/controllers/floor_controller.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────
@@ -150,16 +152,70 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
     final tableId = terminated.tableInfo?.id ?? sentTableId;
     if (tableId.isEmpty) return;
 
-    final now = DateTime.now();
     final bookings = state.valueOrNull ?? const <BookingEntity>[];
-    final heldByOther = bookings.any(
+    if (_tableHeldByOther(
+      tableId: tableId,
+      excludeBookingId: terminated.id,
+      bookings: bookings,
+      now: DateTime.now(),
+    )) {
+      return;
+    }
+
+    unawaited(
+      ref
+          .read(floorControllerProvider.notifier)
+          .updateTableStatus(tableId, 'free'),
+    );
+  }
+
+  /// Shared "another active holder" gate: true when some booking OTHER than
+  /// [excludeBookingId] still actively holds [tableId] at [now]
+  /// ([BookingEntityX.isHoldingTableAt]). Used by both the finalize-release
+  /// ([_freeTableIfReleased]) and the delete-release
+  /// ([_clearOverrideIfReleased]) paths so they can never disagree.
+  bool _tableHeldByOther({
+    required String tableId,
+    required String excludeBookingId,
+    required List<BookingEntity> bookings,
+    required DateTime now,
+  }) {
+    return bookings.any(
       (b) =>
-          b.id != terminated.id &&
+          b.id != excludeBookingId &&
           b.tableInfo?.id == tableId &&
           !kNonBlockingStatuses.contains(b.status) &&
           b.isHoldingTableAt(now),
     );
-    if (heldByOther) return;
+  }
+
+  /// G11: after a booking is deleted, clear a stuck manual override on the
+  /// table it was holding. If the linked table still carries a manual
+  /// ([kManualStatuses]) status and no OTHER active booking holds it now, reset
+  /// it to 'free' so the deleted booking's override doesn't linger. [remaining]
+  /// is the post-delete list (the deleted booking already removed); the
+  /// "another active holder" gate is shared with [_freeTableIfReleased].
+  void _clearOverrideIfReleased(
+    BookingEntity deleted,
+    List<BookingEntity> remaining,
+  ) {
+    final tableId = deleted.tableInfo?.id;
+    if (tableId == null || tableId.isEmpty) return;
+
+    final table = ref
+        .read(floorControllerProvider)
+        .valueOrNull
+        ?.firstWhereOrNull((t) => t.id == tableId);
+    if (table == null || !kManualStatuses.contains(table.status)) return;
+
+    if (_tableHeldByOther(
+      tableId: tableId,
+      excludeBookingId: deleted.id,
+      bookings: remaining,
+      now: DateTime.now(),
+    )) {
+      return;
+    }
 
     unawaited(
       ref
@@ -191,7 +247,12 @@ class BookingController extends AsyncNotifier<List<BookingEntity>> {
     return result.when(
       success: (_) {
         final current = state.valueOrNull ?? [];
-        state = AsyncData(current.where((b) => b.id != id).toList());
+        final deleted = current.firstWhereOrNull((b) => b.id == id);
+        final remaining = current.where((b) => b.id != id).toList();
+        state = AsyncData(remaining);
+        if (deleted != null) {
+          _clearOverrideIfReleased(deleted, remaining);
+        }
         return true;
       },
       error: (_) => false,
