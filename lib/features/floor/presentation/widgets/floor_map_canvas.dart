@@ -111,9 +111,19 @@ class _FloorMapCanvasState extends ConsumerState<FloorMapCanvas> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (_) => TableDetailSheet(
-        tableId: entity.id,
-        tableNumber: entity.number,
+      backgroundColor: Colors.transparent, // DraggableScrollableSheet paints bg
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.45, // compact: ~45% screen
+        minChildSize: 0.35, // min: 35%
+        maxChildSize: 0.90, // max: 90% (3+ bookings + action buttons)
+        expand: false,
+        snap: true,
+        snapSizes: const [0.45, 0.70, 0.90],
+        builder: (_, scrollController) => TableDetailSheet(
+          tableId: entity.id,
+          tableNumber: entity.number,
+          scrollController: scrollController,
+        ),
       ),
     );
   }

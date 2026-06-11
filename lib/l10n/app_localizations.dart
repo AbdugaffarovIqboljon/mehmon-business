@@ -1491,6 +1491,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No zones added yet'**
   String get noZonesYet;
+
+  /// No description provided for @bookingStatus_confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for guest'**
+  String get bookingStatus_confirmed;
+
+  /// No description provided for @bookingStatus_arrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest arrived'**
+  String get bookingStatus_arrived;
+
+  /// No description provided for @bookingStatus_noShow.
+  ///
+  /// In en, this message translates to:
+  /// **'No-show'**
+  String get bookingStatus_noShow;
+
+  /// No description provided for @bookingStatus_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get bookingStatus_completed;
 }
 
 class _AppLocalizationsDelegate

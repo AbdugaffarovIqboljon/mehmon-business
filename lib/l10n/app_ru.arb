@@ -251,5 +251,9 @@
   "zoneManagementTitle": "Управление зонами",
   "zoneManagementSubtitle": "Например: Главный зал, Терраса, VIP.",
   "zoneNameHint": "Название зоны (например: Терраса)",
-  "noZonesYet": "Зоны ещё не добавлены"
+  "noZonesYet": "Зоны ещё не добавлены",
+  "bookingStatus_confirmed": "Ожидание гостя",
+  "bookingStatus_arrived": "Гость прибыл",
+  "bookingStatus_noShow": "Неявка",
+  "bookingStatus_completed": "Завершено"
 }

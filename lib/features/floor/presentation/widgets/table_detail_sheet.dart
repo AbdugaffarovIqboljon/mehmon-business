@@ -23,11 +23,16 @@ class TableDetailSheet extends ConsumerWidget {
   const TableDetailSheet({
     required this.tableId,
     required this.tableNumber,
+    this.scrollController,
     super.key,
   });
 
   final String tableId;
   final String tableNumber;
+
+  /// Supplied by the host [DraggableScrollableSheet] so the inner scroll view
+  /// drives the sheet's drag-to-resize gesture as one continuous motion.
+  final ScrollController? scrollController;
 
   Future<void> _openEdit(BuildContext context, WidgetRef ref) async {
     final tables = ref.read(floorControllerProvider).valueOrNull;
@@ -90,29 +95,52 @@ class TableDetailSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.md,
-          AppSpacing.lg,
-          AppSpacing.lg,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const _SheetHandle(),
-            const SizedBox(height: AppSpacing.md),
-            _Header(tableNumber: tableNumber),
-            const SizedBox(height: AppSpacing.lg),
-            _DetailsBody(tableId: tableId),
-            const SizedBox(height: AppSpacing.lg),
-            _ActionButtons(
-              onEdit: () => _openEdit(context, ref),
-              onDelete: () => _confirmDelete(context, ref),
-            ),
-          ],
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      child: ColoredBox(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: SafeArea(
+          top: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: AppSpacing.md),
+              const _SheetHandle(),
+              const SizedBox(height: AppSpacing.md),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: _Header(tableNumber: tableNumber),
+              ),
+              // Scrolls independently; its controller is the sheet's drag
+              // driver so list overflow flows straight into resize.
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    AppSpacing.xl,
+                  ),
+                  child: _DetailsBody(tableId: tableId),
+                ),
+              ),
+              // Pinned outside the scroll view so the edit/delete actions stay
+              // reachable at every snap height.
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.sm,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                ),
+                child: _ActionButtons(
+                  onEdit: () => _openEdit(context, ref),
+                  onDelete: () => _confirmDelete(context, ref),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -190,12 +218,20 @@ class _DetailsBody extends ConsumerWidget {
 
     final todayTableBookings = allBookings.where((b) {
       if (b.status == 'cancelled') return false;
+      if (b.status == 'completed') return false;
+      if (b.status == 'no_show') return false;
+      if (b.isExpired) return false;
       if (b.tableInfo?.id != tableId) return false;
       final parsed = DateTime.tryParse(b.date)?.toLocal();
       if (parsed == null) return false;
       return DateTime(parsed.year, parsed.month, parsed.day) == today;
     }).toList()
-      ..sort((a, b) => a.timeSlot.compareTo(b.timeSlot));
+      ..sort((a, b) {
+        final bucketCmp = a.sortBucket.compareTo(b.sortBucket);
+        if (bucketCmp != 0) return bucketCmp;
+        if (a.sortBucket == 2) return b.dateTime.compareTo(a.dateTime);
+        return a.dateTime.compareTo(b.dateTime);
+      });
 
     final banner = switch (tableStatus) {
       'reserved' => const _ReservedBanner(),
@@ -222,10 +258,8 @@ class _DetailsBody extends ConsumerWidget {
           ),
         ] else ...[
           const SizedBox(height: AppSpacing.lg),
-          if (todayTableBookings.length >= 2) ...[
-            Text(l10n.floor_today_bookings, style: AppTextStyles.titleMedium),
-            const SizedBox(height: AppSpacing.sm),
-          ],
+          Text(l10n.floor_today_bookings, style: AppTextStyles.titleMedium),
+          const SizedBox(height: AppSpacing.sm),
           Column(
             children: [
               for (int i = 0; i < todayTableBookings.length; i++) ...[
@@ -392,24 +426,77 @@ class _BookingRow extends StatelessWidget {
     final name =
         booking.guestName.trim().isEmpty ? l10n.regularGuest : booking.guestName;
 
+    // Per-booking lifecycle chip — distinct from the table's *derived* dot
+    // colour, so a completed/no-show row reads its own outcome at a glance.
+    final (IconData chipIcon, Color chipColor, String chipLabel) =
+        switch (booking.status) {
+      'confirmed' => (
+          Icons.schedule_outlined,
+          AppColors.warning,
+          l10n.bookingStatus_confirmed,
+        ),
+      'arrived' => (
+          Icons.person_outlined,
+          AppColors.info,
+          l10n.bookingStatus_arrived,
+        ),
+      'no_show' => (
+          Icons.person_off_outlined,
+          AppColors.error,
+          l10n.bookingStatus_noShow,
+        ),
+      'completed' => (
+          Icons.check_circle_outlined,
+          AppColors.success,
+          l10n.bookingStatus_completed,
+        ),
+      _ => (
+          Icons.circle_outlined,
+          AppColors.disabled,
+          l10n.bookingStatus_confirmed,
+        ),
+    };
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: dotColor,
-              shape: BoxShape.circle,
+          Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: dotColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(timeRange, style: AppTextStyles.labelLarge),
+              const Spacer(),
+              Text(name, style: AppTextStyles.bodyLarge),
+              const Spacer(),
+              Text(l10n.floor_guests_kishi(booking.numberOfGuests),
+                  style: AppTextStyles.bodyMedium),
+            ],
+          ),
+          const SizedBox(height: 4),
+          // Aligned under the time text: 8 (dot) + 8 (gap).
+          Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(chipIcon, size: 12, color: chipColor),
+                const SizedBox(width: 4),
+                Text(
+                  chipLabel,
+                  style: AppTextStyles.bodySmall.copyWith(color: chipColor),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 8),
-          Text(timeRange, style: AppTextStyles.labelLarge),
-          const Spacer(),
-          Text(name, style: AppTextStyles.bodyLarge),
-          const Spacer(),
-          Text(l10n.floor_guests_kishi(booking.numberOfGuests), style: AppTextStyles.bodyMedium),
         ],
       ),
     );

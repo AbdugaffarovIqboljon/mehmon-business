@@ -743,4 +743,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get noZonesYet => 'Зоны ещё не добавлены';
+
+  @override
+  String get bookingStatus_confirmed => 'Ожидание гостя';
+
+  @override
+  String get bookingStatus_arrived => 'Гость прибыл';
+
+  @override
+  String get bookingStatus_noShow => 'Неявка';
+
+  @override
+  String get bookingStatus_completed => 'Завершено';
 }

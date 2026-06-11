@@ -284,5 +284,9 @@
   "zoneManagementTitle": "Zone management",
   "zoneManagementSubtitle": "For example: Main hall, Terrace, VIP.",
   "zoneNameHint": "Zone name (e.g. Terrace)",
-  "noZonesYet": "No zones added yet"
+  "noZonesYet": "No zones added yet",
+  "bookingStatus_confirmed": "Waiting for guest",
+  "bookingStatus_arrived": "Guest arrived",
+  "bookingStatus_noShow": "No-show",
+  "bookingStatus_completed": "Completed"
 }

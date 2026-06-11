@@ -746,4 +746,16 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get noZonesYet => 'Hali zonalar qo\'shilmagan';
+
+  @override
+  String get bookingStatus_confirmed => 'Mehmon kutilmoqda';
+
+  @override
+  String get bookingStatus_arrived => 'Mehmon keldi';
+
+  @override
+  String get bookingStatus_noShow => 'Kelmadi';
+
+  @override
+  String get bookingStatus_completed => 'Yakunlandi';
 }

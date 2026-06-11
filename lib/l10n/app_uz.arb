@@ -251,5 +251,9 @@
   "zoneManagementTitle": "Zonalar boshqaruvi",
   "zoneManagementSubtitle": "Masalan: Asosiy zal, Terassa, VIP.",
   "zoneNameHint": "Zona nomi (masalan: Terassa)",
-  "noZonesYet": "Hali zonalar qo'shilmagan"
+  "noZonesYet": "Hali zonalar qo'shilmagan",
+  "bookingStatus_confirmed": "Mehmon kutilmoqda",
+  "bookingStatus_arrived": "Mehmon keldi",
+  "bookingStatus_noShow": "Kelmadi",
+  "bookingStatus_completed": "Yakunlandi"
 }

@@ -744,4 +744,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noZonesYet => 'No zones added yet';
+
+  @override
+  String get bookingStatus_confirmed => 'Waiting for guest';
+
+  @override
+  String get bookingStatus_arrived => 'Guest arrived';
+
+  @override
+  String get bookingStatus_noShow => 'No-show';
+
+  @override
+  String get bookingStatus_completed => 'Completed';
 }
